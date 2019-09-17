@@ -21,6 +21,9 @@
     <Text Include="output.txt">
       <Filter>资源文件</Filter>
     </Text>
+    <Text Include="error.txt">
+      <Filter>资源文件</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -29,9 +32,18 @@
     <ClCompile Include="Lexical.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="FaultHandler.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lexical.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FaultHandler.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

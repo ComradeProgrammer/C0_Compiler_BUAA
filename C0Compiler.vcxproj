@@ -123,15 +123,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="error.txt" />
     <Text Include="input.txt" />
     <Text Include="output.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FaultHandler.cpp" />
     <ClCompile Include="Lexical.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FaultHandler.h" />
     <ClInclude Include="Lexical.h" />
+    <ClInclude Include="main.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
