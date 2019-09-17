@@ -1,5 +1,7 @@
 #pragma once
+#include<cctype>
 #include<string>
+#include<fstream>
 #include"FaultHandler.h"
 using namespace std;
 enum Lexical {
@@ -38,18 +40,34 @@ enum Lexical {
 	LBRACK,//[
 	RBRACK,//]
 	LBRACE,//{
-	RBRACE//}
+	RBRACE,//}
+	UNKNOWN,
+	END
 };
-/*
+
+struct Result {
+	Lexical type;
+	int value;//value for int or char
+	string str;//value for string or symbol
+};
+
 class LexicalAnalyzer {
 public:
-	LexicalAnalyzer(FaultHandler f) ;
+	LexicalAnalyzer(FaultHandler& f) ;
 	void readAll(string filename);
-	Lexical sym();
+	Result sym();
 	Lexical getNextSym();
+	void homework();
 private:
 	string text;
-	Lexical currentSym;
+	int ptr;
+	int line;
+	int column;
+	map<string, Lexical>reservedKey;
+	Result currentSym;
 	FaultHandler& faultHandler;
+	int getUnsignedInteger();
+	bool isValidChar(char c);
+	string getString();
+	string getIdentifier();
 };
-*/

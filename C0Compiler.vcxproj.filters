@@ -24,6 +24,12 @@
     <Text Include="error.txt">
       <Filter>资源文件</Filter>
     </Text>
+    <Text Include="grammar.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="grammarRegroup.txt">
+      <Filter>资源文件</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

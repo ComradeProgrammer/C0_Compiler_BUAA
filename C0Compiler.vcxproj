@@ -124,6 +124,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="error.txt" />
+    <Text Include="grammar.txt" />
+    <Text Include="grammarRegroup.txt" />
     <Text Include="input.txt" />
     <Text Include="output.txt" />
   </ItemGroup>

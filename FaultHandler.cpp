@@ -2,7 +2,7 @@
 
 FaultHandler::FaultHandler(string filename) {
 	debug = false;
-	fout.open(filename);
+	fout.open(filename,ios_base::trunc);
 	messages[LEXICALERROR] = "lexical error";
 	messages[REDEFINED] = "redefined symbol";
 	messages[UNDEFINED] = "undifined symbol";
@@ -34,6 +34,11 @@ void FaultHandler::debugOn() {
 
 void FaultHandler::debugOff() {
 	debug = false;
+}
+
+void FaultHandler::terminate() {
+	cout << endl << "Compilation Terminated"<<endl;
+	exit(0);
 }
 
 void FaultHandler::test() {

@@ -4,6 +4,7 @@
 #include<fstream>
 #include<string>
 #include<map>
+#include<cstdlib>
 using namespace std;
 
 enum FaultType {
@@ -23,9 +24,11 @@ public:
 	~FaultHandler();
 	void handleCourseFault(int line, FaultType type);
 	void handleFault(int line, string information);
+	void terminate();
 	void debugOn();
 	void debugOff();
 	void test();
+	
 private:
 	ofstream fout;
 	bool debug;
