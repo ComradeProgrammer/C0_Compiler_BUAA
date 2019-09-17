@@ -129,12 +129,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FaultHandler.cpp" />
-    <ClCompile Include="Lexical.cpp" />
+    <ClCompile Include="LexicalAnalyzer.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FaultHandler.h" />
-    <ClInclude Include="Lexical.h" />
+    <ClInclude Include="LexicalAnalyzer.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

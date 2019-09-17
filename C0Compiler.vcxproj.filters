@@ -29,21 +29,21 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Lexical.cpp">
+    <ClCompile Include="FaultHandler.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="FaultHandler.cpp">
+    <ClCompile Include="LexicalAnalyzer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Lexical.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="FaultHandler.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="main.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LexicalAnalyzer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
