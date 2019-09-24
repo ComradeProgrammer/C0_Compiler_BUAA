@@ -19,6 +19,65 @@ LexicalAnalyzer::LexicalAnalyzer(FaultHandler& f):faultHandler(f) {
 	reservedKey["scanf"] = SCANFTK;
 	reservedKey["printf"] = PRINTFTK;
 	reservedKey["return"] = RETURNTK;
+
+	{
+		lexicalName[IDENFR] = "IDENFR";
+		lexicalName[INTCON] = "INTCON";
+		lexicalName[CHARCON] = "CHARCON";
+		lexicalName[STRCON] = "STRCON";
+		lexicalName[CONSTTK] = "CONSTTK";
+		lexicalName[INTTK] = "INTTK";
+		lexicalName[CHARTK] = "CHARTK";
+		lexicalName[VOIDTK] = "VOIDTK";
+		lexicalName[MAINTK] = "MAINTK";
+		lexicalName[IFTK] = "IFTK";
+		lexicalName[ELSETK] = "ELSETK";
+		lexicalName[DOTK] = "DOTK";
+		lexicalName[WHILETK] = "WHILETK";
+		lexicalName[FORTK] = "FORTK";
+		lexicalName[SCANFTK] = "SCANFTK";
+		lexicalName[PRINTFTK] = "PRINTFTK";
+		lexicalName[RETURNTK] = "RETURNTK";
+		lexicalName[PLUS] = "PLUS";
+		lexicalName[MINU] = "MINU";
+		lexicalName[MULT] = "MULT";
+		lexicalName[DIV] = "DIV";
+		lexicalName[LSS] = "LSS";
+		lexicalName[LEQ] = "LEQ";
+		lexicalName[GRE] = "GRE";
+		lexicalName[GEQ] = "GEQ";
+		lexicalName[EQL] = "EQL";
+		lexicalName[NEQ] = "NEQ";
+		lexicalName[ASSIGN] = "ASSIGN";
+		lexicalName[SEMICN] = "SEMICN";
+		lexicalName[COMMA] = "COMMA";
+		lexicalName[LPARENT] = "LPARENT";
+		lexicalName[RPARENT] = "RPARENT";
+		lexicalName[LBRACK] = "LBRACK";
+		lexicalName[RBRACK] = "RBRACK";
+		lexicalName[LBRACE] = "LBRACE";
+		lexicalName[RBRACE] = "RBRACE";
+
+		lexicalSymbol[PLUS] = "+";
+		lexicalSymbol[MINU] = "-";
+		lexicalSymbol[MULT] = "*";
+		lexicalSymbol[DIV] = "/";
+		lexicalSymbol[LSS] = "<";
+		lexicalSymbol[LEQ] = "<=";
+		lexicalSymbol[GRE] = ">";
+		lexicalSymbol[GEQ] = ">=";
+		lexicalSymbol[EQL] = "==";
+		lexicalSymbol[NEQ] = "!=";
+		lexicalSymbol[ASSIGN] = "=";
+		lexicalSymbol[SEMICN] = ";";
+		lexicalSymbol[COMMA] = ",";
+		lexicalSymbol[LPARENT] = "(";
+		lexicalSymbol[RPARENT] = ")";
+		lexicalSymbol[LBRACK] = "[";
+		lexicalSymbol[RBRACK] = "]";
+		lexicalSymbol[LBRACE] = "{";
+		lexicalSymbol[RBRACE] = "}";
+	}
 }
 
 void LexicalAnalyzer::readAll(string filename) {
@@ -288,102 +347,47 @@ Lexical LexicalAnalyzer::getNextSym() {
 	return res;
 }
 
+int LexicalAnalyzer::lineNumber() {
+	return line;
+}
+
+void LexicalAnalyzer::printResult(ostream& out) {
+	out << lexicalName[currentSym.type] << " ";
+	if (currentSym.type == IDENFR || currentSym.type == STRCON) {
+		out << currentSym.str;
+	}
+	else if (currentSym.type == CHARCON) {
+		out << (char)currentSym.value;
+	}
+	else if (currentSym.type == INTCON) {
+		out << currentSym.value;
+	}
+	else if (currentSym.type == CONSTTK || currentSym.type == INTTK || currentSym.type == CHARTK || currentSym.type == VOIDTK ||
+		currentSym.type == MAINTK || currentSym.type == IFTK || currentSym.type == ELSETK || currentSym.type == DOTK ||
+		currentSym.type == WHILETK || currentSym.type == FORTK || currentSym.type == SCANFTK || currentSym.type == PRINTFTK
+		|| currentSym.type == RETURNTK) {
+		out << currentSym.str;
+	}
+	else {
+		out << lexicalSymbol[currentSym.type];
+	}
+	out << endl;
+}
 void LexicalAnalyzer::homework() {
-	map<Lexical, string>lexicalName;
-	map<Lexical, string>lexicalSymbol;
+	
 	ofstream fout;
 	fout.open("output.txt", ios_base::trunc);
-	{
-		lexicalName[IDENFR] = "IDENFR";
-		lexicalName[INTCON] = "INTCON";
-		lexicalName[CHARCON] = "CHARCON";
-		lexicalName[STRCON] = "STRCON";
-		lexicalName[CONSTTK] = "CONSTTK";
-		lexicalName[INTTK] = "INTTK";
-		lexicalName[CHARTK] = "CHARTK";
-		lexicalName[VOIDTK] = "VOIDTK";
-		lexicalName[MAINTK] = "MAINTK";
-		lexicalName[IFTK] = "IFTK";
-		lexicalName[ELSETK] = "ELSETK";
-		lexicalName[DOTK] = "DOTK";
-		lexicalName[WHILETK] = "WHILETK";
-		lexicalName[FORTK] = "FORTK";
-		lexicalName[SCANFTK] = "SCANFTK";
-		lexicalName[PRINTFTK] = "PRINTFTK";
-		lexicalName[RETURNTK] = "RETURNTK";
-		lexicalName[PLUS] = "PLUS";
-		lexicalName[MINU] = "MINU";
-		lexicalName[MULT] = "MULT";
-		lexicalName[DIV] = "DIV";
-		lexicalName[LSS] = "LSS";
-		lexicalName[LEQ] = "LEQ";
-		lexicalName[GRE] = "GRE";
-		lexicalName[GEQ] = "GEQ";
-		lexicalName[EQL] = "EQL";
-		lexicalName[NEQ] = "NEQ";
-		lexicalName[ASSIGN] = "ASSIGN";
-		lexicalName[SEMICN] = "SEMICN";
-		lexicalName[COMMA] = "COMMA";
-		lexicalName[LPARENT] = "LPARENT";
-		lexicalName[RPARENT] = "RPARENT";
-		lexicalName[LBRACK] = "LBRACK";
-		lexicalName[RBRACK] = "RBRACK";
-		lexicalName[LBRACE] = "LBRACE";
-		lexicalName[RBRACE] = "RBRACE";
-
-		lexicalSymbol[PLUS] = "+";
-		lexicalSymbol[MINU] = "-";
-		lexicalSymbol[MULT] = "*";
-		lexicalSymbol[DIV] = "/";
-		lexicalSymbol[LSS] = "<";
-		lexicalSymbol[LEQ] = "<=";
-		lexicalSymbol[GRE] = ">";
-		lexicalSymbol[GEQ] = ">=";
-		lexicalSymbol[EQL] = "==";
-		lexicalSymbol[NEQ] = "!=";
-		lexicalSymbol[ASSIGN] = "=";
-		lexicalSymbol[SEMICN] = ";";
-		lexicalSymbol[COMMA] = ",";
-		lexicalSymbol[LPARENT] = "(";
-		lexicalSymbol[RPARENT] = ")";
-		lexicalSymbol[LBRACK] = "[";
-		lexicalSymbol[RBRACK] = "]";
-		lexicalSymbol[LBRACE] = "{";
-		lexicalSymbol[RBRACE] = "}";
-	}
+	
 	while (1) {
 		Lexical tmp = getNextSym();
 		if (tmp == END) {
-			break;
-		}
-		else if (ptr >= text.size()) {
 			break;
 		}
 		else if (tmp == UNKNOWN) {
 			fout << "UNKNOWN??????????????????????????" << endl;
 		}
 		else {
-			Result result = sym();
-			fout << lexicalName[tmp]<<" ";
-			if (result.type == IDENFR||result.type==STRCON) {
-				fout << result.str;
-			}
-			else if (result.type == CHARCON) {
-				fout << (char)result.value;
-			}
-			else if (result.type == INTCON) {
-				fout << result.value;
-			}
-			else if (result.type == CONSTTK||result.type == INTTK || result.type == CHARTK || result.type == VOIDTK ||
-				result.type == MAINTK || result.type == IFTK || result.type == ELSETK || result.type == DOTK ||
-				result.type == WHILETK || result.type == FORTK || result.type == SCANFTK || result.type == PRINTFTK
-				|| result.type == RETURNTK) {
-				fout << result.str;
-			}
-			else {
-				fout << lexicalSymbol[result.type];
-			}
-			fout << endl;
+			printResult(fout);
 		}
 	}
 	fout.close();

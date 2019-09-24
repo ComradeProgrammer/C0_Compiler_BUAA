@@ -32,9 +32,6 @@ void FaultHandler::debugOn() {
 	debug = true;
 }
 
-void FaultHandler::debugOff() {
-	debug = false;
-}
 
 void FaultHandler::terminate() {
 	cout << endl << "Compilation Terminated"<<endl;
@@ -44,6 +41,5 @@ void FaultHandler::terminate() {
 void FaultHandler::test() {
 	debugOn();
 	handleCourseFault(15, LEXICALERROR);
-	debugOff();
 	handleCourseFault(107,NORPARENT);
 }

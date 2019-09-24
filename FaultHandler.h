@@ -26,11 +26,10 @@ public:
 	void handleFault(int line, string information);
 	void terminate();
 	void debugOn();
-	void debugOff();
 	void test();
 	
 private:
 	ofstream fout;
-	bool debug;
+	bool debug=false;
 	map<FaultType, string>messages;
 };

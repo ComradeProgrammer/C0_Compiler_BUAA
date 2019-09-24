@@ -5,3 +5,4 @@
 #include"LexicalAnalyzer.h"
 #include"SubSymbolTable.h"
 #include"SymbolTable.h"
+#include"GrammarAnalyzer.h"

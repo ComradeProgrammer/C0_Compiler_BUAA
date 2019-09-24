@@ -2,6 +2,7 @@
 #include<cctype>
 #include<string>
 #include<fstream>
+#include<iostream>
 #include"FaultHandler.h"
 using namespace std;
 enum Lexical {
@@ -55,8 +56,12 @@ class LexicalAnalyzer {
 public:
 	LexicalAnalyzer(FaultHandler& f) ;
 	void readAll(string filename);
+
 	Result sym();
 	Lexical getNextSym();
+	int lineNumber();
+
+	void printResult(ostream& out);
 	void homework();
 private:
 	string text;
@@ -70,4 +75,7 @@ private:
 	bool isValidChar(char c);
 	string getString();
 	string getIdentifier();
+
+	map<Lexical, string>lexicalName;
+	map<Lexical, string>lexicalSymbol;
 };

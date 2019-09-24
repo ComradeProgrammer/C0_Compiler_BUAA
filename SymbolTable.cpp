@@ -66,7 +66,4 @@ void SymbolTable::selfTest() {
 	SymbolEntry* tmp9 = getSymbolByName("", "var1");
 
 	SymbolEntry* tmp10 = getSymbolByName("", "func1");
-
-
-
 }

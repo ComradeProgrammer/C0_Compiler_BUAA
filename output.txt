@@ -1,39 +1,24 @@
-IDENFR aaa
-IDENFR bbb
-INTCON 12
-CHARCON v
-STRCON fsd
-STRCON 
-CHARCON 0
 CONSTTK const
 INTTK int
-CHARTK char
-VOIDTK void
-MAINTK main
-IFTK if
-ELSETK else
-DOTK do
-WHILETK while
-FORTK for
-SCANFTK scanf
-PRINTFTK printf
-RETURNTK return
-PLUS +
-MINU -
-MULT *
-DIV /
-LSS <
-LEQ <=
-GRE >
-GEQ >=
-EQL ==
-NEQ !=
+IDENFR const1
 ASSIGN =
-SEMICN ;
+INTCON 1
+<无符号整数>
+<整数>
 COMMA ,
-LPARENT (
-RPARENT )
-LBRACE {
-RBRACE }
-LBRACK [
-RBRACK ]
+IDENFR const2
+ASSIGN =
+MINU -
+INTCON 100
+<无符号整数>
+<整数>
+<常量定义>
+SEMICN ;
+CONSTTK const
+CHARTK char
+IDENFR const3
+ASSIGN =
+CHARCON _
+<常量定义>
+SEMICN ;
+<常量说明>
