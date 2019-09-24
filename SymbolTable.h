@@ -11,6 +11,7 @@ public:
 	SymbolEntry* addSymbol(string currentScope,string name,bool isFunction);
 	SymbolEntry* getSymbolByName(string currentScope,string name);
 	SymbolEntry* getSymbolById(int id);
+	void selfTest();
 private:
 	int count;
 	map<string, SubSymbolTable*>scope;

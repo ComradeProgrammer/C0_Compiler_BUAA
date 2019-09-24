@@ -32,8 +32,9 @@ struct SymbolEntry {
 	string scope;
 	int initValue;
 	unsigned int addr;
-	int dimension;
-	FunctionLink* link;
+	int dimension=0;
+	bool isConst=false;
+	FunctionLink* link=NULL;
 };
 
 class SubSymbolTable {
@@ -43,8 +44,8 @@ public:
 	SymbolEntry* addSymbol(string name,bool isFuntion);
 	SymbolEntry* getSymbolByName(string name);
 
+	void selfTest();
 private:
 	string nameScope;
-	int count;
 	map<string, SymbolEntry*>symbolMap;
 };
