@@ -13,11 +13,14 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\FrontEnd">
+      <UniqueIdentifier>{9ac13162-aeb2-48a8-95e4-140b0c5c2377}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\FrontEnd">
+      <UniqueIdentifier>{91729342-3e67-4f79-ab41-26fd3d57afd1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="input.txt">
-      <Filter>资源文件</Filter>
-    </Text>
     <Text Include="output.txt">
       <Filter>资源文件</Filter>
     </Text>
@@ -30,26 +33,47 @@
     <Text Include="grammarRegroup.txt">
       <Filter>资源文件</Filter>
     </Text>
+    <Text Include="testfile.txt">
+      <Filter>资源文件</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="FaultHandler.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\FrontEnd</Filter>
     </ClCompile>
     <ClCompile Include="LexicalAnalyzer.cpp">
-      <Filter>源文件</Filter>
+      <Filter>源文件\FrontEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="GrammarAnalyzer.cpp">
+      <Filter>源文件\FrontEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSymbolTable.cpp">
+      <Filter>源文件\FrontEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="SymbolTable.cpp">
+      <Filter>源文件\FrontEnd</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FaultHandler.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="SymbolTable.h">
+      <Filter>头文件\FrontEnd</Filter>
     </ClInclude>
-    <ClInclude Include="main.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="SubSymbolTable.h">
+      <Filter>头文件\FrontEnd</Filter>
     </ClInclude>
     <ClInclude Include="LexicalAnalyzer.h">
+      <Filter>头文件\FrontEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="GrammarAnalyzer.h">
+      <Filter>头文件\FrontEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="FaultHandler.h">
+      <Filter>头文件\FrontEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

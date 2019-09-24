@@ -126,18 +126,24 @@
     <Text Include="error.txt" />
     <Text Include="grammar.txt" />
     <Text Include="grammarRegroup.txt" />
-    <Text Include="input.txt" />
+    <Text Include="testfile.txt" />
     <Text Include="output.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FaultHandler.cpp" />
+    <ClCompile Include="GrammarAnalyzer.cpp" />
     <ClCompile Include="LexicalAnalyzer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SubSymbolTable.cpp" />
+    <ClCompile Include="SymbolTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FaultHandler.h" />
+    <ClInclude Include="GrammarAnalyzer.h" />
     <ClInclude Include="LexicalAnalyzer.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="SubSymbolTable.h" />
+    <ClInclude Include="SymbolTable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

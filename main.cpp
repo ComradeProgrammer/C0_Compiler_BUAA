@@ -3,7 +3,7 @@ using namespace std;
 int main() {
     FaultHandler faultHandler("error.txt");
 	LexicalAnalyzer lexicalAnalyzer(faultHandler);
-	lexicalAnalyzer.readAll("input.txt");
+	lexicalAnalyzer.readAll("testfile.txt");
 	lexicalAnalyzer.homework();
-	system("pause");
+	//system("pause");
 }

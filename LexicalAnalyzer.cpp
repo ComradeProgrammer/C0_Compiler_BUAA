@@ -1,5 +1,5 @@
 #include"LexicalAnalyzer.h"
-
+#include<cstdlib>
 LexicalAnalyzer::LexicalAnalyzer(FaultHandler& f):faultHandler(f) {
 	text = "";
 	currentSym = {UNKNOWN};
@@ -90,8 +90,9 @@ Lexical LexicalAnalyzer::getNextSym() {
 		}
 		ptr++;
 	}
-	if (ptr == text.size()) {
+	if (ptr >= text.size()) {
 		result.str = END;
+		currentSym = result;
 		return END;
 	}
 	Lexical res;
@@ -159,6 +160,7 @@ Lexical LexicalAnalyzer::getNextSym() {
 			res = NEQ;
 			ptr++;
 			column++;
+			break;
 		}
 		else {
 			faultHandler.handleCourseFault(line, LEXICALERROR);
@@ -260,7 +262,7 @@ Lexical LexicalAnalyzer::getNextSym() {
 			res = INTCON;
 			result.value = temp;
 		}
-		else if (isalpha(text[ptr])) {
+		else if (isalpha(text[ptr])||text[ptr]=='_') {
 			string idfy = getIdentifier();
 			map<string, Lexical>::iterator itr = reservedKey.find(idfy);
 			if (itr != reservedKey.end()) {
@@ -275,6 +277,8 @@ Lexical LexicalAnalyzer::getNextSym() {
 		else {
 			faultHandler.handleCourseFault(line, LEXICALERROR);
 			faultHandler.handleFault(line, "Illegal lexical");
+			ptr++;
+			column++;
 			res = UNKNOWN;
 			break;
 		}
@@ -287,6 +291,8 @@ Lexical LexicalAnalyzer::getNextSym() {
 void LexicalAnalyzer::homework() {
 	map<Lexical, string>lexicalName;
 	map<Lexical, string>lexicalSymbol;
+	ofstream fout;
+	fout.open("output.txt", ios_base::trunc);
 	{
 		lexicalName[IDENFR] = "IDENFR";
 		lexicalName[INTCON] = "INTCON";
@@ -350,31 +356,35 @@ void LexicalAnalyzer::homework() {
 		if (tmp == END) {
 			break;
 		}
+		else if (ptr >= text.size()) {
+			break;
+		}
 		else if (tmp == UNKNOWN) {
-			cout << "UNKNOWN??????????????????????????" << endl;
+			fout << "UNKNOWN??????????????????????????" << endl;
 		}
 		else {
 			Result result = sym();
-			cout << lexicalName[tmp]<<" ";
+			fout << lexicalName[tmp]<<" ";
 			if (result.type == IDENFR||result.type==STRCON) {
-				cout << result.str;
+				fout << result.str;
 			}
 			else if (result.type == CHARCON) {
-				cout << (char)result.value;
+				fout << (char)result.value;
 			}
 			else if (result.type == INTCON) {
-				cout << result.value;
+				fout << result.value;
 			}
 			else if (result.type == CONSTTK||result.type == INTTK || result.type == CHARTK || result.type == VOIDTK ||
 				result.type == MAINTK || result.type == IFTK || result.type == ELSETK || result.type == DOTK ||
 				result.type == WHILETK || result.type == FORTK || result.type == SCANFTK || result.type == PRINTFTK
 				|| result.type == RETURNTK) {
-				cout << result.str;
+				fout << result.str;
 			}
 			else {
-				cout << lexicalSymbol[result.type];
+				fout << lexicalSymbol[result.type];
 			}
-			cout << endl;
+			fout << endl;
 		}
 	}
+	fout.close();
 }
