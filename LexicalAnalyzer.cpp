@@ -83,12 +83,8 @@ LexicalAnalyzer::LexicalAnalyzer(FaultHandler& f):faultHandler(f) {
 void LexicalAnalyzer::readAll(string filename) {
 	ifstream fin;
 	fin.open(filename,ios_base::in);
-	while (1) {
-		string tmp;
-		getline(fin, tmp);
-		if (tmp == "") {
-			break;
-		}
+	string tmp;
+	while (getline(fin, tmp)) {
 		tmp += '\n';
 		text += tmp;
 	}

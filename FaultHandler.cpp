@@ -18,8 +18,8 @@ FaultHandler::~FaultHandler() {
 }
 
 void FaultHandler::handleCourseFault(int line, FaultType type) {
-	fout << line << (char)type<<endl;
-	handleFault(line, messages[type]);
+	fout << line << " "<<(char)type<<endl;
+	//handleFault(line, messages[type]);
 }
 
 void FaultHandler::handleFault(int line, string information) {
@@ -35,6 +35,7 @@ void FaultHandler::debugOn() {
 
 void FaultHandler::terminate() {
 	cout << endl << "Compilation Terminated"<<endl;
+	system("pause");
 	exit(0);
 }
 

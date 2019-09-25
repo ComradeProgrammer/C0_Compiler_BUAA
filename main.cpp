@@ -2,6 +2,7 @@
 using namespace std;
 int main() {
     FaultHandler faultHandler("error.txt");
+	faultHandler.debugOn();
 	LexicalAnalyzer lexicalAnalyzer(faultHandler);
 	lexicalAnalyzer.readAll("testfile.txt");
 	//lexicalAnalyzer.homework();
@@ -11,5 +12,7 @@ int main() {
 	GrammarAnalyzer g(faultHandler,test,lexicalAnalyzer,"output.txt");
 	g.homeworkOn();
 	g.constDeclearation();
+	g.declearationHeader();
+	//g.declearationHeader();
 	system("pause");
 }
