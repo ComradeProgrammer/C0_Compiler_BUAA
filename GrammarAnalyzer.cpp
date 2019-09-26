@@ -687,18 +687,19 @@ void GrammarAnalyzer::expression() {
 	if (course) { out << "<表达式>" << endl; }
 }
 
+/*针对赋值语句和函数调用语句的预读分支*/
 void GrammarAnalyzer::assignAndCall() {
 	if (lex.sym().type != IDENFR) {
 		f.handleFault(lex.lineNumber(), "需要标识符");
 		// todo handle fault
 		f.terminate();
 	}
-	string name = lex.sym().str;
+	string name = lex.sym().str;//读到一个标识符
 	getNextSym();
-	if (lex.sym().type == LBRACK || lex.sym().type == ASSIGN) {
+	if (lex.sym().type == LBRACK || lex.sym().type == ASSIGN) {//是赋值语句
 		assignSentence(name);
 	}
-	else if (lex.sym().type == LPARENT) {
+	else if (lex.sym().type == LPARENT) {//是函数调用语句
 		functionCall(name,false);
 	}
 	else {
@@ -707,7 +708,7 @@ void GrammarAnalyzer::assignAndCall() {
 		f.terminate();
 	}
 }
-
+/*<赋值语句>，已经过预读*/
 void GrammarAnalyzer::assignSentence(string varname) {
 	bool error = false;
 	SymbolEntry* entry = table.getSymbolByName(currentScope, varname);
@@ -732,44 +733,45 @@ void GrammarAnalyzer::assignSentence(string varname) {
 			getNextSym();
 		}
 	}
-	if (lex.sym().type != ASSIGN) {
+	if (lex.sym().type != ASSIGN) {//读取赋值运算符
 		f.handleFault(lex.lineNumber(), "需要=");
 		// todo handlefault
 	}
 	else {
 		getNextSym();
 	}
-	expression();
+	expression();//读取所赋的表达式
 	if (course) { out << "<赋值语句>"<<endl; }
 }
 
+/*函数调用，若mustReturn是真意味着必须有返回值，否则有无返回值皆可，已被预读符号*/
 void GrammarAnalyzer::functionCall(string name,bool mustReturn) {
 	bool error = false;
-	SymbolEntry* entry = table.getSymbolByName(currentScope, name);
-	if (entry == NULL) {
+	SymbolEntry* entry = table.getSymbolByName(currentScope, name);//读取函数信息
+	if (entry == NULL) {//检查是否已定义
 		f.handleCourseFault(lex.lineNumber(), UNDEFINED);
 		f.handleFault(lex.lineNumber(), "未定义的变量");
 		error = true;
 	}
-	if (!error&&entry->type != TYPEFUNCTION) {
+	if (!error&&entry->type != TYPEFUNCTION) {//检查是否为函数
 		f.handleCourseFault(lex.lineNumber(), TYPEERROR);
 		f.handleFault(lex.lineNumber(), "不是函数");
 		//todo handle fault
 		f.terminate();
 	}
-	if (!error&&mustReturn && entry->link->returnType == RETVOID) {
+	if (!error&&mustReturn && entry->link->returnType == RETVOID) {//检查是否有返回值
 		f.handleCourseFault(lex.lineNumber(), TYPEERROR);
 		f.handleFault(lex.lineNumber(), "不是有返回值函数");
 		// todo handlefault;
 		f.terminate();
 	}
-	if (lex.sym().type != LPARENT) {
+	if (lex.sym().type != LPARENT) {//读取（
 		f.handleFault(lex.lineNumber(), "缺少(");
 		//todo handle fault
 		f.terminate();
 	}
 	getNextSym();
-	parameterValueList(entry);
+	parameterValueList(entry);//读取实参列表
 	if (lex.sym().type != RPARENT) {
 		f.handleCourseFault(lex.lineNumber(), NORPARENT);
 		f.handleFault(lex.lineNumber(), "缺少)");
@@ -786,6 +788,7 @@ void GrammarAnalyzer::functionCall(string name,bool mustReturn) {
 	}
 }
 
+/*<值参数表>*/
 void GrammarAnalyzer::parameterValueList(SymbolEntry* entry) {
 	int paraNum = 0;
 	bool init = true;
