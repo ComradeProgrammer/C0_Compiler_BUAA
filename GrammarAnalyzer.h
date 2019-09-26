@@ -9,8 +9,7 @@ public:
 	GrammarAnalyzer(FaultHandler& f,SymbolTable& s,LexicalAnalyzer& l,string file);
 	Lexical getNextSym();
 	void homeworkOn();
-
-
+	int integer();
 
 	void constDeclearation();
 	void constDefination();
@@ -20,15 +19,13 @@ public:
 
 	void nonVoidFunctionDefination();
 	void nonVoidFunctionDefination(Lexical retType, string functionName);
-	//void voidFunctionDefination();
+	void voidFunctionDefination();
 
 	string declearationHeader(Lexical& retType);
 	Lexical declearationHeader();
 
 	void parameterList(SymbolEntry* entry);
 	void compoundSentence();
-
-	int integer();
 	
 private:
 	FaultHandler& f;

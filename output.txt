@@ -1,6 +1,5 @@
-INTTK int
+VOIDTK void
 IDENFR a
-<声明头部>
 LPARENT (
 INTTK int
 IDENFR b
@@ -13,4 +12,4 @@ IDENFR d
 <参数表>
 RPARENT )
 LBRACE {
-<有返回值函数声明>
+<无返回值函数声明>

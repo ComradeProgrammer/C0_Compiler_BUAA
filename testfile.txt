@@ -1,2 +1,2 @@
-int a(int b,int c,int d){
+void a(int b,int c,int d){
 }

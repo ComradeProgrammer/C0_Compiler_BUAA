@@ -12,7 +12,7 @@ int main() {
 	GrammarAnalyzer g(faultHandler,test,lexicalAnalyzer,"output.txt");
 	g.homeworkOn();
 	g.constDeclearation();
-	g.declearationHeader();
+	g.voidFunctionDefination();
 	//g.declearationHeader();
 	system("pause");
 }
