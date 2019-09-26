@@ -10,12 +10,18 @@ int main() {
 	lexicalAnalyzer.getNextSym();
 	GrammarAnalyzer g(faultHandler,test,lexicalAnalyzer,"output.txt");
 	g.homeworkOn();
-	//g.constDeclearation();
+	g.constDeclearation();
 	//g.mainFunctionDefination();
-	//g.declearationHeader();
+	g.declearationHeader();
+	g.declearationHeader();
+	g.declearationHeader();
 	g.voidFunctionDefination();
-	g.expression();
-	//g.assignAndCall();
+	g.declearationHeader();
+	g.declearationHeader();
+	g.declearationHeader();
+	//g.expression();
+	g.assignAndCall();
+
 	system("pause");
 }
 

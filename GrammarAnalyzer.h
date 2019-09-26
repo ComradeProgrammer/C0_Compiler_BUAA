@@ -41,7 +41,7 @@ public:
 private:
 	FaultHandler& f;
 	SymbolTable& table;
-	LexicalAnalyzer lex;
+	LexicalAnalyzer& lex;
 	bool course=false;
 	fstream out;
 	string currentScope ;

@@ -1,3 +1,15 @@
-void tmp(int a,int b,int c){
+const int const1=12;
+const char const2='a';
+int a,b[100],c[1000];
+int e[100];
+int d;
+void tmp0(){
+
 }
-tmp(1,2,3)
+int tmp1(){
+}
+int tmp2(int para1){
+}
+int tmp3(int para1,int para2){
+}
+b[1]=+tmp2(+tmp1()+((((((tmp2(b[--0])))))))/c[tmp3(++5,const1)]+12*7);

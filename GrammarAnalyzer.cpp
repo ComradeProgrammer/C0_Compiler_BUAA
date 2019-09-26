@@ -556,6 +556,10 @@ void GrammarAnalyzer::parameterList(SymbolEntry* entry) {
 				getNextSym();
 			}
 		}
+		if (lex.sym().type != INTTK && lex.sym().type != CHARTK) {
+			f.handleFault(lex.lineNumber(), "需要提供参数类型");
+			throw 0;
+		}
 		SymbolType paratype = lex.sym().type == INTTK ? TYPEINT : TYPECHAR;
 		getNextSym();
 		if (lex.sym().type != IDENFR) {
@@ -614,7 +618,7 @@ void GrammarAnalyzer::factor() {
 				getNextSym();
 			}
 		}
-		else if (lex.sym().type == LBRACE) {//有返回值函数
+		else if (lex.sym().type == LPARENT) {//有返回值函数
 			functionCall(varname,true);
 		}
 		else {//标识符
@@ -747,13 +751,13 @@ void GrammarAnalyzer::functionCall(string name,bool mustReturn) {
 		f.handleFault(lex.lineNumber(), "未定义的变量");
 		error = true;
 	}
-	if (entry->type != TYPEFUNCTION) {
+	if (!error&&entry->type != TYPEFUNCTION) {
 		f.handleCourseFault(lex.lineNumber(), TYPEERROR);
 		f.handleFault(lex.lineNumber(), "不是函数");
 		//todo handle fault
 		f.terminate();
 	}
-	if (mustReturn && entry->link->returnType == RETVOID) {
+	if (!error&&mustReturn && entry->link->returnType == RETVOID) {
 		f.handleCourseFault(lex.lineNumber(), TYPEERROR);
 		f.handleFault(lex.lineNumber(), "不是有返回值函数");
 		// todo handlefault;
