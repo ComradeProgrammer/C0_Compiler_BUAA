@@ -2,7 +2,7 @@
 
 FaultHandler::FaultHandler(string filename) {
 	debug = false;
-	fout.open(filename,ios_base::trunc);
+	fout.open(filename,ios_base::out|ios_base::trunc);
 	messages[LEXICALERROR] = "lexical error";
 	messages[REDEFINED] = "redefined symbol";
 	messages[UNDEFINED] = "undifined symbol";

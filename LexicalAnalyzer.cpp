@@ -146,7 +146,7 @@ Lexical LexicalAnalyzer::getNextSym() {
 		ptr++;
 	}
 	if (ptr >= text.size()) {
-		result.str = END;
+		result.type = END;
 		currentSym = result;
 		return END;
 	}
@@ -372,7 +372,7 @@ void LexicalAnalyzer::printResult(ostream& out) {
 void LexicalAnalyzer::homework() {
 	
 	ofstream fout;
-	fout.open("output.txt", ios_base::trunc);
+	fout.open("output.txt", ios_base::out|ios_base::trunc);
 	
 	while (1) {
 		Lexical tmp = getNextSym();

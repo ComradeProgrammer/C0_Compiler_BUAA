@@ -5,14 +5,15 @@ int main() {
 	faultHandler.debugOn();
 	LexicalAnalyzer lexicalAnalyzer(faultHandler);
 	lexicalAnalyzer.readAll("testfile.txt");
-	//lexicalAnalyzer.homework();
 	SymbolTable test;
 	//test.selfTest();
 	lexicalAnalyzer.getNextSym();
 	GrammarAnalyzer g(faultHandler,test,lexicalAnalyzer,"output.txt");
 	g.homeworkOn();
-	g.constDeclearation();
-	g.voidFunctionDefination();
+	//g.constDeclearation();
+	//g.mainFunctionDefination();
 	//g.declearationHeader();
+	g.expression();
 	system("pause");
 }
+

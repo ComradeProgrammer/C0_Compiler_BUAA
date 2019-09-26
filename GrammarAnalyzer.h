@@ -20,12 +20,17 @@ public:
 	void nonVoidFunctionDefination();
 	void nonVoidFunctionDefination(Lexical retType, string functionName);
 	void voidFunctionDefination();
+	void mainFunctionDefination();
 
 	string declearationHeader(Lexical& retType);
 	Lexical declearationHeader();
 
 	void parameterList(SymbolEntry* entry);
 	void compoundSentence();
+
+	void factor();
+	void term();
+	void expression();
 	
 private:
 	FaultHandler& f;
@@ -35,5 +40,4 @@ private:
 	fstream out;
 	string currentScope ;
 	void toNextSemicon();
-
 };

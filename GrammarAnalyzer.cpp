@@ -356,6 +356,7 @@ void GrammarAnalyzer::nonVoidFunctionDefination(Lexical retType,string functionN
 	if (course) { out << "<有返回值函数声明>" << endl; }
 }
 
+/*<主函数>*/
 void GrammarAnalyzer::voidFunctionDefination() {
 	try {
 		if (lex.sym().type != VOIDTK) {
@@ -418,6 +419,70 @@ void GrammarAnalyzer::voidFunctionDefination() {
 	}
 	if (course) { out << "<无返回值函数声明>" << endl; }
 }
+
+
+void GrammarAnalyzer::mainFunctionDefination() {
+	try {
+		if (lex.sym().type != VOIDTK) {
+			cout << "BUG@void GrammarAnalyzer::voidFunctionDefination()" << endl;
+			f.terminate();
+		}
+		getNextSym();
+
+		if (lex.sym().type != MAINTK) {
+			f.handleFault(lex.lineNumber(), "缺少函数名");
+			//todo 错误处理待定;
+			f.terminate();
+		}
+		string functionName = "main";
+		getNextSym();
+
+		SymbolEntry* entry = table.addSymbol(currentScope, functionName, true);
+		if (entry == NULL) {
+			f.handleCourseFault(lex.lineNumber(), REDEFINED);
+			f.handleFault(lex.lineNumber(), "函数名重定义" + functionName);
+		}
+		entry->link->returnType = RETVOID;
+		if (lex.sym().type != LPARENT) {
+			f.handleFault(lex.lineNumber(), "缺少参数表");
+			//todo 错误处理待定;
+			f.terminate();
+		}
+		getNextSym();
+
+		if (lex.sym().type != RPARENT) {
+			f.handleCourseFault(lex.lineNumber(), NORPARENT);
+			f.handleFault(lex.lineNumber(), "缺少)");
+		}
+		else {
+			getNextSym();
+		}
+
+		if (lex.sym().type != LBRACE) {
+			f.handleFault(lex.lineNumber(), "缺少{");
+			throw 0;
+		}
+		else {
+			getNextSym();
+		}
+		currentScope = functionName;
+		compoundSentence();
+		currentScope = "";
+
+		if (lex.sym().type != RBRACE) {
+			f.handleFault(lex.lineNumber(), "缺少}");
+			// TODO HANDLEFAULT
+			f.terminate();
+		}
+	}
+	catch (int e) {
+		// TODO handlefault;
+		f.terminate();
+	}
+	getNextSym();
+	if (course) { out << "<主函数>" << endl; }
+}
+
 /*<声明头部>,供非变量声明区的有返回值函数调用*/
 string GrammarAnalyzer::declearationHeader(Lexical& retType) {
 	if (lex.sym().type != INTTK && lex.sym().type != CHARTK) {
@@ -505,4 +570,101 @@ void GrammarAnalyzer::parameterList(SymbolEntry* entry) {
 /*<复合语句>*/
 void GrammarAnalyzer::compoundSentence(){
 
+}
+
+void GrammarAnalyzer::factor() {
+	bool error = false;
+	if (lex.sym().type == IDENFR) {//标识符，标识符数组，有返回值函数调用语句
+		string varname = lex.sym().str;
+		getNextSym();
+		SymbolEntry* entry = table.getSymbolByName(currentScope, varname);
+		if (entry == NULL) {
+			f.handleCourseFault(lex.lineNumber(), UNDEFINED);
+			f.handleFault(lex.lineNumber(), "未定义的符号" + varname);
+			error = true;
+		}
+		if (lex.sym().type == LBRACK) {//数组
+			if (!error && entry->type != TYPECHARARRAY && entry->type != TYPEINTARRAY) {
+				f.handleCourseFault(lex.lineNumber(), TYPEERROR);
+				f.handleFault(lex.lineNumber(), varname + "变量不是数组类型");
+				error = true;
+			}
+			getNextSym();
+
+			expression();
+
+			if (lex.sym().type != RBRACK) {
+				f.handleCourseFault(lex.lineNumber(), NORBRACK);
+				f.handleFault(lex.lineNumber(), "缺少]");
+				error = true;
+			}
+			else {
+				getNextSym();
+			}
+		}
+		else if (lex.sym().type == LBRACE) {//有返回值函数
+			//todo 有返回值函数调用语句的被预读形式
+		}
+		else {//标识符
+			//此处应有中间代码生成？
+		}
+	}
+	else if (lex.sym().type == LPARENT) {
+		getNextSym();
+
+		expression();
+		if (lex.sym().type != RPARENT) {
+			f.handleCourseFault(lex.lineNumber(), NORPARENT);
+			f.handleFault(lex.lineNumber(),"缺少）");
+		}
+		else {
+			getNextSym();
+		}
+	}
+	else if (lex.sym().type == INTCON|| lex.sym().type == PLUS|| lex.sym().type == MINU) {
+		int value = integer();
+	}
+	else if (lex.sym().type == CHARCON) {
+		char c = (char)(lex.sym().value);
+		getNextSym();
+	}
+	else {
+		f.handleFault(lex.lineNumber(), "不被识别的表达式");
+		// todo handlefault 
+		f.terminate();
+	}
+	if (course) { out << "<因子>" << endl; }
+}
+
+void GrammarAnalyzer::term() {
+	factor();
+	while (1) {
+		if (lex.sym().type != MULT && lex.sym().type != DIV) {
+			break;
+		}
+		Lexical op = lex.sym().type;
+		getNextSym();
+		factor();
+	}
+	if (course) { out << "<项>" << endl; }
+}
+
+void GrammarAnalyzer::expression() {
+	int sign = 1;
+	if (lex.sym().type == PLUS || lex.sym().type == MINU) {
+		if (lex.sym().type == MINU) {
+			sign = -1;
+		}
+		getNextSym();
+	}
+	term();
+	while (1) {
+		if (lex.sym().type != PLUS && lex.sym().type != MINU) {
+			break;
+		}
+		Lexical op = lex.sym().type;
+		getNextSym();
+		term();
+	}
+	if (course) { out << "<表达式>" << endl; }
 }
