@@ -1,0 +1,20 @@
+VOIDTK void
+IDENFR tmp
+LPARENT (
+INTTK int
+IDENFR a
+COMMA ,
+INTTK int
+IDENFR b
+COMMA ,
+INTTK int
+IDENFR c
+<参数表>
+RPARENT )
+LBRACE {
+RBRACE }
+<无返回值函数声明>
+IDENFR tmp
+<因子>
+<项>
+<表达式>

@@ -13,7 +13,9 @@ int main() {
 	//g.constDeclearation();
 	//g.mainFunctionDefination();
 	//g.declearationHeader();
+	g.voidFunctionDefination();
 	g.expression();
+	//g.assignAndCall();
 	system("pause");
 }
 

@@ -146,6 +146,9 @@
     <ClInclude Include="SubSymbolTable.h" />
     <ClInclude Include="SymbolTable.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Annotation 2019-09-26 123820.jpg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -1,1 +1,3 @@
-'a'+'c'
+void tmp(int a,int b,int c){
+}
+tmp(1,2,3)

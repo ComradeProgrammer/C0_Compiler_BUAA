@@ -26,11 +26,17 @@ public:
 	Lexical declearationHeader();
 
 	void parameterList(SymbolEntry* entry);
-	void compoundSentence();
+	void compoundSentence();//未实现
 
-	void factor();
+	void factor();//缺一个有返回值的因子没处理
 	void term();
 	void expression();
+
+	void assignAndCall();
+	void assignSentence(string varname);
+	void functionCall(string name, bool mustReturn);
+	void parameterValueList(SymbolEntry* entry);
+
 	
 private:
 	FaultHandler& f;
