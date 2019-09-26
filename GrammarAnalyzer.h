@@ -37,7 +37,9 @@ public:
 	void functionCall(string name, bool mustReturn);
 	void parameterValueList(SymbolEntry* entry);
 
-	
+	void scanSentence();
+	void printSentence();
+	void returnSentence();
 private:
 	FaultHandler& f;
 	SymbolTable& table;

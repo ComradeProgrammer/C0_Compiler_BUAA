@@ -820,3 +820,109 @@ void GrammarAnalyzer::parameterValueList(SymbolEntry* entry) {
 	}
 	if (course) { out << "<值参数表>" << endl; }
 }
+
+void GrammarAnalyzer::scanSentence() {
+	if (lex.sym().type != SCANFTK) {
+		f.handleFault(lex.lineNumber(), "缺少scanf标识符");
+		// todo handle-fault;
+		f.terminate();
+	}
+	getNextSym();
+	if (lex.sym().type != LPARENT) {
+		f.handleFault(lex.lineNumber(), "缺少（");
+		// todo handle-fault
+		f.terminate();
+	}
+	getNextSym();
+	bool init = true;
+	while (1) {
+		if (init) {
+			init = false;
+		}
+		else {
+			if (lex.sym().type != COMMA) {
+				break;
+			}
+			else {
+				getNextSym();
+			}
+		}
+		if (lex.sym().type != IDENFR) {
+			f.handleFault(lex.lineNumber(), "缺少标识符");
+			// todo handle-fault
+			f.terminate();
+		}
+		string varname = lex.sym().str;
+		SymbolEntry* entry = table.getSymbolByName(currentScope, varname);
+		if (entry == NULL) {
+			f.handleCourseFault(lex.lineNumber(), UNDEFINED);
+			f.handleFault(lex.lineNumber(), "未定义的变量");
+		}
+		// todo other illegal situation
+		getNextSym();
+	}
+	if (lex.sym().type != RPARENT) {
+		f.handleCourseFault(lex.lineNumber(), NORPARENT);
+		f.handleFault(lex.lineNumber(), "缺少)");
+	}
+	else {
+		getNextSym();
+	}
+	if (course) { out << "<读语句>" << endl; }
+}
+
+void GrammarAnalyzer::printSentence() {
+	if (lex.sym().type != PRINTFTK) {
+		f.handleFault(lex.lineNumber(), "缺少printf标识符");
+		// todo handle-fault;
+		f.terminate();
+	}
+	getNextSym();
+	if (lex.sym().type != LPARENT) {
+		f.handleFault(lex.lineNumber(), "缺少（");
+		// todo handle-fault
+		f.terminate();
+	}
+	getNextSym();
+	if (lex.sym().type == STRCON) {
+		/*how to handle the string*/
+		getNextSym();
+		if (lex.sym().type == COMMA) {
+			getNextSym();
+			expression();
+		}
+	}
+	else { 
+		expression();
+	}
+	
+	if (lex.sym().type != RPARENT) {
+		f.handleCourseFault(lex.lineNumber(), NORPARENT);
+		f.handleFault(lex.lineNumber(), "缺少)");
+	}
+	else {
+		getNextSym();
+	}
+	if (course) { out << "<写语句>" << endl; }
+}
+
+void GrammarAnalyzer::returnSentence() {
+	if (lex.sym().type != RETURNTK) {
+		f.handleFault(lex.lineNumber(), "缺少RETURN标识符");
+		// todo handle-fault;
+		f.terminate();
+	}
+	getNextSym();
+	if (lex.sym().type == LPARENT) {
+		getNextSym();
+		expression();
+		if (lex.sym().type != RPARENT) {
+			f.handleCourseFault(lex.lineNumber(), NORPARENT);
+			f.handleFault(lex.lineNumber(), "缺少)");
+		}
+		else {
+			getNextSym();
+		}
+	}
+	if (course) { out << "<返回语句>" << endl; }
+}
