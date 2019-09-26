@@ -12,4 +12,4 @@ int tmp2(int para1){
 }
 int tmp3(int para1,int para2){
 }
-b[1]=+tmp2(+tmp1()+((((((tmp2(b[--0])))))))/c[tmp3(++5,const1)]+12*7);
+b[1]=+tmp2(+tmp1()+((((((tmp2(b[- -0])))))))/c[tmp3(++5,const1)]+12*7);
