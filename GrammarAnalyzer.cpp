@@ -53,10 +53,11 @@ void GrammarAnalyzer::constDeclearation() {
 	while (1) {
 		try {
 			if (lex.sym().type != CONSTTK) {
-				break;//检查是否是const
+				break;//检查是否是const，若不是则结束
 			}
 			init = false;
 			getNextSym();
+			//完成读取const符号
 
 			constDefination();//检查常量定义
 
@@ -67,6 +68,7 @@ void GrammarAnalyzer::constDeclearation() {
 			else {
 				getNextSym();
 			}
+			//完成读取分号
 		}
 		catch (int e) {
 			toNextSemicon();//跳读
@@ -86,6 +88,7 @@ void GrammarAnalyzer::constDefination() {
 	}
 	Lexical vartype = lex.sym().type;
 	getNextSym();
+	//读取标识符完成
 	
 	while (1) {
 		if (init) {
@@ -98,6 +101,7 @@ void GrammarAnalyzer::constDefination() {
 			else {
 				getNextSym();
 			}
+			//读取逗号完成
 		}
 		if (lex.sym().type != IDENFR) {//检查并获取标识符
 			f.handleFault(lex.lineNumber(), "需要变量名称");
@@ -105,27 +109,33 @@ void GrammarAnalyzer::constDefination() {
 		}
 		string varname = lex.sym().str;
 		getNextSym();
+		//读取标识符完成
 		
 		if (lex.sym().type != ASSIGN) {//获取等号
 			f.handleFault(lex.lineNumber(), "需要=");
 			throw 0;
 		}
 		getNextSym();
+		//读取等号完成
 
 		if (vartype == INTTK) {/*根据类型读取值并写入符号表*/
 			int intvalue = integer();
-			SymbolEntry* entry = table.addSymbol(currentScope, varname, false);
+			//读取整数完成
+			/*SymbolEntry* entry = table.addSymbol(currentScope, varname, false);
 			entry->type = TYPEINT;
 			entry->initValue = intvalue;
-			entry->isConst = true;
+			entry->isConst = true;*/
+			//写入符号表完成
 		}
 		else {
 			char charvalue = (char)(lex.sym().value);
 			getNextSym();
-			SymbolEntry* entry = table.addSymbol(currentScope, varname, false);
+			//读取字符完成
+			/*SymbolEntry* entry = table.addSymbol(currentScope, varname, false);
 			entry->type = TYPECHAR;
 			entry->initValue = charvalue;
-			entry->isConst = true;
+			entry->isConst = true;*/
+			//写入符号表完成
 		}
 	}
 	if (course) { out << "<常量定义>" << endl; }
