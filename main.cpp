@@ -2,7 +2,7 @@
 using namespace std;
 int main() {
     FaultHandler faultHandler("error.txt");
-	faultHandler.debugOn();
+	//faultHandler.debugOn();
 	LexicalAnalyzer lexicalAnalyzer(faultHandler);
 	lexicalAnalyzer.readAll("testfile.txt");
 	SymbolTable test;
@@ -12,7 +12,7 @@ int main() {
 	g.homeworkOn();
 	//g.constDeclearation();
 	//g.mainFunctionDefination();
-	g.declearationHeader();
+	//g.declearationHeader();
 	//g.declearationHeader();
 	//g.declearationHeader();
 	//g.voidFunctionDefination();
@@ -22,7 +22,10 @@ int main() {
 	//g.expression();
 	//g.assignAndCall();
 	//g.scanSentence();
-	g.returnSentence();
-	system("pause");
+	//g.returnSentence();
+	//g.sentence();
+	//g.mainFunctionDefination();
+	g.programme();
+	//system("pause");
 }
 

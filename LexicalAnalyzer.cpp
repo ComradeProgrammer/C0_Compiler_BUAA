@@ -348,6 +348,9 @@ int LexicalAnalyzer::lineNumber() {
 }
 
 void LexicalAnalyzer::printResult(ostream& out) {
+	if (currentSym.type == END || currentSym.type == UNKNOWN) {
+		return;
+	}
 	out << lexicalName[currentSym.type] << " ";
 	if (currentSym.type == IDENFR || currentSym.type == STRCON) {
 		out << currentSym.str;
@@ -387,4 +390,29 @@ void LexicalAnalyzer::homework() {
 		}
 	}
 	fout.close();
+}
+void LexicalAnalyzer::printResult(ostream& out,Result currentSym) {
+	if (currentSym.type == END || currentSym.type == UNKNOWN) {
+		return;
+	}
+	out << lexicalName[currentSym.type] << " ";
+	if (currentSym.type == IDENFR || currentSym.type == STRCON) {
+		out << currentSym.str;
+	}
+	else if (currentSym.type == CHARCON) {
+		out << (char)currentSym.value;
+	}
+	else if (currentSym.type == INTCON) {
+		out << currentSym.value;
+	}
+	else if (currentSym.type == CONSTTK || currentSym.type == INTTK || currentSym.type == CHARTK || currentSym.type == VOIDTK ||
+		currentSym.type == MAINTK || currentSym.type == IFTK || currentSym.type == ELSETK || currentSym.type == DOTK ||
+		currentSym.type == WHILETK || currentSym.type == FORTK || currentSym.type == SCANFTK || currentSym.type == PRINTFTK
+		|| currentSym.type == RETURNTK) {
+		out << currentSym.str;
+	}
+	else {
+		out << lexicalSymbol[currentSym.type];
+	}
+	out << endl;
 }

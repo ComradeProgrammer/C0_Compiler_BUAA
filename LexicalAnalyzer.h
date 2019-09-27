@@ -62,6 +62,7 @@ public:
 	int lineNumber();
 
 	void printResult(ostream& out);
+	void printResult(ostream& out,Result currentSym);
 	void homework();
 private:
 	string text;

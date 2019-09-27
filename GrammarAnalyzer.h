@@ -15,7 +15,7 @@ public:
 	void constDefination();
 	void variableDeclearation();
 	void variableDeclearation(Lexical type, string varname);
-	void variableDefination(bool wraper = true, Lexical type = UNKNOWN, string name = "");
+	void variableDefination(bool wraper = false, Lexical type = UNKNOWN, string name = "");
 
 	void nonVoidFunctionDefination();
 	void nonVoidFunctionDefination(Lexical retType, string functionName);
@@ -26,7 +26,7 @@ public:
 	Lexical declearationHeader();
 
 	void parameterList(SymbolEntry* entry);
-	void compoundSentence();//未实现
+	void compoundSentence();
 
 	void factor();//缺一个有返回值的因子没处理
 	void term();
@@ -40,6 +40,15 @@ public:
 	void scanSentence();
 	void printSentence();
 	void returnSentence();
+
+	void ifSentence();
+	void condition();
+	void loopSentence();
+
+	void sentence();
+	void sentenceSeries();
+
+	void programme();
 private:
 	FaultHandler& f;
 	SymbolTable& table;
@@ -48,4 +57,5 @@ private:
 	fstream out;
 	string currentScope ;
 	void toNextSemicon();
+	bool globalVariableDeclearation = false;
 };
