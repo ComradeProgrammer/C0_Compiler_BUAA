@@ -245,7 +245,7 @@ LABEL:	int dimension = 0;
 			dimension = lex.sym().value;
 			getNextSym();
 			//读取维数完成
-
+			if (course) { out << "<无符号整数>"<<endl; }//debug added
 			if(lex.sym().type!=RBRACK){
 				f.handleCourseFault(lex.lineNumber(), NORBRACK);
 				f.handleFault(lex.lineNumber(), "缺少]");
@@ -464,7 +464,7 @@ void GrammarAnalyzer::voidFunctionDefination() {
 		// TODO handlefault;
 		f.terminate();
 	}
-	if (course) { out << "<无返回值函数声明>" << endl; }
+	if (course) { out << "<无返回值函数定义>" << endl; }
 }
 
 
@@ -1372,6 +1372,12 @@ void GrammarAnalyzer::programme() {
 	}
 	while (1) {
 		if (lex.sym().type == VOIDTK) {
+			if (globalVariableDeclearation) {
+				if (course) { out << "<变量说明>" << endl; }
+				globalVariableDeclearation = false;
+				//如果这是我们碰见的第一个有返回值函数
+				//并且前面出现了全局变量声明，那就要输出变量声明这一问题
+			}
 			getNextSym();
 			if (lex.sym().type == IDENFR) {
 				voidFunctionDefination();
