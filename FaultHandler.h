@@ -8,14 +8,14 @@
 using namespace std;
 
 enum FaultType {
-	LEXICALERROR = 97,//a.²»·ûºÏ´Ê·¨¹æÔò
-	REDEFINED,//b.ÖØ¶¨Òå
-	UNDEFINED,//c.Î´¶¨Òå·ûºÅ
-	PARANUMERROR,//d.²ÎÊý¸öÊý²»Æ¥Åä
-	TYPEERROR,//e.ÀàÐÍ²»Æ¥Åä
-	NOSEMICN,//f.È±ÉÙ·ÖºÅ
-	NORPARENT,//g.È±ÉÙÓÒÀ¨ºÅ
-	NORBRACK//h¡£È±ÉÙÓÒÖÐÀ¨ºÅ
+	LEXICALERROR = 97,//a.ä¸ç¬¦åˆè¯æ³•è§„åˆ™
+	REDEFINED,//b.é‡å®šä¹‰
+	UNDEFINED,//c.æœªå®šä¹‰ç¬¦å·
+	PARANUMERROR,//d.å‚æ•°ä¸ªæ•°ä¸åŒ¹é…
+	TYPEERROR,//e.ç±»åž‹ä¸åŒ¹é…
+	NOSEMICN,//f.ç¼ºå°‘åˆ†å·
+	NORPARENT,//g.ç¼ºå°‘å³æ‹¬å·
+	NORBRACK//hã€‚ç¼ºå°‘å³ä¸­æ‹¬å·
 };
 
 class FaultHandler {

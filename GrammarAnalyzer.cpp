@@ -1,19 +1,19 @@
 #include"GrammarAnalyzer.h"
 
-/*¹¹ÔìÆ÷º¯Êı*/
+/*æ„é€ å™¨å‡½æ•°*/
 GrammarAnalyzer::GrammarAnalyzer(FaultHandler& _f, SymbolTable& _s, LexicalAnalyzer& _l,string file)
 :f(_f),table(_s),lex(_l){
-	out.open(file);
+	out.open(file,ios_base::trunc|ios_base::out);
 	currentScope="";
 }
 
-/*»ñÈ¡ÏÂÒ»´ÊËØ£¬²¢Êä³öÉÏÒ»¸ö´ÊËØ*/
+/*è·å–ä¸‹ä¸€è¯ç´ ï¼Œå¹¶è¾“å‡ºä¸Šä¸€ä¸ªè¯ç´ */
 Lexical GrammarAnalyzer::getNextSym() {
-	if (course) { lex.printResult(out); }
+	if (lexicalTest) { lex.printResult(out); }
 	return lex.getNextSym();
 }
 
-/*Ò»Ö±Ìøµ½ÏÂÒ»¸ö·ÖºÅÎªÖ¹*/
+/*ä¸€ç›´è·³åˆ°ä¸‹ä¸€ä¸ªåˆ†å·ä¸ºæ­¢*/
 void GrammarAnalyzer::toNextSemicon() {
 	while (1) {
 		Lexical tmp = lex.getNextSym();
@@ -23,125 +23,129 @@ void GrammarAnalyzer::toNextSemicon() {
 	}
 }
 
-/*Êä³öÓï·¨·ÖÎö×÷ÒµµÄÊä³ö*/
-void GrammarAnalyzer::homeworkOn() {
-	course = true;
+/*è¾“å‡ºè¯­æ³•åˆ†æä½œä¸šçš„è¾“å‡º*/
+void GrammarAnalyzer::homeworkOn(bool _c, bool _l) {
+	course = _c;
+	lexicalTest = _l;
+
 }
 
-/*<ÕûÊı>*/
+/*<æ•´æ•°>*/
 int GrammarAnalyzer::integer() {
 	int sign = 1;
-	Lexical tk = lex.sym().type;//¼ì²é·ûºÅ
+	Lexical tk = lex.sym().type;//æ£€æŸ¥ç¬¦å·
 	if (tk == PLUS || tk == MINU) {
 		sign = tk == MINU ? -1 : 1;
 		getNextSym();
 	}
 	if (lex.sym().type != INTCON) {
-		f.handleFault(lex.lineNumber(), "ĞèÒªÎŞ·ûºÅÕûÊı");
+		f.handleFault(lex.lineNumber(), "éœ€è¦æ— ç¬¦å·æ•´æ•°");
 		throw 0;
 	}
-	int value = lex.sym().value;//»ñÈ¡Êı×Ö
+	int value = lex.sym().value;//è·å–æ•°å­—
 	getNextSym();
-	out << "<ÎŞ·ûºÅÕûÊı>" << endl;
-	out << "<ÕûÊı>" << endl;
+	if (course) {
+		out << "<æ— ç¬¦å·æ•´æ•°>" << endl;
+		out << "<æ•´æ•°>" << endl;
+	}
 	return value;
 }
 
-/*<³£Á¿ÉùÃ÷>*/
+/*<å¸¸é‡å£°æ˜>*/
 void GrammarAnalyzer::constDeclearation() {
 	bool init = true;
 	while (1) {
 		try {
 			if (lex.sym().type != CONSTTK) {
-				break;//¼ì²éÊÇ·ñÊÇconst£¬Èô²»ÊÇÔò½áÊø
+				break;//æ£€æŸ¥æ˜¯å¦æ˜¯constï¼Œè‹¥ä¸æ˜¯åˆ™ç»“æŸ
 			}
 			init = false;
 			getNextSym();
-			//Íê³É¶ÁÈ¡const·ûºÅ
+			//å®Œæˆè¯»å–constç¬¦å·
 
-			constDefination();//¼ì²é³£Á¿¶¨Òå
+			constDefination();//æ£€æŸ¥å¸¸é‡å®šä¹‰
 
-			if (lex.sym().type != SEMICN) {//¼ì²éÊÇ·ñÎª·ÖºÅ
+			if (lex.sym().type != SEMICN) {//æ£€æŸ¥æ˜¯å¦ä¸ºåˆ†å·
 				f.handleCourseFault(lex.lineNumber(), NOSEMICN);
-				f.handleFault(lex.lineNumber(), "È±ÉÙ ;");
+				f.handleFault(lex.lineNumber(), "ç¼ºå°‘ ;");
 			}
 			else {
 				getNextSym();
 			}
-			//Íê³É¶ÁÈ¡·ÖºÅ
+			//å®Œæˆè¯»å–åˆ†å·
 		}
 		catch (int e) {
-			toNextSemicon();//Ìø¶Á
+			toNextSemicon();//è·³è¯»
 			lex.getNextSym();
 			break;
 		}
 	}
-	if (course&&!init) {out << "<³£Á¿ËµÃ÷>" << endl;}
+	if (course&&!init) {out << "<å¸¸é‡è¯´æ˜>" << endl;}
 }
 
-/*<³£Á¿¶¨Òå>*/
+/*<å¸¸é‡å®šä¹‰>*/
 void GrammarAnalyzer::constDefination() {
 	bool init = true;
-	if (lex.sym().type != INTTK && lex.sym().type != CHARTK) {//¼ì²éint»òchar
-		f.handleFault(lex.lineNumber(), "ĞèÒªÀàĞÍ±êÊ¶·û");
+	if (lex.sym().type != INTTK && lex.sym().type != CHARTK) {//æ£€æŸ¥intæˆ–char
+		f.handleFault(lex.lineNumber(), "éœ€è¦ç±»å‹æ ‡è¯†ç¬¦");
 		throw 0;
 	}
 	Lexical vartype = lex.sym().type;
 	getNextSym();
-	//¶ÁÈ¡±êÊ¶·ûÍê³É
+	//è¯»å–æ ‡è¯†ç¬¦å®Œæˆ
 	
 	while (1) {
 		if (init) {
-			init = false;//µÚÒ»¸ö±äÁ¿¶¨Òå²»ÄÜÃ»ÓĞÇÒ²»ÊÇ¶ººÅ¿ªÍ·
+			init = false;//ç¬¬ä¸€ä¸ªå˜é‡å®šä¹‰ä¸èƒ½æ²¡æœ‰ä¸”ä¸æ˜¯é€—å·å¼€å¤´
 		}
 		else {
 			if (lex.sym().type != COMMA) {
-				break;//ÈôÃ»ÓĞ¶ººÅËµÃ÷¶¨Òå½áÊø
+				break;//è‹¥æ²¡æœ‰é€—å·è¯´æ˜å®šä¹‰ç»“æŸ
 			}
 			else {
 				getNextSym();
 			}
-			//¶ÁÈ¡¶ººÅÍê³É
+			//è¯»å–é€—å·å®Œæˆ
 		}
-		if (lex.sym().type != IDENFR) {//¼ì²é²¢»ñÈ¡±êÊ¶·û
-			f.handleFault(lex.lineNumber(), "ĞèÒª±äÁ¿Ãû³Æ");
+		if (lex.sym().type != IDENFR) {//æ£€æŸ¥å¹¶è·å–æ ‡è¯†ç¬¦
+			f.handleFault(lex.lineNumber(), "éœ€è¦å˜é‡åç§°");
 			throw 0;
 		}
 		string varname = lex.sym().str;
 		getNextSym();
-		//¶ÁÈ¡±êÊ¶·ûÍê³É
+		//è¯»å–æ ‡è¯†ç¬¦å®Œæˆ
 		
-		if (lex.sym().type != ASSIGN) {//»ñÈ¡µÈºÅ
-			f.handleFault(lex.lineNumber(), "ĞèÒª=");
+		if (lex.sym().type != ASSIGN) {//è·å–ç­‰å·
+			f.handleFault(lex.lineNumber(), "éœ€è¦=");
 			throw 0;
 		}
 		getNextSym();
-		//¶ÁÈ¡µÈºÅÍê³É
+		//è¯»å–ç­‰å·å®Œæˆ
 
-		if (vartype == INTTK) {/*¸ù¾İÀàĞÍ¶ÁÈ¡Öµ²¢Ğ´Èë·ûºÅ±í*/
+		if (vartype == INTTK) {/*æ ¹æ®ç±»å‹è¯»å–å€¼å¹¶å†™å…¥ç¬¦å·è¡¨*/
 			int intvalue = integer();
-			//¶ÁÈ¡ÕûÊıÍê³É
+			//è¯»å–æ•´æ•°å®Œæˆ
 			/*SymbolEntry* entry = table.addSymbol(currentScope, varname, false);
 			entry->type = TYPEINT;
 			entry->initValue = intvalue;
 			entry->isConst = true;*/
-			//Ğ´Èë·ûºÅ±íÍê³É
+			//å†™å…¥ç¬¦å·è¡¨å®Œæˆ
 		}
 		else {
 			char charvalue = (char)(lex.sym().value);
 			getNextSym();
-			//¶ÁÈ¡×Ö·ûÍê³É
+			//è¯»å–å­—ç¬¦å®Œæˆ
 			/*SymbolEntry* entry = table.addSymbol(currentScope, varname, false);
 			entry->type = TYPECHAR;
 			entry->initValue = charvalue;
 			entry->isConst = true;*/
-			//Ğ´Èë·ûºÅ±íÍê³É
+			//å†™å…¥ç¬¦å·è¡¨å®Œæˆ
 		}
 	}
-	if (course) { out << "<³£Á¿¶¨Òå>" << endl; }
+	if (course) { out << "<å¸¸é‡å®šä¹‰>" << endl; }
 }
 
-/*<±äÁ¿ËµÃ÷>,¹©·ÇÈ«¾Ö¶ÎµÄ±äÁ¿ÉùÃ÷ËùÊ¹ÓÃ*/
+/*<å˜é‡è¯´æ˜>,ä¾›éå…¨å±€æ®µçš„å˜é‡å£°æ˜æ‰€ä½¿ç”¨*/
 void GrammarAnalyzer::variableDeclearation() {
 	bool init = true;
 	while (1) {
@@ -149,67 +153,70 @@ void GrammarAnalyzer::variableDeclearation() {
 			if (lex.sym().type != INTTK && lex.sym().type != CHARTK) {
 				break;
 			}
+			//é¢„è¯»æ ‡è¯†ç¬¦
 			init = false;
 			variableDefination();
-			if (lex.sym().type != SEMICN) {//¼ì²éÊÇ·ñÎª·ÖºÅ
+			if (lex.sym().type != SEMICN) {//æ£€æŸ¥æ˜¯å¦ä¸ºåˆ†å·
 				f.handleCourseFault(lex.lineNumber(), NOSEMICN);
-				f.handleFault(lex.lineNumber(), "È±ÉÙ ;");
+				f.handleFault(lex.lineNumber(), "ç¼ºå°‘ ;");
 			}
 			else {
 				getNextSym();
 			}
+			//è¯»å–åˆ†å·å®Œæˆ
 		}
 		catch (int e) {
-			toNextSemicon();//Ìø¶Á
+			toNextSemicon();//è·³è¯»
 			lex.getNextSym();
 			break;
 		}
 	}
-	if (course && !init) { out << "<±äÁ¿ËµÃ÷>" << endl; }
+	if (course && !init) { out << "<å˜é‡è¯´æ˜>" << endl; }
 }
 
-/*<±äÁ¿ËµÃ÷>£¬¹©declearationHeader°ü×°µ÷ÓÃÊ¹ÓÃ*/
+/*<å˜é‡è¯´æ˜>ï¼Œä¾›declearationHeaderåŒ…è£…è°ƒç”¨ä½¿ç”¨*/
 void GrammarAnalyzer::variableDeclearation(Lexical type,string varname) {
-		try {
-			variableDefination(true,type,varname);
-			if (lex.sym().type != SEMICN) {//¼ì²éÊÇ·ñÎª·ÖºÅ
-				f.handleCourseFault(lex.lineNumber(), NOSEMICN);
-				f.handleFault(lex.lineNumber(), "È±ÉÙ ;");
-			}
-			else {
-				getNextSym();
-			}
+	try {
+		variableDefination(true,type,varname);
+		if (lex.sym().type != SEMICN) {//æ£€æŸ¥æ˜¯å¦ä¸ºåˆ†å·
+			f.handleCourseFault(lex.lineNumber(), NOSEMICN);
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘ ;");
 		}
-		catch (int e) {
-			toNextSemicon();//Ìø¶Á
-			lex.getNextSym();
+		else {
+			getNextSym();
 		}
-	//if (course ) { out << "<±äÁ¿ËµÃ÷>" << endl; }
+	}
+	catch (int e) {
+		toNextSemicon();//è·³è¯»
+		lex.getNextSym();
+	}
+	//if (course ) { out << "<å˜é‡è¯´æ˜>" << endl; }
 }
-/*<±äÁ¿¶¨Òå>,¹©¸÷ÖÖÇé¿öÊ¹ÓÃ
-µÚÒ»¸ö²ÎÊı´ú±íÊÇ·ñÊÇ±»°ü×°Æ÷µ÷ÓÃµÄ£¬µÚ¶ş¸ö²ÎÊı´«Èë°ü×°Æ÷Ô¤¶ÁµÄ±äÁ¿ÀàĞÍºÍ±äÁ¿Ãû³Æ
+/*<å˜é‡å®šä¹‰>,ä¾›å„ç§æƒ…å†µä½¿ç”¨
+ç¬¬ä¸€ä¸ªå‚æ•°ä»£è¡¨æ˜¯å¦æ˜¯è¢«åŒ…è£…å™¨è°ƒç”¨çš„ï¼Œç¬¬äºŒä¸ªå‚æ•°ä¼ å…¥åŒ…è£…å™¨é¢„è¯»çš„å˜é‡ç±»å‹å’Œå˜é‡åç§°
 */
 void GrammarAnalyzer::variableDefination(bool wraper,Lexical type,string name) {
 	Lexical vartype;
 	if (!wraper) {
 		if (lex.sym().type != INTTK && lex.sym().type != CHARTK) {
-			f.handleFault(lex.lineNumber(), "ĞèÒªÀàĞÍ±êÊ¶·û");//Î´±»°ü×°£º¼ì²â±äÁ¿ÀàĞÍ±êÊ¶·û
+			f.handleFault(lex.lineNumber(), "éœ€è¦ç±»å‹æ ‡è¯†ç¬¦");//æœªè¢«åŒ…è£…ï¼šæ£€æµ‹å˜é‡ç±»å‹æ ‡è¯†ç¬¦
 			throw 0;
 		}
 		vartype = lex.sym().type;
 		getNextSym();
+		//è¯»å–æ ‡è¯†ç¬¦å®Œæˆ
 	}
 	else {
-		vartype = type;//ÒÑ±»°ü×°£º¼ì²â±äÁ¿ÀàĞÍ±êÊ¶·û
+		vartype = type;//å·²è¢«åŒ…è£…ï¼šä¸éœ€è¦æ£€æµ‹å˜é‡ç±»å‹æ ‡è¯†ç¬¦
 	}
 	bool init = true;
 	string varname;
 	while (1) {
-		if (init) {
+		if (init) {//æ˜¯å¾ªç¯ä¸­è¯»å–çš„ç¬¬ä¸€ä¸ªå˜é‡
 			init = false;
-			if (wraper) {//ĞèÒª´¦Àí±»°ü×°Æ÷Ô¤¶ÁµÄµÚÒ»¸ö±äÁ¿
+			if (wraper) {//éœ€è¦å¤„ç†è¢«åŒ…è£…å™¨é¢„è¯»çš„ç¬¬ä¸€ä¸ªå˜é‡
 				varname = name;
-				goto LABEL;
+				goto LABEL;//è·³è¿‡è¯»å–æ ‡è¯†ç¬¦çš„é˜¶æ®µ
 			}
 		}
 		else {
@@ -221,35 +228,38 @@ void GrammarAnalyzer::variableDefination(bool wraper,Lexical type,string name) {
 			}
 		}
 		if (lex.sym().type != IDENFR) {
-			f.handleFault(lex.lineNumber(), "ĞèÒª±äÁ¿Ãû³Æ");//¶Á±äÁ¿Ãû³Æ
+			f.handleFault(lex.lineNumber(), "éœ€è¦å˜é‡åç§°");//è¯»å˜é‡åç§°
 			throw 0;
 		}
 		varname = lex.sym().str;
-		
 		getNextSym();
+		//å®Œæˆæ ‡è¯†ç¬¦åœ°åŒº
 
 LABEL:	int dimension = 0;
-		if (lex.sym().type == LBRACK) {//ÅĞ¶ÏÊÇ²»ÊÇÊı×éÔªËØ
+		if (lex.sym().type == LBRACK) {//åˆ¤æ–­æ˜¯ä¸æ˜¯æ•°ç»„å…ƒç´ 
 			getNextSym();
 			if (lex.sym().type != INTCON) {
-				f.handleFault(lex.lineNumber(), "ĞèÒªÎ¬Êı");
+				f.handleFault(lex.lineNumber(), "éœ€è¦ç»´æ•°");
 				throw 0;
 			}
 			dimension = lex.sym().value;
 			getNextSym();
+			//è¯»å–ç»´æ•°å®Œæˆ
+
 			if(lex.sym().type!=RBRACK){
 				f.handleCourseFault(lex.lineNumber(), NORBRACK);
-				f.handleFault(lex.lineNumber(), "È±ÉÙ]");
+				f.handleFault(lex.lineNumber(), "ç¼ºå°‘]");
 			}
 			else {
 				getNextSym();
 			}
+			//è¯»å–å³ä¸­æ‹¬å·å®Œæˆ
 		}
 
-		SymbolEntry* entry = table.addSymbol(currentScope, varname, false);//²åÈë·ûºÅ±í
+		/*SymbolEntry* entry = table.addSymbol(currentScope, varname, false);//æ’å…¥ç¬¦å·è¡¨
 		if (entry == NULL) {
 			f.handleCourseFault(lex.lineNumber(), REDEFINED);
-			f.handleFault(lex.lineNumber(), varname + "ÖØ¶¨Òå");
+			f.handleFault(lex.lineNumber(), varname + "é‡å®šä¹‰");
 		}
 		else {
 			entry->dimension = dimension;
@@ -259,295 +269,343 @@ LABEL:	int dimension = 0;
 			else if (vartype == CHARTK) {
 				entry->type = dimension == 0 ? TYPECHAR : TYPECHARARRAY;
 			}
-		}
+		}*/
+		//å‘ç¬¦å·è¡¨ä¸­å¡«å…¥ä¿¡æ¯
 	}
-	if (course) { out << "<±äÁ¿¶¨Òå>" << endl; }
+	if (course) { out << "<å˜é‡å®šä¹‰>" << endl; }
 }
 
-/*<ÓĞ·µ»ØÖµº¯Êı¶¨Òå>,¹©·Ç±äÁ¿ÉùÃ÷ÇøµÄÓĞ·µ»ØÖµº¯ÊıÉùÃ÷*/
+/*<æœ‰è¿”å›å€¼å‡½æ•°å®šä¹‰>,ä¾›éå˜é‡å£°æ˜åŒºçš„æœ‰è¿”å›å€¼å‡½æ•°å£°æ˜*/
 void GrammarAnalyzer::nonVoidFunctionDefination() {
 	try {
 		Lexical retType;
-		string functionName=declearationHeader(retType);//»ñÈ¡±äÁ¿ÃûºÍ·µ»ØÀàĞÍ
-		if (lex.sym().type != LPARENT) {//²ÎÊı±íµÄ×óÀ¨ºÅ
-			f.handleFault(lex.lineNumber(), "È±ÉÙ²ÎÊı±í");
-			//todo ´íÎó´¦Àí´ı¶¨;
+		string functionName=declearationHeader(retType);
+		//è·å–å˜é‡åå’Œè¿”å›ç±»å‹å®Œæˆ
+
+		if (lex.sym().type != LPARENT) {//å‚æ•°è¡¨çš„å·¦æ‹¬å·
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘å‚æ•°è¡¨");
+			//todo é”™è¯¯å¤„ç†å¾…å®š;
 			f.terminate();
 		}
 		getNextSym();
-		SymbolEntry* entry = table.addSymbol(currentScope, functionName, true);//²åÈë·ûºÅ±íÏî
+		//å¤„ç†å·¦æ‹¬å·å®Œæˆ
+
+		SymbolEntry* entry = table.addSymbol(currentScope, functionName, true);//æ’å…¥ç¬¦å·è¡¨é¡¹
 		if (entry == NULL) {
 			f.handleCourseFault(lex.lineNumber(), REDEFINED);
-			f.handleFault(lex.lineNumber(), "º¯ÊıÃûÖØ¶¨Òå" + functionName);
+			f.handleFault(lex.lineNumber(), "å‡½æ•°åé‡å®šä¹‰" + functionName);
 		}
 		entry->link->returnType = retType == INTTK ? RETINT : RETCHAR;
 		entry->type = TYPEFUNCTION;
 		parameterList(entry);
+		//å¡«å…¥ç¬¦å·è¡¨ä¿¡æ¯
 
-		if (lex.sym().type != RPARENT) {//²ÎÊı±íÓÒÀ¨ºÅ
+		if (lex.sym().type != RPARENT) {
 			f.handleCourseFault(lex.lineNumber(), NORPARENT);
-			f.handleFault(lex.lineNumber(), "È±ÉÙ)");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘)");
 		}
 		else {
 			getNextSym();
 		}
+		//å‚æ•°è¡¨å³æ‹¬å·å®Œæˆ
 
-		if (lex.sym().type != LBRACE) {//¶ÁÈ¡×ó´óÀ¨ºÅ
-			f.handleFault(lex.lineNumber(), "È±ÉÙ{");
+		if (lex.sym().type != LBRACE) {//è¯»å–å·¦å¤§æ‹¬å·
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘{");
 			throw 0;
 		}
 		else {
 			getNextSym();
 		}
-		currentScope = functionName;//±ä¸üµ±Ç°×÷ÓÃÓò
-		compoundSentence();
-		currentScope = "";
+		//å·¦å¤§æ‹¬å·å®Œæˆ
+
+		currentScope = functionName;//å˜æ›´å½“å‰ä½œç”¨åŸŸ
+		compoundSentence();//å¤åˆè¯­å¥
+		currentScope = "";//ä½œç”¨åŸŸå˜å›æ¥
 
 		if (lex.sym().type != RBRACE) {
-			f.handleFault(lex.lineNumber(), "È±ÉÙ{");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘{");
 			// TODO HANDLEFAULT
 			f.terminate();
 		}
 		getNextSym();
+		//è·å–å³å¤§æ‹¬å·
 	}
 	catch (int e) {
 		// TODO handlefault;
 		f.terminate();
 	}
-	if (course) { out << "<ÓĞ·µ»ØÖµº¯Êı¶¨Òå>" << endl; }
+	if (course) { out << "<æœ‰è¿”å›å€¼å‡½æ•°å®šä¹‰>" << endl; }
 }
 
 void GrammarAnalyzer::nonVoidFunctionDefination(Lexical retType,string functionName) {
 	try {
-		
-		if (lex.sym().type != LPARENT) {//²ÎÊı±íµÄ×óÀ¨ºÅ
-			f.handleFault(lex.lineNumber(), "È±ÉÙ²ÎÊı±í");
-			//todo ´íÎó´¦Àí´ı¶¨;
+		if (lex.sym().type != LPARENT) {//å‚æ•°è¡¨çš„å·¦æ‹¬å·
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘å‚æ•°è¡¨");
+			//todo é”™è¯¯å¤„ç†å¾…å®š;
 			f.terminate();
 		}
 		getNextSym();
+		//å·¦æ‹¬å·è¯»å–å®Œæˆ
 
-		SymbolEntry* entry = table.addSymbol(currentScope, functionName, true);//²åÈë·ûºÅ±íÏî
+		SymbolEntry* entry = table.addSymbol(currentScope, functionName, true);//æ’å…¥ç¬¦å·è¡¨é¡¹
 		if (entry == NULL) {
 			f.handleCourseFault(lex.lineNumber(), REDEFINED);
-			f.handleFault(lex.lineNumber(), "º¯ÊıÃûÖØ¶¨Òå" + functionName);
+			f.handleFault(lex.lineNumber(), "å‡½æ•°åé‡å®šä¹‰" + functionName);
 		}
 		entry->link->returnType = retType == INTTK ? RETINT : RETCHAR;
 		entry->type = TYPEFUNCTION;
+		//å†™å…¥ç¬¦å·è¡¨
+
 		parameterList(entry);
+		//å‚æ•°è¡¨
 
 		if (lex.sym().type != RPARENT) {
-			f.handleCourseFault(lex.lineNumber(), NORPARENT);//²ÎÊı±íÓÒÀ¨ºÅ
-			f.handleFault(lex.lineNumber(), "È±ÉÙ)");
+			f.handleCourseFault(lex.lineNumber(), NORPARENT);//å‚æ•°è¡¨å³æ‹¬å·
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘)");
 		}
 		else {
 			getNextSym();
 		}
+		//è¯»å–å³æ‹¬å·
 
-		if (lex.sym().type != LBRACE) {//×ó´óÀ¨ºÅ
-			f.handleFault(lex.lineNumber(), "È±ÉÙ{");
+		if (lex.sym().type != LBRACE) {//å·¦å¤§æ‹¬å·
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘{");
 			throw 0;
 		}
 		else {
 			getNextSym();
 		}
-		currentScope = functionName;
-		compoundSentence();
-		currentScope = "";
+		//è¯»å–å·¦å¤§æ‹¬å·å®Œæˆ
 
-		if (lex.sym().type != RBRACE) {//ÓÒ´óÀ¨ºÅ
-			f.handleFault(lex.lineNumber(), "È±ÉÙ{");
+		currentScope = functionName;//ä½œç”¨åŸŸå˜è¿‡æ¥
+		compoundSentence();//å¤åˆè¯­å¥
+		currentScope = "";//ä½œç”¨åŸŸå˜å›å»
+
+		if (lex.sym().type != RBRACE) {//å³å¤§æ‹¬å·
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘{");
 			// TODO HANDLEFAULT
 			f.terminate();
 		}
 		getNextSym();
+		//å³å¤§æ‹¬å·è¯»å–å®Œæˆ
 	}
 	catch (int e) {
 		// TODO handlefault;
 		f.terminate();
 	}
 	
-	if (course) { out << "<ÓĞ·µ»ØÖµº¯Êı¶¨Òå>" << endl; }
+	if (course) { out << "<æœ‰è¿”å›å€¼å‡½æ•°å®šä¹‰>" << endl; }
 }
 
-/*<Ö÷º¯Êı>*/
+/*<ä¸»å‡½æ•°>*/
+
 void GrammarAnalyzer::voidFunctionDefination() {
 	try {
+		//è¿™ä¸ªåœ°æ–¹æ²¡æœ‰voidç¬¦å·å› ä¸ºå·²ç»è¢«programmeé¢„è¯»æ‰äº†
 		if (lex.sym().type != IDENFR) {
-			f.handleFault(lex.lineNumber(), "È±ÉÙº¯ÊıÃû");
-			//todo ´íÎó´¦Àí´ı¶¨;
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘å‡½æ•°å");
+			//todo é”™è¯¯å¤„ç†å¾…å®š;
 			f.terminate();
 		}
 		string functionName = lex.sym().str;
 		getNextSym();
+		//å‡½æ•°åè¯»å–å®Œæˆ
 
 		if (lex.sym().type != LPARENT) {
-			f.handleFault(lex.lineNumber(), "È±ÉÙ²ÎÊı±í");
-			//todo ´íÎó´¦Àí´ı¶¨;
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘å‚æ•°è¡¨");
+			//todo é”™è¯¯å¤„ç†å¾…å®š;
 			f.terminate();
 		}
-
 		getNextSym();
+		//è¯»èµ°äº†å·¦æ‹¬å·
 		SymbolEntry* entry = table.addSymbol(currentScope, functionName, true);
 		if (entry == NULL) {
 			f.handleCourseFault(lex.lineNumber(), REDEFINED);
-			f.handleFault(lex.lineNumber(), "º¯ÊıÃûÖØ¶¨Òå" + functionName);
+			f.handleFault(lex.lineNumber(), "å‡½æ•°åé‡å®šä¹‰" + functionName);
 		}
 		entry->link->returnType = RETVOID;
 		entry->type = TYPEFUNCTION;
+		//å†™å…¥ç¬¦å·è¡¨å®Œæˆ
+
 		parameterList(entry);
+		//å‚æ•°è¡¨è¯»å–å®Œæˆ
 
 		if (lex.sym().type != RPARENT) {
 			f.handleCourseFault(lex.lineNumber(), NORPARENT);
-			f.handleFault(lex.lineNumber(), "È±ÉÙ)");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘)");
 		}
 		else {
 			getNextSym();
 		}
+		//å³æ‹¬å·è¯»å–å®Œæˆ
 
 		if (lex.sym().type != LBRACE) {
-			f.handleFault(lex.lineNumber(), "È±ÉÙ{");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘{");
 			throw 0;
 		}
 		else {
 			getNextSym();
 		}
+		//è¯»å–å·¦å¤§æ‹¬å·å®Œæˆ
+
 		currentScope = functionName;
 		compoundSentence();
 		currentScope = "";
 
 		if (lex.sym().type != RBRACE) {
-			f.handleFault(lex.lineNumber(), "È±ÉÙ{");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘{");
 			// TODO HANDLEFAULT
 			f.terminate();
 		}
 		getNextSym();
+		//è¯»å–å³å¤§æ‹¬å·å®Œæˆ
 	}
 	catch (int e) {
 		// TODO handlefault;
 		f.terminate();
 	}
-	if (course) { out << "<ÎŞ·µ»ØÖµº¯ÊıÉùÃ÷>" << endl; }
+	if (course) { out << "<æ— è¿”å›å€¼å‡½æ•°å£°æ˜>" << endl; }
 }
 
 
 void GrammarAnalyzer::mainFunctionDefination() {
 	try {
-
+		//è¿™ä¸ªåœ°æ–¹æ²¡æœ‰voidç¬¦å·å› ä¸ºå·²ç»è¢«programmeé¢„è¯»æ‰äº†
 		if (lex.sym().type != MAINTK) {
-			f.handleFault(lex.lineNumber(), "È±ÉÙº¯ÊıÃû");
-			//todo ´íÎó´¦Àí´ı¶¨;
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘å‡½æ•°å");
+			//todo é”™è¯¯å¤„ç†å¾…å®š;
 			f.terminate();
 		}
 		string functionName = "main";
 		getNextSym();
+		//è¯»å–mainæ ‡è¯†ç¬¦
 
 		SymbolEntry* entry = table.addSymbol(currentScope, functionName, true);
 		if (entry == NULL) {
 			f.handleCourseFault(lex.lineNumber(), REDEFINED);
-			f.handleFault(lex.lineNumber(), "º¯ÊıÃûÖØ¶¨Òå" + functionName);
+			f.handleFault(lex.lineNumber(), "å‡½æ•°åé‡å®šä¹‰" + functionName);
 		}
 		entry->link->returnType = RETVOID;
 		entry->type = TYPEFUNCTION;
+		// å†™å…¥ç¬¦å·è¡¨å®Œæˆ
+
 		if (lex.sym().type != LPARENT) {
-			f.handleFault(lex.lineNumber(), "È±ÉÙ²ÎÊı±í");
-			//todo ´íÎó´¦Àí´ı¶¨;
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘å‚æ•°è¡¨");
+			//todo é”™è¯¯å¤„ç†å¾…å®š;
 			f.terminate();
 		}
 		getNextSym();
+		//è¯»å…¥å·¦æ‹¬å·å®Œæˆ
 
 		if (lex.sym().type != RPARENT) {
 			f.handleCourseFault(lex.lineNumber(), NORPARENT);
-			f.handleFault(lex.lineNumber(), "È±ÉÙ)");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘)");
 		}
 		else {
 			getNextSym();
 		}
+		//è¯»å…¥å³æ‹¬å·å®Œæˆ
 
 		if (lex.sym().type != LBRACE) {
-			f.handleFault(lex.lineNumber(), "È±ÉÙ{");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘{");
 			throw 0;
 		}
 		else {
 			getNextSym();
 		}
+		//è¯»å…¥å·¦å¤§æ‹¬å·å®Œæˆ
 		currentScope = functionName;
 		compoundSentence();
 		currentScope = "";
 
 		if (lex.sym().type != RBRACE) {
-			f.handleFault(lex.lineNumber(), "È±ÉÙ}");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘}");
 			// TODO HANDLEFAULT
 			f.terminate();
 		}
 		getNextSym();
+		//è¯»å…¥å³å¤§æ‹¬å·å®Œæˆ
 	}
 	catch (int e) {
 		// TODO handlefault;
 		f.terminate();
 	}
-	getNextSym();
-	if (course) { out << "<Ö÷º¯Êı>" << endl; }
+	if (course) { out << "<ä¸»å‡½æ•°>" << endl; }
 }
 
-/*<ÉùÃ÷Í·²¿>,¹©·Ç±äÁ¿ÉùÃ÷ÇøµÄÓĞ·µ»ØÖµº¯Êıµ÷ÓÃ*/
+/*<å£°æ˜å¤´éƒ¨>,ä¾›éå˜é‡å£°æ˜åŒºçš„æœ‰è¿”å›å€¼å‡½æ•°è°ƒç”¨*/
 string GrammarAnalyzer::declearationHeader(Lexical& retType) {
 	if (lex.sym().type != INTTK && lex.sym().type != CHARTK) {
-		f.handleFault(lex.lineNumber(), "È±ÉÙÀàĞÍ±êÊ¶·û");
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘ç±»å‹æ ‡è¯†ç¬¦");
 		throw 0;
 	}
 	retType = lex.sym().type;
 	getNextSym();
+	// è¯»å–ç±»å‹å®Œæˆ
+
 	if (lex.sym().type != IDENFR) {
-		f.handleFault(lex.lineNumber(), "È±ÉÙº¯ÊıÃû³Æ");
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘å‡½æ•°åç§°");
 		throw 0;
 	}
 	string functionName = lex.sym().str;
-	if (course) { out << "<ÉùÃ÷Í·²¿>" << endl; }
 	getNextSym();
-	
+	//è¯»å–å‡½æ•°åå®Œæˆ
+	if (course) { out << "<å£°æ˜å¤´éƒ¨>" << endl; }
 	return functionName;
 }
 
-/*±äÁ¿ÉùÃ÷ºÍÓĞ·µ»ØÖµº¯Êı¶¨ÒåÔÚÉĞÎŞ·¨ÅĞÃ÷µÄÇé¿öÏÂ½øĞĞÔ¤¶ÁÓÃµÄº¯Êı*/
+/*å˜é‡å£°æ˜å’Œæœ‰è¿”å›å€¼å‡½æ•°å®šä¹‰åœ¨å°šæ— æ³•åˆ¤æ˜çš„æƒ…å†µä¸‹è¿›è¡Œé¢„è¯»ç”¨çš„å‡½æ•°*/
 Lexical GrammarAnalyzer::declearationHeader() {
 	Lexical type;
 	if (lex.sym().type != INTTK && lex.sym().type != CHARTK) {
-		f.handleFault(lex.lineNumber(), "È±ÉÙÀàĞÍ±êÊ¶·û");
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘ç±»å‹æ ‡è¯†ç¬¦");
 		throw 0;
 	}
 	type = lex.sym().type;
 	//getNextSym();
 	Result tmp1 = lex.sym();
 	lex.getNextSym();
+	//è¯»å–ç±»å‹æ ‡è¯†ç¬¦å®Œæˆ
+
 	if (lex.sym().type != IDENFR) {
-		f.handleFault(lex.lineNumber(), "È±ÉÙº¯ÊıÃû³Æ");
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘å‡½æ•°åç§°");
 		throw 0;
 	}
 	string name = lex.sym().str;
 	Result tmp2 = lex.sym();
 	lex.getNextSym();
+	//è¯»å–æ ‡è¯†ç¬¦å®Œæˆ
 
 	if (lex.sym().type == LPARENT) {
 		if (globalVariableDeclearation) {
-			if (course) { out << "<±äÁ¿ËµÃ÷>" << endl; }
+			if (course) { out << "<å˜é‡è¯´æ˜>" << endl; }
+			globalVariableDeclearation = false;
+			//å¦‚æœè¿™æ˜¯æˆ‘ä»¬ç¢°è§çš„ç¬¬ä¸€ä¸ªæœ‰è¿”å›å€¼å‡½æ•°
+			//å¹¶ä¸”å‰é¢å‡ºç°äº†å…¨å±€å˜é‡å£°æ˜ï¼Œé‚£å°±è¦è¾“å‡ºå˜é‡å£°æ˜è¿™ä¸€é—®é¢˜
 		}
-		lex.printResult(out, tmp1);
-		lex.printResult(out, tmp2);
-		if (course) { out << "<ÉùÃ÷Í·²¿>" << endl; }
+		if (lexicalTest) {
+			lex.printResult(out, tmp1);
+			lex.printResult(out, tmp2);//è¾“å‡ºæ†‹ä½çš„ä¿¡æ¯
+		}
+		if (course) { out << "<å£°æ˜å¤´éƒ¨>" << endl; }
 		nonVoidFunctionDefination(type, name);
 	}
 	else if (lex.sym().type == COMMA||lex.sym().type==LBRACK||lex.sym().type==SEMICN) {
-		globalVariableDeclearation = true;
-		lex.printResult(out, tmp1);
-		lex.printResult(out, tmp2);
+		globalVariableDeclearation = true;//è®¾ç½®å­˜åœ¨å˜é‡å£°æ˜çš„æ ‡è®°ä½
+		if (lexicalTest) {
+			lex.printResult(out, tmp1);
+			lex.printResult(out, tmp2);//è¾“å‡ºæ†‹ä½çš„ä¿¡æ¯
+		}
 		variableDeclearation(type, name);
 	}
+	else {
+		f.handleFault(lex.lineNumber(), "éæ³•çš„æ ‡è¯†ç¬¦å£°æ˜");
+		f.terminate();
+	}
 	return lex.sym().type;
-
 }
 
-/*<²ÎÊı±í>*/
+/*<å‚æ•°è¡¨>*/
 void GrammarAnalyzer::parameterList(SymbolEntry* entry) {
 	bool init = true;
 	int paraNum = 0;
@@ -556,6 +614,7 @@ void GrammarAnalyzer::parameterList(SymbolEntry* entry) {
 			if (lex.sym().type != INTTK && lex.sym().type != CHARTK) {
 				break;
 			}
+			//è¦æ˜¯åœ¨å¼€å¤´è€Œä¸”è¿˜æ²¡æœ‰ç±»å‹æ ‡è¯†ç¬¦è¯´æ˜æ˜¯ç©ºåˆ—è¡¨
 			init = false;
 		}
 		else {
@@ -565,107 +624,128 @@ void GrammarAnalyzer::parameterList(SymbolEntry* entry) {
 			else {
 				getNextSym();
 			}
+			//è¯»å–é€—å·å®Œæˆ
 		}
+
 		if (lex.sym().type != INTTK && lex.sym().type != CHARTK) {
-			f.handleFault(lex.lineNumber(), "ĞèÒªÌá¹©²ÎÊıÀàĞÍ");
+			f.handleFault(lex.lineNumber(), "éœ€è¦æä¾›å‚æ•°ç±»å‹");
 			throw 0;
 		}
 		SymbolType paratype = lex.sym().type == INTTK ? TYPEINT : TYPECHAR;
 		getNextSym();
+		//è¯»å–å‚æ•°ç±»å‹
+
 		if (lex.sym().type != IDENFR) {
-			f.handleFault(lex.lineNumber(), "ĞèÒªÌá¹©²ÎÊıÃû³Æ");
+			f.handleFault(lex.lineNumber(), "éœ€è¦æä¾›å‚æ•°åç§°");
 			throw 0;
 		}
 		string paraname = lex.sym().str;
-		entry->link->paras.push_back(paratype);
+
+		/*entry->link->paras.push_back(paratype);
 		entry->link->paraNum++;
 		string scope = entry->name;
 		SymbolEntry* paraentry=table.addSymbol(scope, paraname, false);
 		if (paraentry == NULL) {
 			f.handleCourseFault(lex.lineNumber(), REDEFINED);
-			f.handleFault(lex.lineNumber(), "²ÎÊıÃûÖØ¶¨Òå" + paraname);
-		}
+			f.handleFault(lex.lineNumber(), "å‚æ•°åé‡å®šä¹‰" + paraname);
+		}*/
+		//å†™å…¥ç¬¦å·è¡¨
+
 		getNextSym();
+		//è¯»å–å‚æ•°åç§°å®Œæˆ
 		paraNum++;
 	}
-	entry->link->paraNum = paraNum;
-	if (course) { out << "<²ÎÊı±í>" << endl; }
+	//entry->link->paraNum = paraNum;
+	if (course) { out << "<å‚æ•°è¡¨>" << endl; }
 }
 
-/*<¸´ºÏÓï¾ä>*/
+/*<å¤åˆè¯­å¥>*/
 void GrammarAnalyzer::compoundSentence(){
 	constDeclearation();
 	variableDeclearation();
 	sentenceSeries();
-	if (course) { out << "<¸´ºÏÓï¾ä>" << endl; }
+	if (course) { out << "<å¤åˆè¯­å¥>" << endl; }
 }
 
-/*<Òò×Ó>*/
+/*<å› å­>*/
 void GrammarAnalyzer::factor() {
 	bool error = false;
-	if (lex.sym().type == IDENFR) {//±êÊ¶·û£¬±êÊ¶·ûÊı×é£¬ÓĞ·µ»ØÖµº¯Êıµ÷ÓÃÓï¾ä
+	if (lex.sym().type == IDENFR) {//æ ‡è¯†ç¬¦ï¼Œæ ‡è¯†ç¬¦æ•°ç»„ï¼Œæœ‰è¿”å›å€¼å‡½æ•°è°ƒç”¨è¯­å¥
 		string varname = lex.sym().str;
 		getNextSym();
-		SymbolEntry* entry = table.getSymbolByName(currentScope, varname);
+		//æ ‡è¯†ç¬¦è¯»å–å®Œæˆ
+
+		/*SymbolEntry* entry = table.getSymbolByName(currentScope, varname);
 		if (entry == NULL) {
 			f.handleCourseFault(lex.lineNumber(), UNDEFINED);
-			f.handleFault(lex.lineNumber(), "Î´¶¨ÒåµÄ·ûºÅ" + varname);
+			f.handleFault(lex.lineNumber(), "æœªå®šä¹‰çš„ç¬¦å·" + varname);
 			error = true;
-		}
-		if (lex.sym().type == LBRACK) {//Êı×é
-			if (!error && entry->type != TYPECHARARRAY && entry->type != TYPEINTARRAY) {
+		}*/
+		//æŸ¥è¯¢ç¬¦å·è¡¨ï¼Œæ£€ç´¢æ˜¯å¦å­˜åœ¨è¿™ä¸ªç¬¦å·
+
+		if (lex.sym().type == LBRACK) {//æ•°ç»„
+			/*if (!error && entry->type != TYPECHARARRAY && entry->type != TYPEINTARRAY) {
 				f.handleCourseFault(lex.lineNumber(), TYPEERROR);
-				f.handleFault(lex.lineNumber(), varname + "±äÁ¿²»ÊÇÊı×éÀàĞÍ");
+				f.handleFault(lex.lineNumber(), varname + "å˜é‡ä¸æ˜¯æ•°ç»„ç±»å‹");
 				error = true;
-			}
+			}*/
+			//æ£€ç´¢ç¬¦å·è¡¨ï¼Œæ£€æŸ¥è¯¥ç¬¦å·æ˜¯å¦ä¸ºæ•°ç»„ç±»å‹
 			getNextSym();
+			//å®Œæˆè¯»å–ä¸­æ‹¬å·
 
 			expression();
+			//ä¸‹æ ‡è¡¨è¾¾å¼
 
 			if (lex.sym().type != RBRACK) {
 				f.handleCourseFault(lex.lineNumber(), NORBRACK);
-				f.handleFault(lex.lineNumber(), "È±ÉÙ]");
+				f.handleFault(lex.lineNumber(), "ç¼ºå°‘]");
 				error = true;
 			}
 			else {
 				getNextSym();
 			}
+			//å®Œæˆè¯»å–å³æ‹¬å·
 		}
-		else if (lex.sym().type == LPARENT) {//ÓĞ·µ»ØÖµº¯Êı
+		else if (lex.sym().type == LPARENT) {//æœ‰è¿”å›å€¼å‡½æ•°
 			functionCall(varname,true);
 		}
-		else {//±êÊ¶·û
-			//´Ë´¦Ó¦ÓĞÖĞ¼ä´úÂëÉú³É£¿
+		else {//æ ‡è¯†ç¬¦
+			//æ­¤å¤„åº”æœ‰ä¸­é—´ä»£ç ç”Ÿæˆï¼Ÿ
 		}
 	}
-	else if (lex.sym().type == LPARENT) {
+	else if (lex.sym().type == LPARENT) {//ï¼ˆ<è¡¨è¾¾å¼>ï¼‰
 		getNextSym();
+		//å®Œæˆè¯»å–å·¦æ‹¬å·
 
 		expression();
+		//è¯»å–è¡¨è¾¾å¼
 		if (lex.sym().type != RPARENT) {
 			f.handleCourseFault(lex.lineNumber(), NORPARENT);
-			f.handleFault(lex.lineNumber(),"È±ÉÙ£©");
+			f.handleFault(lex.lineNumber(),"ç¼ºå°‘ï¼‰");
 		}
 		else {
 			getNextSym();
 		}
 	}
 	else if (lex.sym().type == INTCON|| lex.sym().type == PLUS|| lex.sym().type == MINU) {
+		//æ•´æ•°ï¼ˆç”±+-æˆ–æ•´æ•°å¼€å¤´ï¼‰
 		int value = integer();
+		//è¯»å–æ•´æ•°
 	}
 	else if (lex.sym().type == CHARCON) {
 		char c = (char)(lex.sym().value);
 		getNextSym();
+		//å®Œæˆè¯»å–å­—ç¬¦
 	}
 	else {
-		f.handleFault(lex.lineNumber(), "²»±»Ê¶±ğµÄ±í´ïÊ½");
+		f.handleFault(lex.lineNumber(), "ä¸è¢«è¯†åˆ«çš„è¡¨è¾¾å¼");
 		// todo handlefault 
 		f.terminate();
 	}
-	if (course) { out << "<Òò×Ó>" << endl; }
+	if (course) { out << "<å› å­>" << endl; }
 }
 
-/*<Ïî>*/
+/*<é¡¹>*/
 void GrammarAnalyzer::term() {
 	factor();
 	while (1) {
@@ -674,12 +754,13 @@ void GrammarAnalyzer::term() {
 		}
 		Lexical op = lex.sym().type;
 		getNextSym();
+		//è¯»å–å®Œè¿ç®—ç¬¦å·
 		factor();
 	}
-	if (course) { out << "<Ïî>" << endl; }
+	if (course) { out << "<é¡¹>" << endl; }
 }
 
-/*<±í´ïÊ½>*/
+/*<è¡¨è¾¾å¼>*/
 void GrammarAnalyzer::expression() {
 	int sign = 1;
 	if (lex.sym().type == PLUS || lex.sym().type == MINU) {
@@ -688,120 +769,148 @@ void GrammarAnalyzer::expression() {
 		}
 		getNextSym();
 	}
+	//è¯»å–å¼€å¤´çš„åŠ å‡å·å®Œæˆ
+
 	term();
+	//è¯»å–ç¬¬ä¸€é¡¹
 	while (1) {
 		if (lex.sym().type != PLUS && lex.sym().type != MINU) {
 			break;
 		}
 		Lexical op = lex.sym().type;
 		getNextSym();
+		//è¯»å–è¿ç®—ç¬¦å·å®Œæˆ
 		term();
 	}
-	if (course) { out << "<±í´ïÊ½>" << endl; }
+	if (course) { out << "<è¡¨è¾¾å¼>" << endl; }
 }
 
-/*Õë¶Ô¸³ÖµÓï¾äºÍº¯Êıµ÷ÓÃÓï¾äµÄÔ¤¶Á·ÖÖ§*/
+/*é’ˆå¯¹èµ‹å€¼è¯­å¥å’Œå‡½æ•°è°ƒç”¨è¯­å¥çš„é¢„è¯»åˆ†æ”¯*/
 void GrammarAnalyzer::assignAndCall() {
 	if (lex.sym().type != IDENFR) {
-		f.handleFault(lex.lineNumber(), "ĞèÒª±êÊ¶·û");
+		f.handleFault(lex.lineNumber(), "éœ€è¦æ ‡è¯†ç¬¦");
 		// todo handle fault
 		f.terminate();
 	}
-	string name = lex.sym().str;//¶Áµ½Ò»¸ö±êÊ¶·û
+	string name = lex.sym().str;
 	getNextSym();
-	if (lex.sym().type == LBRACK || lex.sym().type == ASSIGN) {//ÊÇ¸³ÖµÓï¾ä
+	//è¯»å–æ ‡è¯†ç¬¦å®Œæˆ
+
+	if (lex.sym().type == LBRACK || lex.sym().type == ASSIGN) {
+		//æ¥ä¸‹æ¥æ˜¯=æˆ–è€…[çš„æ˜¯èµ‹å€¼è¯­å¥
 		assignSentence(name);
 	}
-	else if (lex.sym().type == LPARENT) {//ÊÇº¯Êıµ÷ÓÃÓï¾ä
+	else if (lex.sym().type == LPARENT) {//æ˜¯å‡½æ•°è°ƒç”¨è¯­å¥
 		functionCall(name,false);
 	}
 	else {
-		f.handleFault(lex.lineNumber(), "ÎŞÒâÒåµÄ±êÊ¶·û");
+		f.handleFault(lex.lineNumber(), "æ— æ„ä¹‰çš„æ ‡è¯†ç¬¦");
 		// todo handle fault
 		f.terminate();
 	}
 }
-/*<¸³ÖµÓï¾ä>£¬ÒÑ¾­¹ıÔ¤¶Á*/
+/*<èµ‹å€¼è¯­å¥>ï¼Œå·²ç»è¿‡é¢„è¯»*/
 void GrammarAnalyzer::assignSentence(string varname) {
 	bool error = false;
-	SymbolEntry* entry = table.getSymbolByName(currentScope, varname);
+	/*SymbolEntry* entry = table.getSymbolByName(currentScope, varname);
 	if (entry == NULL) {
 		f.handleCourseFault(lex.lineNumber(), UNDEFINED);
-		f.handleFault(lex.lineNumber(), "Î´¶¨ÒåµÄ±äÁ¿");
+		f.handleFault(lex.lineNumber(), "æœªå®šä¹‰çš„å˜é‡");
 		error = true;
-	}
-	if (lex.sym().type == LBRACK) {//×óÖµÊÇÊı×é
-		if (!error && entry->type != TYPECHARARRAY && entry->type != TYPEINTARRAY) {
+	}*/
+	//æ£€æŸ¥å˜é‡åˆæ³•æ€§
+	if (lex.sym().type == LBRACK) {//å·¦å€¼æ˜¯æ•°ç»„
+		/*if (!error && entry->type != TYPECHARARRAY && entry->type != TYPEINTARRAY) {
 			f.handleCourseFault(lex.lineNumber(), TYPEERROR);
-			f.handleFault(lex.lineNumber(), varname + "±äÁ¿²»ÊÇÊı×éÀàĞÍ");
+			f.handleFault(lex.lineNumber(), varname + "å˜é‡ä¸æ˜¯æ•°ç»„ç±»å‹");
 			error = true;
-		}
+		}*/
+		//æ£€æŸ¥æ˜¯ä¸æ˜¯æ•°ç»„ç±»å‹çš„å˜é‡
 		getNextSym();
+		//è¯»å–å®Œäº†å·¦æ‹¬å·
+
 		expression();
+		//è¯»å–å®Œæˆå³æ‹¬å·
+
 		if (lex.sym().type != RBRACK) {
 			f.handleCourseFault(lex.lineNumber(), NORBRACK);
-			f.handleFault(lex.lineNumber(), "È±ÉÙ]");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘]");
 		}
 		else {
 			getNextSym();
 		}
+		//å®Œæˆè¯»å–å³æ‹¬å·
 	}
-	if (lex.sym().type != ASSIGN) {//¶ÁÈ¡¸³ÖµÔËËã·û
-		f.handleFault(lex.lineNumber(), "ĞèÒª=");
+	if (lex.sym().type != ASSIGN) {//è¯»å–èµ‹å€¼è¿ç®—ç¬¦
+		f.handleFault(lex.lineNumber(), "éœ€è¦=");
 		// todo handlefault
 	}
 	else {
 		getNextSym();
 	}
-	expression();//¶ÁÈ¡Ëù¸³µÄ±í´ïÊ½
-	if (course) { out << "<¸³ÖµÓï¾ä>"<<endl; }
+	//å®Œæˆè¯»å–èµ‹å€¼è¿ç®—ç¬¦
+	expression();
+	//è¯»å–æ‰€èµ‹çš„è¡¨è¾¾å¼
+	if (course) { out << "<èµ‹å€¼è¯­å¥>"<<endl; }
 }
 
-/*º¯Êıµ÷ÓÃ£¬ÈômustReturnÊÇÕæÒâÎ¶×Å±ØĞëÓĞ·µ»ØÖµ£¬·ñÔòÓĞÎŞ·µ»ØÖµ½Ô¿É£¬ÒÑ±»Ô¤¶Á·ûºÅ*/
+/*å‡½æ•°è°ƒç”¨ï¼Œè‹¥mustReturnæ˜¯çœŸæ„å‘³ç€å¿…é¡»æœ‰è¿”å›å€¼ï¼Œå¦åˆ™æœ‰æ— è¿”å›å€¼çš†å¯ï¼Œå·²è¢«é¢„è¯»ç¬¦å·*/
 void GrammarAnalyzer::functionCall(string name,bool mustReturn) {
 	bool error = false;
-	SymbolEntry* entry = table.getSymbolByName(currentScope, name);//¶ÁÈ¡º¯ÊıĞÅÏ¢
-	if (entry == NULL) {//¼ì²éÊÇ·ñÒÑ¶¨Òå
+
+	SymbolEntry* entry = table.getSymbolByName(currentScope, name);
+	if (entry == NULL) {//æ£€æŸ¥æ˜¯å¦å·²å®šä¹‰
 		f.handleCourseFault(lex.lineNumber(), UNDEFINED);
-		f.handleFault(lex.lineNumber(), "Î´¶¨ÒåµÄ±äÁ¿");
+		f.handleFault(lex.lineNumber(), "æœªå®šä¹‰çš„å‡½æ•°");
 		error = true;
 	}
-	if (!error&&entry->type != TYPEFUNCTION) {//¼ì²éÊÇ·ñÎªº¯Êı
+	//æ£€æŸ¥æ˜¯å¦æœ‰å˜é‡ä¿¡æ¯
+
+	if (!error&&entry->type != TYPEFUNCTION) {//æ£€æŸ¥æ˜¯å¦ä¸ºå‡½æ•°
 		f.handleCourseFault(lex.lineNumber(), TYPEERROR);
-		f.handleFault(lex.lineNumber(), "²»ÊÇº¯Êı");
+		f.handleFault(lex.lineNumber(), "ä¸æ˜¯å‡½æ•°");
+		error = true;
 		//todo handle fault
 		f.terminate();
 	}
-	if (!error&&mustReturn && entry->link->returnType == RETVOID) {//¼ì²éÊÇ·ñÓĞ·µ»ØÖµ
+	
+	if (!error&&mustReturn && entry->link->returnType == RETVOID) {//æ£€æŸ¥æ˜¯å¦æœ‰è¿”å›å€¼
 		f.handleCourseFault(lex.lineNumber(), TYPEERROR);
-		f.handleFault(lex.lineNumber(), "²»ÊÇÓĞ·µ»ØÖµº¯Êı");
+		f.handleFault(lex.lineNumber(), "ä¸æ˜¯æœ‰è¿”å›å€¼å‡½æ•°");
 		// todo handlefault;
+		error = true;
 		f.terminate();
 	}
-	if (lex.sym().type != LPARENT) {//¶ÁÈ¡£¨
-		f.handleFault(lex.lineNumber(), "È±ÉÙ(");
+
+	if (lex.sym().type != LPARENT) {//è¯»å–ï¼ˆ
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘(");
 		//todo handle fault
 		f.terminate();
 	}
 	getNextSym();
-	parameterValueList(entry);//¶ÁÈ¡Êµ²ÎÁĞ±í
+	//å®Œæˆå·¦æ‹¬å·å¤„ç†
+
+	parameterValueList(entry);//è¯»å–å®å‚åˆ—è¡¨
+
 	if (lex.sym().type != RPARENT) {
 		f.handleCourseFault(lex.lineNumber(), NORPARENT);
-		f.handleFault(lex.lineNumber(), "È±ÉÙ)");
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘)");
 		//todo handle fault
 	}
 	getNextSym();
+	//å³å¤§æ‹¬å·è¯»å–å®Œæˆ
+
 	if (course) {
 		if (entry->link->returnType == RETVOID) {
-			out << "<ÎŞ·µ»ØÖµº¯Êıµ÷ÓÃÓï¾ä>"<<endl;
+			out << "<æ— è¿”å›å€¼å‡½æ•°è°ƒç”¨è¯­å¥>"<<endl;
 		}
 		else {
-			out << "<ÓĞ·µ»ØÖµº¯Êıµ÷ÓÃÓï¾ä>" << endl;
+			out << "<æœ‰è¿”å›å€¼å‡½æ•°è°ƒç”¨è¯­å¥>" << endl;
 		}
 	}
 }
 
-/*<Öµ²ÎÊı±í>*/
+/*<å€¼å‚æ•°è¡¨>*/
 void GrammarAnalyzer::parameterValueList(SymbolEntry* entry) {
 	int paraNum = 0;
 	bool init = true;
@@ -811,42 +920,49 @@ void GrammarAnalyzer::parameterValueList(SymbolEntry* entry) {
 		}
 		if (!init) {
 			if (lex.sym().type != COMMA) {
-				f.handleFault(lex.lineNumber(), "È±ÉÙ,");
+				f.handleFault(lex.lineNumber(), "ç¼ºå°‘,");
 				// todo handle fault
 				f.terminate();
 			}
 			else {
 				getNextSym();
 			}
+			//è¯»å–é€—å·
 		}
 		else {
 			init = false;
 		}
 		expression();
+		//è¯»å–å®å‚çš„è¡¨è¾¾å¼
 		paraNum++;
 	}
-	if (entry->link->paraNum != paraNum) {
+	/*if (entry->link->paraNum != paraNum) {
 		f.handleCourseFault(lex.lineNumber(), PARANUMERROR);
-		f.handleFault(lex.lineNumber(), "º¯Êı²ÎÊı¸öÊı²»ÕıÈ·");
+		f.handleFault(lex.lineNumber(), "å‡½æ•°å‚æ•°ä¸ªæ•°ä¸æ­£ç¡®");
 		// todo handle fault 
 		f.terminate();
-	}
-	if (course) { out << "<Öµ²ÎÊı±í>" << endl; }
+	}*/
+	//æ£€æŸ¥å‚æ•°æ˜¯å¦å¯¹åº”ï¼ˆä¸ªæ•°ï¼Œåº”è¯¥è¿˜æœ‰å‚æ•°ç±»å‹çš„æ ‡è®°ï¼‰
+	if (course) { out << "<å€¼å‚æ•°è¡¨>" << endl; }
 }
 
 void GrammarAnalyzer::scanSentence() {
 	if (lex.sym().type != SCANFTK) {
-		f.handleFault(lex.lineNumber(), "È±ÉÙscanf±êÊ¶·û");
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘scanfæ ‡è¯†ç¬¦");
 		// todo handle-fault;
 		f.terminate();
 	}
 	getNextSym();
+	//è¯»å–scanfæ ‡è¯†ç¬¦
+
 	if (lex.sym().type != LPARENT) {
-		f.handleFault(lex.lineNumber(), "È±ÉÙ£¨");
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘ï¼ˆ");
 		// todo handle-fault
 		f.terminate();
 	}
 	getNextSym();
+	//è¯»å–å·¦æ‹¬å·
+
 	bool init = true;
 	while (1) {
 		if (init) {
@@ -861,263 +977,316 @@ void GrammarAnalyzer::scanSentence() {
 			}
 		}
 		if (lex.sym().type != IDENFR) {
-			f.handleFault(lex.lineNumber(), "È±ÉÙ±êÊ¶·û");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘æ ‡è¯†ç¬¦");
 			// todo handle-fault
 			f.terminate();
 		}
 		string varname = lex.sym().str;
-		SymbolEntry* entry = table.getSymbolByName(currentScope, varname);
+		/*SymbolEntry* entry = table.getSymbolByName(currentScope, varname);
 		if (entry == NULL) {
 			f.handleCourseFault(lex.lineNumber(), UNDEFINED);
-			f.handleFault(lex.lineNumber(), "Î´¶¨ÒåµÄ±äÁ¿");
-		}
+			f.handleFault(lex.lineNumber(), "æœªå®šä¹‰çš„å˜é‡");
+		}*/
 		// todo other illegal situation
+		//ä¾æ®ç¬¦å·è¡¨ä¿¡æ¯æ£€æŸ¥å˜é‡æ˜¯å¦åˆæ³•
 		getNextSym();
+		//æ ‡è¯†ç¬¦è¯»å–å®Œæˆ
 	}
+
 	if (lex.sym().type != RPARENT) {
 		f.handleCourseFault(lex.lineNumber(), NORPARENT);
-		f.handleFault(lex.lineNumber(), "È±ÉÙ)");
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘)");
 	}
 	else {
 		getNextSym();
 	}
-	if (course) { out << "<¶ÁÓï¾ä>" << endl; }
+	//å³æ‹¬å·è¯»å–å®Œæˆ
+	if (course) { out << "<è¯»è¯­å¥>" << endl; }
 }
 
 void GrammarAnalyzer::printSentence() {
 	if (lex.sym().type != PRINTFTK) {
-		f.handleFault(lex.lineNumber(), "È±ÉÙprintf±êÊ¶·û");
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘printfæ ‡è¯†ç¬¦");
 		// todo handle-fault;
 		f.terminate();
 	}
 	getNextSym();
+	//è¯»å–printfç¬¦å·å®Œæˆ
+
 	if (lex.sym().type != LPARENT) {
-		f.handleFault(lex.lineNumber(), "È±ÉÙ£¨");
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘ï¼ˆ");
 		// todo handle-fault
 		f.terminate();
 	}
 	getNextSym();
+	//è¯»å–å·¦æ‹¬å·å®Œæˆ
+
 	if (lex.sym().type == STRCON) {
 		/*how to handle the string*/
 		
 		getNextSym();
-		if (course) { out << "<×Ö·û´®>" << endl; }
+		if (course) { out << "<å­—ç¬¦ä¸²>" << endl; }
 		if (lex.sym().type == COMMA) {
 			getNextSym();
+			//è¯»å–é€—å·å®Œæˆ
 			expression();
+			//ç›´æ¥è¯»å–è¡¨è¾¾å¼
 		}
 	}
 	else { 
 		expression();
+		//ç›´æ¥è¯»å–è¡¨è¾¾å¼
 	}
 	
 	if (lex.sym().type != RPARENT) {
 		f.handleCourseFault(lex.lineNumber(), NORPARENT);
-		f.handleFault(lex.lineNumber(), "È±ÉÙ)");
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘)");
 	}
 	else {
 		getNextSym();
 	}
-	if (course) { out << "<Ğ´Óï¾ä>" << endl; }
+	if (course) { out << "<å†™è¯­å¥>" << endl; }
 }
 
 void GrammarAnalyzer::returnSentence() {
 	if (lex.sym().type != RETURNTK) {
-		f.handleFault(lex.lineNumber(), "È±ÉÙRETURN±êÊ¶·û");
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘RETURNæ ‡è¯†ç¬¦");
 		// todo handle-fault;
 		f.terminate();
 	}
 	getNextSym();
+	//è¯»å–returnæ ‡è¯†ç¬¦
 	if (lex.sym().type == LPARENT) {
 		getNextSym();
+		//å®Œæˆè¯»å–å·¦æ‹¬å·
 		expression();
 		if (lex.sym().type != RPARENT) {
 			f.handleCourseFault(lex.lineNumber(), NORPARENT);
-			f.handleFault(lex.lineNumber(), "È±ÉÙ)");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘)");
 		}
 		else {
 			getNextSym();
 		}
+		//å®Œæˆè¯»å–å³æ‹¬å·
 	}
-	if (course) { out << "<·µ»ØÓï¾ä>" << endl; }
+	if (course) { out << "<è¿”å›è¯­å¥>" << endl; }
 }
 
 void GrammarAnalyzer::ifSentence() {
 	if (lex.sym().type != IFTK) {
-		f.handleFault(lex.lineNumber(), "È±ÉÙif±êÊ¶·û");
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘ifæ ‡è¯†ç¬¦");
 		// todo handlefault
 		f.terminate();
 	}
 	getNextSym();
+	//å®Œæˆifæ ‡è¯†ç¬¦è¯»å–
+
 	if (lex.sym().type != LPARENT) {
-		f.handleFault(lex.lineNumber(), "È±ÉÙ£¨");
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘ï¼ˆ");
 		// todo handle-fault
 		f.terminate();
 	}
 	getNextSym();
+	//å®Œæˆè¯»å–å·¦æ‹¬å·
+
 	condition();
+	//è¯»å–æ¡ä»¶
+
 	if (lex.sym().type != RPARENT) {
 		f.handleCourseFault(lex.lineNumber(), NORPARENT);
-		f.handleFault(lex.lineNumber(), "È±ÉÙ)");
+		f.handleFault(lex.lineNumber(), "ç¼ºå°‘)");
 	}
 	else {
 		getNextSym();
 	}
+	//è¯»å–å³æ‹¬å·
+
 	sentence();
+	//è¯­å¥
 	if (lex.sym().type == ELSETK) {
 		getNextSym();
+		//è¯»å–elseå®Œæˆ
 		sentence();
+		//è¯»å–è¯­å¥
 	}
-	if (course) { out << "<Ìõ¼şÓï¾ä>" << endl; }
+	if (course) { out << "<æ¡ä»¶è¯­å¥>" << endl; }
 }
 
 void GrammarAnalyzer::condition() {
 	expression();
+	//è¡¨è¾¾å¼
 	if (lex.sym().type == LSS || lex.sym().type == LEQ
 		|| lex.sym().type == GRE || lex.sym().type == GEQ
 		|| lex.sym().type == EQL || lex.sym().type == NEQ) {
 		getNextSym();
+		//è¯»å–å…³ç³»è¿ç®—ç¬¦å®Œæˆ
 		expression();
 	}
-	if (course) { out << "<Ìõ¼ş>" << endl; }
+	if (course) { out << "<æ¡ä»¶>" << endl; }
 }
 
 void GrammarAnalyzer::loopSentence() {
 	if (lex.sym().type == WHILETK) {
 		getNextSym();
+		//è¯»å–whileç¬¦å·
+
 		if (lex.sym().type != LPARENT) {
-			f.handleFault(lex.lineNumber(), "È±ÉÙ£¨");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘ï¼ˆ");
 			// todo handle-fault
 			f.terminate();
 		}
 		getNextSym();
+		//è¯»å–å·¦æ‹¬å·
+
 		condition();
+		//è¯»å–æ¡ä»¶è¯­å¥
 		if (lex.sym().type != RPARENT) {
 			f.handleCourseFault(lex.lineNumber(), NORPARENT);
-			f.handleFault(lex.lineNumber(), "È±ÉÙ)");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘)");
 		}
 		else {
 			getNextSym();
 		}
+		//è¯»å–å³æ‹¬å·å®Œæˆ
 		sentence();
 	}
 	else if (lex.sym().type == DOTK) {
 		getNextSym();
+		//è¯»å–doç¬¦å·å®Œæˆ
 		sentence();
+		//è¯»å–å¥å­
 		if (lex.sym().type != WHILETK) {
-			f.handleFault(lex.lineNumber(), "È±ÉÙwhile·ûºÅ");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘whileç¬¦å·");
 			// todo handle fault
 			f.terminate();
 		}
 		else {
 			getNextSym();
 		}
+		//è¯»å–whileç¬¦å·
 		if (lex.sym().type != LPARENT) {
-			f.handleFault(lex.lineNumber(), "È±ÉÙ£¨");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘ï¼ˆ");
 			// todo handle-fault
 			f.terminate();
 		}
 		getNextSym();
+		//è¯»å–å·¦æ‹¬å·
 		condition();
+		//è¯»å–æ¡ä»¶è¯­å¥
 		if (lex.sym().type != RPARENT) {
 			f.handleCourseFault(lex.lineNumber(), NORPARENT);
-			f.handleFault(lex.lineNumber(), "È±ÉÙ)");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘)");
 		}
 		else {
 			getNextSym();
 		}
+		//è¯»å–å³æ‹¬å·
 	}
 	else if (lex.sym().type == FORTK) {
 		getNextSym();
+		//è¯»å–forç¬¦å·å®Œæˆ
 		if (lex.sym().type != LPARENT) {
-			f.handleFault(lex.lineNumber(), "È±ÉÙ£¨");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘ï¼ˆ");
 			// todo handle-fault
 			f.terminate();
 		}
 		getNextSym();
+		//è¯»å–å·¦æ‹¬å·å®Œæˆ
 		if (lex.sym().type != IDENFR) {
-			f.handleFault(lex.lineNumber(), "ĞèÒª±êÊ¶·û");
+			f.handleFault(lex.lineNumber(), "éœ€è¦æ ‡è¯†ç¬¦");
 			// todo handle-fault
 			f.terminate();
 		}
 		string varname1 = lex.sym().str;
 		getNextSym();
-		if (lex.sym().type != ASSIGN) {//¶ÁÈ¡¸³ÖµÔËËã·û
-			f.handleFault(lex.lineNumber(), "ĞèÒª=");
+		//è¯»å–æ ‡è¯†ç¬¦å®Œæˆ
+		if (lex.sym().type != ASSIGN) {//è¯»å–èµ‹å€¼è¿ç®—ç¬¦
+			f.handleFault(lex.lineNumber(), "éœ€è¦=");
 			// todo handlefault
 		}
 		else {
 			getNextSym();
 		}
-		expression();//¶ÁÈ¡Ëù¸³µÄ±í´ïÊ½
+		//è¯»å–èµ‹å€¼ç¬¦å®Œæˆ
+		expression();
+		//è¯»å–æ‰€èµ‹çš„è¡¨è¾¾å¼
 		if (lex.sym().type != SEMICN) {
 			f.handleCourseFault(lex.lineNumber(), NOSEMICN);
-			f.handleFault(lex.lineNumber(), "ĞèÒª;");
+			f.handleFault(lex.lineNumber(), "éœ€è¦;");
 		}
 		else {
 			getNextSym();
 		}
+		//è¯»å–åˆ†å·å®Œæˆ
 		condition();
+		//è¯»å–æ¡ä»¶å®Œæˆ
 		if (lex.sym().type != SEMICN) {
 			f.handleCourseFault(lex.lineNumber(), NOSEMICN);
-			f.handleFault(lex.lineNumber(), "ĞèÒª;");
+			f.handleFault(lex.lineNumber(), "éœ€è¦;");
 		}
 		else {
 			getNextSym();
 		}
+		//è¯»å–åˆ†å·å®Œæˆ
 		if (lex.sym().type != IDENFR) {
-			f.handleFault(lex.lineNumber(), "ĞèÒª±êÊ¶·û");
+			f.handleFault(lex.lineNumber(), "éœ€è¦æ ‡è¯†ç¬¦");
 			// todo handle-fault
 			f.terminate();
 		}
 		string varname2 = lex.sym().str;
 		getNextSym();
-		if (lex.sym().type != ASSIGN) {//¶ÁÈ¡¸³ÖµÔËËã·û
-			f.handleFault(lex.lineNumber(), "ĞèÒª=");
+		//è¯»å–æ ‡è¯†ç¬¦å®Œæˆ
+		if (lex.sym().type != ASSIGN) {//è¯»å–èµ‹å€¼è¿ç®—ç¬¦
+			f.handleFault(lex.lineNumber(), "éœ€è¦=");
 			// todo handlefault
 			f.terminate();
 		}
 		else {
 			getNextSym();
 		}
+		//è¯»å–èµ‹å€¼è¿ç®—ç¬¦å®Œæˆ
 		if (lex.sym().type != IDENFR) {
-			f.handleFault(lex.lineNumber(), "ĞèÒª±êÊ¶·û");
+			f.handleFault(lex.lineNumber(), "éœ€è¦æ ‡è¯†ç¬¦");
 			// todo handle-fault
 			f.terminate();
 		}
 		string varname3 = lex.sym().str;
 		getNextSym();
+		//è¯»å–æ ‡è¯†ç¬¦å®Œæˆ
 		if (lex.sym().type != PLUS && lex.sym().type != MINU) {
-			f.handleFault(lex.lineNumber(), "ĞèÒªÔËËã·û");
+			f.handleFault(lex.lineNumber(), "éœ€è¦è¿ç®—ç¬¦");
 			// todo handlefault
 			f.terminate();
 		}
 		Lexical op = lex.sym().type;
 		getNextSym();
+		//è¯»å–åŠ å‡å·å®Œæˆ
 		if (lex.sym().type != INTCON) {
-			f.handleFault(lex.lineNumber(), "ĞèÒª²½³¤");
+			f.handleFault(lex.lineNumber(), "éœ€è¦æ­¥é•¿");
 			// todo handlefault
 			f.terminate();
 		}
 		int step = lex.sym().value;
 		getNextSym();
-		if (course) { out << "<ÎŞ·ûºÅÕûÊı>" << endl; }
-		if (course) { out << "<²½³¤>" << endl; }
+		//è¯»å–æ­¥é•¿å®Œæˆ
+		if (course) { out << "<æ— ç¬¦å·æ•´æ•°>" << endl; }
+		if (course) { out << "<æ­¥é•¿>" << endl; }
 		if (lex.sym().type != RPARENT) {
 			f.handleCourseFault(lex.lineNumber(), NORPARENT);
-			f.handleFault(lex.lineNumber(), "È±ÉÙ)");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘)");
 		}
 		else {
 			getNextSym();
 		}
+		//è¯»å–å³æ‹¬å·å®Œæˆ
 		sentence();
 	}
 	else {
-		f.handleFault(lex.lineNumber(), "·Ç·¨µÄÑ­»·Óï¾ä");
+		f.handleFault(lex.lineNumber(), "éæ³•çš„å¾ªç¯è¯­å¥");
 		// todo handle fault;
 		f.terminate();
 	}
-	if (course) { out << "<Ñ­»·Óï¾ä>" << endl; }
+	if (course) { out << "<å¾ªç¯è¯­å¥>" << endl; }
 }
 
 void GrammarAnalyzer::sentence() {
@@ -1130,13 +1299,15 @@ void GrammarAnalyzer::sentence() {
 	}
 	else if (lex.sym().type == LBRACE) {
 		getNextSym();
+		//è¯»å–å·¦å¤§æ‹¬å·å®Œæˆ
 		sentenceSeries();
 		if (lex.sym().type != RBRACE) {
-			f.handleFault(lex.lineNumber(), "È±ÉÙ}");
+			f.handleFault(lex.lineNumber(), "ç¼ºå°‘}");
 			// TODO HANDLEFAULT
 			f.terminate();
 		}
 		getNextSym();
+		//è¯»å–å³å¤§æ‹¬å·å®Œæˆ
 	}
 	else {
 		if (lex.sym().type == IDENFR) {
@@ -1152,19 +1323,19 @@ void GrammarAnalyzer::sentence() {
 			returnSentence();
 		}
 		else if (lex.sym().type != SEMICN) {
-			f.handleFault(lex.lineNumber(), "·Ç·¨µÄÓï¾ä¿ªÍ·");
+			f.handleFault(lex.lineNumber(), "éæ³•çš„è¯­å¥å¼€å¤´");
 			// handle fault
 			f.terminate();
 		}
 		if (lex.sym().type != SEMICN) {
 			f.handleCourseFault(lex.lineNumber(), NOSEMICN);
-			f.handleFault(lex.lineNumber(), "ĞèÒª;");
+			f.handleFault(lex.lineNumber(), "éœ€è¦;");
 		}
 		else {
 			getNextSym();
 		}
 	}
-	if (course) { out << "<Óï¾ä>" << endl; }
+	if (course) { out << "<è¯­å¥>" << endl; }
 }
 
 void GrammarAnalyzer::sentenceSeries() {
@@ -1183,7 +1354,7 @@ void GrammarAnalyzer::sentenceSeries() {
 			break;
 		}
 	}
-	if (course) { out << "<Óï¾äÁĞ>" << endl; }
+	if (course) { out << "<è¯­å¥åˆ—>" << endl; }
 }
 
 void GrammarAnalyzer::programme() {
@@ -1210,6 +1381,8 @@ void GrammarAnalyzer::programme() {
 			}
 			else {
 				// todo handle fault
+				f.handleFault(lex.lineNumber(), "éæ³•");
+				f.terminate();
 			}
 		}
 		else if (lex.sym().type == CHARTK || lex.sym().type == INTTK) {
@@ -1219,5 +1392,5 @@ void GrammarAnalyzer::programme() {
 			break;
 		}
 	}
-	if (course) { out << "<³ÌĞò>" << endl; }
+	if (course) { out << "<ç¨‹åº>" << endl; }
 }

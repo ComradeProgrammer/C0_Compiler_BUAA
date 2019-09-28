@@ -1,116 +1,12 @@
-const int _const1=0,_const2=0;
-const char _char1='a',_char2='d';
-int a[2],__int1,__int2,__int3,b[100];
-char str[100];
-int function1(int x,int uselessparameter){
-    const int __const3=54545,__const4=123;
-    int tmp1,tmp2,_abcdefghijklmnopqrstuvwxyz0123456789;
-    if(x==0)
-        return (a[0]);
-    else if (x==1){
-        return (a[x+1-1]);
-    }
-    else{
-        tmp1=function1(x-1,0);
-        tmp2=function1(x-2,0);
-    }
-
-    return(tmp1+tmp2);
-    
-}
-void function2(){
-   int i;
-   i=0;
-   while(i<100){
-       i=i+1;
-       printf(i);
-   }
-   i=0;
-   while(i<=100){
-       i=i+1;
-       printf(i);
-   }
-   i=0;
-   while(i>=-100){
-       i=i-1;
-       printf(i);
-   }
-   i=0;
-   while(i>-100){
-       i=i-1;
-       printf(i);
-   }
-   i=0;
-   while(i!=100){
-       i=i+1;
-       printf(i);
-   }
-   i=0;
-   while(i==0){
-       i=i+1;
-       printf(i);
-   }
-   i=100;
-   do{
-       i=i-1;
-       printf("fuck");
-   }
-   while(i>=0);;;;;;;;;;;;;;;;;
-
-   for(i=0;i<=100;i=i+1){
-       printf("damn");
-   }
-   return;
-}
-int function3(char uselesspara1,int x,int y,int z){
-    int m,n,p,term,factor,expr;
-    m=0;
-    n=1;
-    p=n+n;
-    factor=a[0];
-    factor=p;
-    factor=(1+2*3-4);
-    uselesspara1='d';
-    term=factor*factor*factor;
-    term=factor/factor;
-    expr=+term+term;
-    expr=-term+term;
-    expr=term;
-    return (0);
-
-}
-void emptyFunction(){
-
+const int const1 = 1, const2 = -100;
+const char const3 = '_';
+int change1;
+char change3;
+int gets1(int var1,int var2){
+    change1 = var1 + var2;
+    return (change1);
 }
 void main(){
-    int res1,para2,para3,para4;
-    int para5;
-       int para6;
-       char p7,p8,p9;
-       char p10;
-    scanf(para2,para3,para4);
-    function2();
-    function3('0',7,7,7);
-    res1=function1(para2,0)+5*884/78*(7-function1(para2+1-2+3*0+1,function1(para2,0)));
-    printf("res1:",res1);
-    printf(function1(para2,0));
-    printf(" !#$\\%d&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
-    str[0]='+';
-        str[0]='-';
-            str[0]='*';
-                str[0]='-';
-                str[0]='s';
-                str[0]='5';
-    res1=0;
-    p7=str[res1+5*(7*0+9)];
-    if(3+4+5*6/7+985){
-        printf("");
-    }
-{}
-    return;
-
+    printf("Hello World");
+    printf(gets1(10, 20));
 }
-
-
-
-
