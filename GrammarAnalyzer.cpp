@@ -1375,7 +1375,7 @@ void GrammarAnalyzer::programme() {
 			if (globalVariableDeclearation) {
 				if (course) { out << "<变量说明>" << endl; }
 				globalVariableDeclearation = false;
-				//如果这是我们碰见的第一个有返回值函数
+				//如果这是我们碰见的第一个函数
 				//并且前面出现了全局变量声明，那就要输出变量声明这一问题
 			}
 			getNextSym();
