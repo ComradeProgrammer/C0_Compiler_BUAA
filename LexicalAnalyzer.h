@@ -6,10 +6,10 @@
 #include"FaultHandler.h"
 using namespace std;
 enum Lexical {
-	IDENFR = 0,//±êÊ¶·û
-	INTCON,//ÕûÐÎ±äÁ¿
-	CHARCON,//×Ö·û³£Á¿
-	STRCON,//×Ö·û´®
+	IDENFR = 0,//æ ‡è¯†ç¬¦
+	INTCON,//æ•´å½¢å˜é‡
+	CHARCON,//å­—ç¬¦å¸¸é‡
+	STRCON,//å­—ç¬¦ä¸²
 	CONSTTK,//const
 	INTTK,//int
 	CHARTK,//char

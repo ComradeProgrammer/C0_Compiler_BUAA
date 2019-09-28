@@ -9,7 +9,7 @@ int main() {
 	//test.selfTest();
 	lexicalAnalyzer.getNextSym();
 	GrammarAnalyzer g(faultHandler,test,lexicalAnalyzer,"output.txt");
-	g.homeworkOn();
+	g.homeworkOn(true,true);
 	//g.constDeclearation();
 	//g.mainFunctionDefination();
 	//g.declearationHeader();
