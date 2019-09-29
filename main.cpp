@@ -1,4 +1,4 @@
-﻿#include"main.h"
+#include"main.h"
 using namespace std;
 int main() {
     FaultHandler faultHandler("error.txt");
@@ -28,4 +28,4 @@ int main() {
 	g.programme();
 	//system("pause");
 }
-
+/*词法分析中001应该是3个数但是我好像没改*/

@@ -1,4 +1,4 @@
-﻿#include"FaultHandler.h"
+#include"FaultHandler.h"
 
 FaultHandler::FaultHandler(string filename) {
 	debug = false;

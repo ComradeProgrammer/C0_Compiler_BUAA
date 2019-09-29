@@ -1,4 +1,4 @@
-﻿#include"SymbolTable.h"
+#include"SymbolTable.h"
 SymbolTable::SymbolTable():globalScope("") {
 	count = 0;
 }
