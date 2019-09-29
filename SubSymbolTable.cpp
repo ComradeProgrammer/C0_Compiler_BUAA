@@ -1,4 +1,4 @@
-#include"SubSymbolTable.h"
+﻿#include"SubSymbolTable.h"
 #include<iostream>
 SubSymbolTable::SubSymbolTable(string _nameScope){
 	nameScope = _nameScope;

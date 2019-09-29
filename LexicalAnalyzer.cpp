@@ -1,4 +1,4 @@
-#include"LexicalAnalyzer.h"
+﻿#include"LexicalAnalyzer.h"
 #include<cstdlib>
 LexicalAnalyzer::LexicalAnalyzer(FaultHandler& f):faultHandler(f) {
 	text = "";
