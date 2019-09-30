@@ -10,6 +10,7 @@ int main() {
 	lexicalAnalyzer.getNextSym();
 	GrammarAnalyzer g(faultHandler,test,lexicalAnalyzer,"output.txt");
 	g.homeworkOn(true,true);
+	test.debugOn();
 	//g.constDeclearation();
 	//g.mainFunctionDefination();
 	//g.declearationHeader();
@@ -26,6 +27,7 @@ int main() {
 	//g.sentence();
 	//g.mainFunctionDefination();
 	g.programme();
-	//system("pause");
+	system("pause");
+	return 0;
 }
 /*词法分析中001应该是3个数但是我好像没改*/

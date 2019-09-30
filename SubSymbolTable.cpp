@@ -65,3 +65,64 @@ void SubSymbolTable::selfTest() {
 		cout << "error7";
 	}
 }
+
+ostream& operator<<(ostream& o,FunctionLink f) {
+	o << "\tsymbol entry link content" << endl;
+	string s = f.returnType == RETINT ? "int" :
+		f.returnType == RETCHAR ? "char" :
+		f.returnType == RETVOID ? "void" :
+		"INVALID";
+	o << "\t\treturnType:" << s<<endl;
+	o << "\t\tparaNum:" << f.paraNum << endl;
+	o << "\t\tparas:[";
+	for (int i = 0; i < f.paras.size(); i++) {
+		string tmp = f.paras[i] == TYPEINT ? "int" :
+			f.paras[i] == TYPECHAR ? "char" :
+			"INVALID";
+		o << tmp << " ";
+	}
+	o << "]" << endl;
+	return o;
+}
+
+ostream& operator<<(ostream& o,SymbolEntry s) {
+	o << "symbol entry content" << endl;
+	o << "\tname:" << s.name;
+	o << "\tid:" << s.id;
+	string tmp;
+	switch(s.type){
+	case TYPEINT:
+		tmp = "int";
+		break;
+	case TYPECHAR:
+		tmp = "char";
+		break;
+	case TYPEINTARRAY:
+		tmp = "int[]";
+		break;
+	case TYPECHARARRAY:
+		tmp = "char[]";
+		break;
+	case TYPEINTCONST:
+		tmp = "const int";
+		break;
+	case TYPECHARCONST:
+		tmp = "const char";
+		break;
+	case TYPEFUNCTION:
+		tmp = "function";
+		break; 
+	}
+	o << "\ttype:" <<tmp<< endl;
+	o << "\tscope:" << s.scope << endl;
+	o << "\tinitValue:" << s.initValue << endl;
+	o << "\taddr:" << s.addr << endl;
+	o << "\tdimension:" << s.dimension << endl;
+	if (s.link != NULL){
+		o<<(*s.link);
+	}
+	else {
+		cout<<"link:NULL"<<endl;
+	}
+	return o;
+}

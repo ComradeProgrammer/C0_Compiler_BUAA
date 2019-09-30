@@ -11,6 +11,11 @@ SymbolTable::~SymbolTable() {
 }
 
 SymbolEntry* SymbolTable::addSymbol(string currentScope, string name,bool isFunction) {
+	if (debug) {
+		cout << "debug@SymbolTable:calling addSymbol" << endl;
+		cout << "currentscope:" + currentScope << ";name:" 
+			<< name << ";isFunction:" << isFunction << endl;
+	}
 	SymbolEntry* res;
 	if (currentScope != "") {
 		SubSymbolTable* s = scope[currentScope];
@@ -22,24 +27,48 @@ SymbolEntry* SymbolTable::addSymbol(string currentScope, string name,bool isFunc
 			SubSymbolTable* newscope = new SubSymbolTable(name);
 			scope[name] = newscope;
 		}
+		if (debug) {
+			cout << "debug@SymbolTable:new scope added" << endl;
+		}
 	}
 	if (res != NULL) {
 		res->id = count++;
 		symbolId.push_back(res);
 	}
+	if (debug&&res==NULL) {
+		cout << "debug@SymbolTable:duplicate name found" << endl;
+	}
+	if (debug) { cout << "==============================" << endl; }
+	
 	return res;
 }
 
 SymbolEntry* SymbolTable::getSymbolByName(string currentScope, string name) {
+	if (debug) {
+		cout << "debug@SymbolTable:calling getSymbolByName" << endl;
+		cout << "currentscope:" + currentScope << ";name:"
+			<< name<< endl;
+	}
 	SymbolEntry* res;
 	if (currentScope != "") {
 		SubSymbolTable* s = scope[currentScope];
 		res = s->getSymbolByName(name);
 		if (res != NULL) {
+			if (debug) { cout << "variable Type:LOCAL" << endl; }
 			return res;
 		}
 	}
 	res = globalScope.getSymbolByName(name);
+	if (debug) {
+		if (res != NULL) {
+			cout << "variable Type:GLOBAL" << endl;
+			cout << (*res);
+		}
+		else {
+			cout << "variable doesm't exist" << endl;
+		}
+		cout << "=============================" << endl;
+	}
 	return res;
 }
 
@@ -48,6 +77,10 @@ SymbolEntry* SymbolTable:: getSymbolById(int id) {
 		return NULL;
 	}
 	return symbolId[id];
+}
+
+void SymbolTable::debugOn() {
+	debug = true;
 }
 
 void SymbolTable::selfTest() {
