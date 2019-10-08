@@ -1,4 +1,4 @@
-#include"main.h"
+﻿#include"main.h"
 using namespace std;
 int main() {
     FaultHandler faultHandler("error.txt");

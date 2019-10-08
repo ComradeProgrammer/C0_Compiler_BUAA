@@ -1,4 +1,4 @@
-#include"GrammarAnalyzer.h"
+﻿#include"GrammarAnalyzer.h"
 
 /*构造器函数*/
 GrammarAnalyzer::GrammarAnalyzer(FaultHandler& _f, SymbolTable& _s, LexicalAnalyzer& _l,string file)

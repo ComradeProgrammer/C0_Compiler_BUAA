@@ -1,9 +1,9 @@
-#pragma once
+ï»¿#pragma once
 #include<vector>
 #include<map>
 #include<string>
 using namespace std;
-/*ÓÃÀ´±ê¼Ç·ûºÅÀàĞÍ*/
+/*ç”¨æ¥æ ‡è®°ç¬¦å·ç±»å‹*/
 enum SymbolType {
 	TYPEINT,
 	TYPECHAR,
@@ -13,14 +13,14 @@ enum SymbolType {
 	TYPECHARCONST,
 	TYPEFUNCTION
 };
-/*ÓÃÀ´±ê¼ÇÈô·ûºÅÎªº¯ÊıÊ±·µ»ØÀàĞÍ*/
+/*ç”¨æ¥æ ‡è®°è‹¥ç¬¦å·ä¸ºå‡½æ•°æ—¶è¿”å›ç±»å‹*/
 enum ReturnType {
 	RETINT,
 	RETCHAR,
 	RETVOID
 };
 
-/*ÔÚ±äÁ¿Îªº¯ÊıÊ±µÄ¸½¼ÓÓò*/
+/*åœ¨å˜é‡ä¸ºå‡½æ•°æ—¶çš„é™„åŠ åŸŸ*/
 struct FunctionLink {
 	ReturnType returnType;
 	int paraNum;
@@ -29,20 +29,20 @@ struct FunctionLink {
 	friend ostream& operator<<(ostream& stream,FunctionLink f);
 };
 
-/*·ûºÅ±íÏî*/
+/*ç¬¦å·è¡¨é¡¹*/
 struct SymbolEntry {
-	string name;//»á×Ô¶¯ÉèÖÃ
-	int id;//»á×Ô¶¯ÉèÖÃ
+	string name;//ä¼šè‡ªåŠ¨è®¾ç½®
+	int id;//ä¼šè‡ªåŠ¨è®¾ç½®
 	SymbolType type;
-	string scope;//»á×Ô¶¯ÉèÖÃ
+	string scope;//ä¼šè‡ªåŠ¨è®¾ç½®
 	int initValue;
 	unsigned int addr;
 	int dimension=0;
-	FunctionLink* link=NULL;//»á×Ô¶¯ÉèÖÃ
+	FunctionLink* link=NULL;//ä¼šè‡ªåŠ¨è®¾ç½®
 	friend ostream& operator<<(ostream& stream,SymbolEntry s);
 };
 
-/*×Ó·ûºÅ±í£¬ÊÇÎªÃ¿¸ö×÷ÓÃÓòËù½¨Á¢µÄ·ûºÅ±í£¬ËùÓĞµÄ·ûºÅ±íÏîÒÀ¿¿¶¯Ì¬·ÖÅä*/
+/*å­ç¬¦å·è¡¨ï¼Œæ˜¯ä¸ºæ¯ä¸ªä½œç”¨åŸŸæ‰€å»ºç«‹çš„ç¬¦å·è¡¨ï¼Œæ‰€æœ‰çš„ç¬¦å·è¡¨é¡¹ä¾é åŠ¨æ€åˆ†é…*/
 class SubSymbolTable {
 public:
 	SubSymbolTable(string _nameScope);
