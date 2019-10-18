@@ -36,7 +36,7 @@ public:
 	/*参数表，会抛出异常*/
 	void parameterList(SymbolEntry* entry);
 	/*复合语句*/
-	bool compoundSentence();
+	void compoundSentence();
 
 	/*因子，会抛出异常*/
 	void factor();
@@ -57,12 +57,12 @@ public:
 	void printSentence();
 	void returnSentence();
 
-	bool ifSentence();
+	void ifSentence();
 	void condition();
 	void loopSentence();
 	/*会在此处理各种语句抛出的异常*/
-	bool sentence();
-	bool sentenceSeries();
+	void sentence();
+	void sentenceSeries();
 
 	void programme();
 private:

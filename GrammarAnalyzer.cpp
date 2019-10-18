@@ -354,13 +354,8 @@ void GrammarAnalyzer::nonVoidFunctionDefination() {
 		//左大括号完成
 
 		currentScope = functionName;//变更当前作用域
-		bool returned=compoundSentence();//复合语句
+		compoundSentence();//复合语句
 		currentScope = "";//作用域变回来
-
-		if (!returned) {
-			f.handleCourseFault(lex.lineNumber(), ILLEGALRETURNINNONVOID);
-			f.handleFault(lex.lineNumber(), "存在路径无返回值");
-		}
 
 		if (lex.sym().type != RBRACE) {
 			f.handleFault(lex.lineNumber(), "缺少}");
@@ -419,12 +414,8 @@ void GrammarAnalyzer::nonVoidFunctionDefination(Lexical retType,string functionN
 		//读取左大括号完成
 
 		currentScope = functionName;//作用域变过来
-		bool returned=compoundSentence();//复合语句
+		compoundSentence();//复合语句
 		currentScope = "";//作用域变回去
-		if (!returned) {
-			f.handleCourseFault(lex.lineNumber(), ILLEGALRETURNINNONVOID);
-			f.handleFault(lex.lineNumber(), "存在路径无返回值");
-		}
 		if (lex.sym().type != RBRACE) {//右大括号
 			f.handleFault(lex.lineNumber(), "缺少{");
 			// TODO HANDLEFAULT
@@ -712,12 +703,11 @@ void GrammarAnalyzer::parameterList(SymbolEntry* entry) {
 }
 
 /*<复合语句>*/
-bool GrammarAnalyzer::compoundSentence(){
+ void GrammarAnalyzer::compoundSentence(){
 	constDeclearation();
 	variableDeclearation();
-	bool res=sentenceSeries();
+	sentenceSeries();
 	if (course) { out << "<复合语句>" << endl; }
-	return res;
 }
 
 /*<因子>*/
@@ -1138,8 +1128,7 @@ void GrammarAnalyzer::returnSentence() {
 	if (course) { out << "<返回语句>" << endl; }
 }
 
-bool GrammarAnalyzer::ifSentence() {
-	bool res1 = false , res2 = false;
+void GrammarAnalyzer::ifSentence() {
 	if (lex.sym().type != IFTK) {
 		f.handleFault(lex.lineNumber(), "缺少if标识符");
 		throw 0;
@@ -1166,16 +1155,15 @@ bool GrammarAnalyzer::ifSentence() {
 	}
 	//读取右括号
 
-	res1=sentence();
+	sentence();
 	//语句
 	if (lex.sym().type == ELSETK) {
 		getNextSym();
 		//读取else完成
-		res2=sentence();
+		sentence();
 		//读取语句
 	}
 	if (course) { out << "<条件语句>" << endl; }
-	return res1 && res2;
 }
 
 void GrammarAnalyzer::condition() {
@@ -1389,11 +1377,10 @@ void GrammarAnalyzer::loopSentence() {
 	if (course) { out << "<循环语句>" << endl; }
 }
 
-bool GrammarAnalyzer::sentence() {
-	bool res = false;
+void GrammarAnalyzer::sentence() {
 	try {
 		if (lex.sym().type == IFTK) {
-			res=ifSentence();
+			ifSentence();
 		}
 		else if (lex.sym().type == WHILETK || lex.sym().type == DOTK ||
 			lex.sym().type == FORTK) {
@@ -1402,7 +1389,7 @@ bool GrammarAnalyzer::sentence() {
 		else if (lex.sym().type == LBRACE) {
 			getNextSym();
 			//读取左大括号完成
-			res=sentenceSeries();
+			sentenceSeries();
 			if (lex.sym().type != RBRACE) {
 				f.handleFault(lex.lineNumber(), "缺少}");
 				f.terminate();
@@ -1422,7 +1409,6 @@ bool GrammarAnalyzer::sentence() {
 			}
 			else if (lex.sym().type == RETURNTK) {
 				returnSentence();
-				res = true;
 			}
 			else if (lex.sym().type != SEMICN) {
 				f.handleFault(lex.lineNumber(), "非法的语句开头");
@@ -1442,11 +1428,9 @@ bool GrammarAnalyzer::sentence() {
 		getNextSym();
 	}
 	if (course) { out << "<语句>" << endl; }
-	return res;
 }
 
-bool GrammarAnalyzer::sentenceSeries() {
-	bool res = false;
+void GrammarAnalyzer::sentenceSeries() {
 	while (1) {
 		if (lex.sym().type == IFTK ||
 			lex.sym().type == WHILETK || lex.sym().type == DOTK || lex.sym().type == FORTK||
@@ -1456,15 +1440,13 @@ bool GrammarAnalyzer::sentenceSeries() {
 			lex.sym().type == SCANFTK ||
 			lex.sym().type == RETURNTK ||
 			lex.sym().type == SEMICN) {
-			bool tmp=sentence();
-			res = res || tmp;
+			sentence();
 		}
 		else {
 			break;
 		}
 	}
 	if (course) { out << "<语句列>" << endl; }
-	return res;
 }
 
 void GrammarAnalyzer::programme() {
