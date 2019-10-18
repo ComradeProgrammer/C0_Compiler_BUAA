@@ -2,220 +2,69 @@ CONSTTK const
 INTTK int
 IDENFR const1
 ASSIGN =
-INTCON 1
-<无符号整数>
-<整数>
-COMMA ,
-IDENFR const2
-ASSIGN =
-MINU -
-INTCON 100
+INTCON 0
 <无符号整数>
 <整数>
 <常量定义>
 SEMICN ;
 <常量说明>
 INTTK int
-IDENFR change1
+IDENFR a
+COMMA ,
+IDENFR b
+COMMA ,
+IDENFR c
 <变量定义>
 SEMICN ;
 CHARTK char
-IDENFR change3
+IDENFR d
+COMMA ,
+IDENFR e
+COMMA ,
+IDENFR f
+LBRACK [
+INTCON 1000
+<无符号整数>
+RBRACK ]
 <变量定义>
 SEMICN ;
 <变量说明>
-INTTK int
-IDENFR gets1
+CHARTK char
+IDENFR fuck2
 <声明头部>
 LPARENT (
-INTTK int
-IDENFR var1
-COMMA ,
-INTTK int
-IDENFR var2
 <参数表>
 RPARENT )
 LBRACE {
-IFTK if
-LPARENT (
-IDENFR change1
-<因子>
-<项>
-<表达式>
-EQL ==
-INTCON 1
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-<条件>
-RPARENT )
-LBRACE {
 RETURNTK return
 LPARENT (
-INTCON 0
-<无符号整数>
-<整数>
+CHARCON d
 <因子>
 <项>
 <表达式>
 RPARENT )
 <返回语句>
 SEMICN ;
-<语句>
-<语句列>
-RBRACE }
-<语句>
-ELSETK else
-LBRACE {
-IFTK if
-LPARENT (
-IDENFR change1
-<因子>
-<项>
-<表达式>
-EQL ==
-INTCON 2
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-<条件>
-RPARENT )
-LBRACE {
-RETURNTK return
-LPARENT (
-INTCON 0
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-RPARENT )
-<返回语句>
-SEMICN ;
-<语句>
-<语句列>
-RBRACE }
-<语句>
-ELSETK else
-IFTK if
-LPARENT (
-IDENFR change1
-<因子>
-<项>
-<表达式>
-EQL ==
-INTCON 3
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-<条件>
-RPARENT )
-LBRACE {
-RETURNTK return
-LPARENT (
-INTCON 0
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-RPARENT )
-<返回语句>
-SEMICN ;
-<语句>
-<语句列>
-RBRACE }
-<语句>
-<条件语句>
-<语句>
-<条件语句>
-<语句>
-<语句列>
-RBRACE }
-<语句>
-<条件语句>
-<语句>
-IFTK if
-LPARENT (
-INTCON 0
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-<条件>
-RPARENT )
-LBRACE {
-RETURNTK return
-LPARENT (
-INTCON 0
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-RPARENT )
-<返回语句>
-SEMICN ;
-<语句>
-<语句列>
-RBRACE }
-<语句>
-ELSETK else
-LBRACE {
-RETURNTK return
-LPARENT (
-INTCON 0
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-RPARENT )
-<返回语句>
-SEMICN ;
-<语句>
-<语句列>
-RBRACE }
-<语句>
-<条件语句>
 <语句>
 <语句列>
 <复合语句>
 RBRACE }
 <有返回值函数定义>
 INTTK int
-IDENFR gets2
+IDENFR fuck
 <声明头部>
 LPARENT (
+INTTK int
+IDENFR p1
+COMMA ,
+CHARTK char
+IDENFR p2
 <参数表>
 RPARENT )
 LBRACE {
-IFTK if
-LPARENT (
-IDENFR change1
-<因子>
-<项>
-<表达式>
-EQL ==
-INTCON 1
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-<条件>
-RPARENT )
-LBRACE {
 RETURNTK return
 LPARENT (
-INTCON 0
+INTCON 416564546
 <无符号整数>
 <整数>
 <因子>
@@ -224,128 +73,6 @@ INTCON 0
 RPARENT )
 <返回语句>
 SEMICN ;
-<语句>
-<语句列>
-RBRACE }
-<语句>
-ELSETK else
-LBRACE {
-IFTK if
-LPARENT (
-IDENFR change1
-<因子>
-<项>
-<表达式>
-EQL ==
-INTCON 2
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-<条件>
-RPARENT )
-LBRACE {
-RETURNTK return
-LPARENT (
-INTCON 0
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-RPARENT )
-<返回语句>
-SEMICN ;
-<语句>
-<语句列>
-RBRACE }
-<语句>
-ELSETK else
-IFTK if
-LPARENT (
-IDENFR change1
-<因子>
-<项>
-<表达式>
-EQL ==
-INTCON 3
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-<条件>
-RPARENT )
-LBRACE {
-RETURNTK return
-LPARENT (
-INTCON 0
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-RPARENT )
-<返回语句>
-SEMICN ;
-<语句>
-<语句列>
-RBRACE }
-<语句>
-<条件语句>
-<语句>
-<条件语句>
-<语句>
-<语句列>
-RBRACE }
-<语句>
-<条件语句>
-<语句>
-IFTK if
-LPARENT (
-INTCON 0
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-<条件>
-RPARENT )
-LBRACE {
-RETURNTK return
-LPARENT (
-INTCON 0
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-RPARENT )
-<返回语句>
-SEMICN ;
-<语句>
-<语句列>
-RBRACE }
-<语句>
-ELSETK else
-LBRACE {
-RETURNTK return
-LPARENT (
-INTCON 0
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-RPARENT )
-<返回语句>
-SEMICN ;
-<语句>
-<语句列>
-RBRACE }
-<语句>
-<条件语句>
 <语句>
 <语句列>
 <复合语句>
@@ -356,6 +83,22 @@ MAINTK main
 LPARENT (
 RPARENT )
 LBRACE {
+IDENFR fuck
+LPARENT (
+CHARCON d
+<因子>
+<项>
+<表达式>
+COMMA ,
+IDENFR d
+<因子>
+<项>
+<表达式>
+<值参数表>
+RPARENT )
+<有返回值函数调用语句>
+SEMICN ;
+<语句>
 <语句列>
 <复合语句>
 RBRACE }

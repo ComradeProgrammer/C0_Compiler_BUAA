@@ -308,6 +308,7 @@ void GrammarAnalyzer::variableDefination(bool wraper,Lexical type,string name) {
 
 /*<有返回值函数定义>,供非变量声明区的有返回值函数声明*/
 void GrammarAnalyzer::nonVoidFunctionDefination() {
+	hasReturned = false;
 	try {
 		Lexical retType;
 		string functionName;
@@ -356,11 +357,14 @@ void GrammarAnalyzer::nonVoidFunctionDefination() {
 		currentScope = functionName;//变更当前作用域
 		compoundSentence();//复合语句
 		currentScope = "";//作用域变回来
+		if (!hasReturned) {
+			f.handleCourseFault(lex.lineNumber(), ILLEGALRETURNINNONVOID);
+			f.handleFault(lex.lineNumber(), "有返回值函数缺少返回语句");
+		}
 
 		if (lex.sym().type != RBRACE) {
 			f.handleFault(lex.lineNumber(), "缺少}");
-			// TODO HANDLEFAULT
-			f.terminate();
+			throw 0;
 		}
 		getNextSym();
 		//获取右大括号
@@ -373,6 +377,7 @@ void GrammarAnalyzer::nonVoidFunctionDefination() {
 }
 /*有返回值函数定义，供包装器调用使用，不会抛出异常*/
 void GrammarAnalyzer::nonVoidFunctionDefination(Lexical retType,string functionName) {
+	hasReturned = false;
 	try {
 		if (lex.sym().type != LPARENT) {//参数表的左括号
 			f.handleFault(lex.lineNumber(), "缺少参数表");
@@ -416,6 +421,10 @@ void GrammarAnalyzer::nonVoidFunctionDefination(Lexical retType,string functionN
 		currentScope = functionName;//作用域变过来
 		compoundSentence();//复合语句
 		currentScope = "";//作用域变回去
+		if (!hasReturned) {
+			f.handleCourseFault(lex.lineNumber(), ILLEGALRETURNINNONVOID);
+			f.handleFault(lex.lineNumber(), "有返回值函数缺少返回语句");
+		}
 		if (lex.sym().type != RBRACE) {//右大括号
 			f.handleFault(lex.lineNumber(), "缺少{");
 			// TODO HANDLEFAULT
@@ -435,6 +444,7 @@ void GrammarAnalyzer::nonVoidFunctionDefination(Lexical retType,string functionN
 
 /*无返回值定义，不会抛出异常*/
 void GrammarAnalyzer::voidFunctionDefination() {
+	hasReturned = false;
 	try {
 		//这个地方没有void符号因为已经被programme预读掉了
 		if (lex.sym().type != IDENFR) {
@@ -502,6 +512,7 @@ void GrammarAnalyzer::voidFunctionDefination() {
 
 /*<主函数>，不会抛出异常*/
 void GrammarAnalyzer::mainFunctionDefination() {
+	hasReturned = false;
 	try {
 		//这个地方没有void符号因为已经被programme预读掉了
 		if (lex.sym().type != MAINTK) {
@@ -711,8 +722,9 @@ void GrammarAnalyzer::parameterList(SymbolEntry* entry) {
 }
 
 /*<因子>*/
-void GrammarAnalyzer::factor() {
+ReturnBundle GrammarAnalyzer::factor() {
 	bool error = false;
+	ReturnBundle res;
 	if (lex.sym().type == IDENFR) {//标识符，标识符数组，有返回值函数调用语句
 		string varname = lex.sym().str;
 		getNextSym();
@@ -735,7 +747,10 @@ void GrammarAnalyzer::factor() {
 			getNextSym();
 			//完成读取中括号
 			try {
-				expression();
+				ReturnBundle res=expression();
+				if (res.isChar) {
+					throw 0;
+				}
 			}
 			catch (int e) {
 				f.handleCourseFault(lex.lineNumber(), ILLEGALINDEX);
@@ -752,12 +767,17 @@ void GrammarAnalyzer::factor() {
 				getNextSym();
 			}
 			//完成读取右括号
+			if (entry->type == TYPECHARARRAY) {
+				res.isChar = true;
+			}
 		}
 		else if (lex.sym().type == LPARENT) {//有返回值函数
-			functionCall(varname,true);
+			res=functionCall(varname,true);
 		}
 		else {//标识符
-			//此处应有中间代码生成？
+			if (entry->type == TYPECHAR || entry->type == TYPECHARCONST) {
+				res.isChar = true;
+			}
 		}
 	}
 	else if (lex.sym().type == LPARENT) {//（<表达式>）
@@ -782,6 +802,7 @@ void GrammarAnalyzer::factor() {
 	else if (lex.sym().type == CHARCON) {
 		char c = (char)(lex.sym().value);
 		getNextSym();
+		res.isChar = true;
 		//完成读取字符
 	}
 	else {
@@ -789,35 +810,44 @@ void GrammarAnalyzer::factor() {
 		throw 0;
 	}
 	if (course) { out << "<因子>" << endl; }
+	return res;
 }
 
 /*<项>*/
-void GrammarAnalyzer::term() {
-	factor();
+ReturnBundle GrammarAnalyzer::term() {
+	ReturnBundle res;
+	ReturnBundle res1=factor();
+	res.isChar = res1.isChar;
 	while (1) {
 		if (lex.sym().type != MULT && lex.sym().type != DIV) {
 			break;
 		}
+		res.isChar = false;
 		Lexical op = lex.sym().type;
 		getNextSym();
 		//读取完运算符号
-		factor();
+		ReturnBundle res2=factor();
 	}
 	if (course) { out << "<项>" << endl; }
+	return res;
 }
 
 /*<表达式>*/
-void GrammarAnalyzer::expression() {
+ReturnBundle GrammarAnalyzer::expression() {
+	ReturnBundle res;
 	int sign = 1;
+	bool calculated = false;
 	if (lex.sym().type == PLUS || lex.sym().type == MINU) {
 		if (lex.sym().type == MINU) {
 			sign = -1;
 		}
 		getNextSym();
+		calculated = true;
 	}
 	//读取开头的加减号完成
 
-	term();
+	ReturnBundle res1= term();
+	res.isChar = res1.isChar;
 	//读取第一项
 	while (1) {
 		if (lex.sym().type != PLUS && lex.sym().type != MINU) {
@@ -826,9 +856,12 @@ void GrammarAnalyzer::expression() {
 		Lexical op = lex.sym().type;
 		getNextSym();
 		//读取运算符号完成
-		term();
+		ReturnBundle res2=term();
+		calculated = true;
 	}
+	res.isChar = res.isChar&&!calculated;
 	if (course) { out << "<表达式>" << endl; }
+	return res;
 }
 
 /*针对赋值语句和函数调用语句的预读分支*/
@@ -849,13 +882,13 @@ void GrammarAnalyzer::assignAndCall() {
 		functionCall(name,false);
 	}
 	else {
-		f.handleFault(lex.lineNumber(), "无意义的符号");
+		f.handleFault(lex.lineNumber(), "assignAndCall无意义的符号");
 		throw 0;
 	}
 }
 /*<赋值语句>，已经过预读*/
 void GrammarAnalyzer::assignSentence(string varname) {
-	bool error = false;
+	bool error = false,leftIsChar=false;
 	SymbolEntry* entry = table.getSymbolByName(currentScope, varname);
 	if (entry == NULL) {
 		f.handleCourseFault(lex.lineNumber(), UNDEFINED);
@@ -881,7 +914,10 @@ void GrammarAnalyzer::assignSentence(string varname) {
 		getNextSym();
 		//读取完了左括号
 		try {
-			expression();
+			ReturnBundle res = expression();
+			if (res.isChar) {
+				throw 0;
+			}
 		}
 		catch (int e) {
 			f.handleCourseFault(lex.lineNumber(), ILLEGALINDEX);
@@ -898,6 +934,9 @@ void GrammarAnalyzer::assignSentence(string varname) {
 		}
 		//完成读取右括号
 	}
+	if (!error&&(entry->type == TYPECHARARRAY || entry->type == TYPECHAR)) {
+		leftIsChar = true;
+	}
 	if (lex.sym().type != ASSIGN) {//读取赋值运算符
 		f.handleFault(lex.lineNumber(), "需要=");
 		throw 0;
@@ -906,15 +945,18 @@ void GrammarAnalyzer::assignSentence(string varname) {
 		getNextSym();
 	}
 	//完成读取赋值运算符
-	expression();
+	ReturnBundle res=expression();
 	//读取所赋的表达式
+	if (res.isChar != leftIsChar) {
+		f.handleFault(lex.lineNumber(), "赋值语句中类型错误");
+	}
 	if (course) { out << "<赋值语句>"<<endl; }
 }
 
 /*函数调用，若mustReturn是真意味着必须有返回值，否则有无返回值皆可，已被预读符号*/
-void GrammarAnalyzer::functionCall(string name,bool mustReturn) {
+ReturnBundle GrammarAnalyzer::functionCall(string name,bool mustReturn) {
 	bool error = false;
-
+	ReturnBundle res;
 	SymbolEntry* entry = table.getSymbolByName(currentScope, name);
 	if (entry == NULL) {//检查是否已定义
 		f.handleCourseFault(lex.lineNumber(), UNDEFINED);
@@ -933,7 +975,9 @@ void GrammarAnalyzer::functionCall(string name,bool mustReturn) {
 		f.handleFault(lex.lineNumber(), "不是有返回值函数");
 		error = true;
 	}
-
+	if (!error && entry->link->returnType == RETCHAR) {
+		res.isChar = true;
+	}
 	if (lex.sym().type != LPARENT) {//读取（
 		f.handleFault(lex.lineNumber(), "缺少(");
 		throw 0;
@@ -962,6 +1006,7 @@ void GrammarAnalyzer::functionCall(string name,bool mustReturn) {
 			out << "<有返回值函数调用语句>" << endl;
 		}
 	}
+	return res;
 }
 
 /*<值参数表>*/
@@ -988,8 +1033,19 @@ void GrammarAnalyzer::parameterValueList(SymbolEntry* entry) {
 		else {
 			init = false;
 		}
-		expression();
+
+		ReturnBundle res1=expression();
 		//读取实参的表达式
+		bool leftIsChar=false;
+		if (paraNum < entry->link->paraNum) {
+			if (entry->link->paras[paraNum] == TYPECHAR) {
+				leftIsChar = true;
+			}
+			if (leftIsChar != res1.isChar) {
+				f.handleCourseFault(lex.lineNumber(), PARATYPEERROR);
+				f.handleFault(lex.lineNumber(), "实参类型不正确");
+			}
+		}
 		paraNum++;
 	}
 	if (!error&&entry->link->paraNum != paraNum) {
@@ -1106,6 +1162,8 @@ void GrammarAnalyzer::printSentence() {
 }
 
 void GrammarAnalyzer::returnSentence() {
+	bool hasValue = false;
+	ReturnBundle res;
 	if (lex.sym().type != RETURNTK) {
 		f.handleFault(lex.lineNumber(), "缺少RETURN标识符");
 		throw 0;
@@ -1113,9 +1171,10 @@ void GrammarAnalyzer::returnSentence() {
 	getNextSym();
 	//读取return标识符
 	if (lex.sym().type == LPARENT) {
+		hasValue = true;
 		getNextSym();
 		//完成读取左括号
-		expression();
+		 res=expression();
 		if (lex.sym().type != RPARENT) {
 			f.handleCourseFault(lex.lineNumber(), NORPARENT);
 			f.handleFault(lex.lineNumber(), "缺少)");
@@ -1125,6 +1184,20 @@ void GrammarAnalyzer::returnSentence() {
 		}
 		//完成读取右括号
 	}
+	SymbolEntry* entry = table.getSymbolByName("",currentScope);
+	if (entry->link->returnType == RETVOID && hasValue) {
+		f.handleCourseFault(lex.lineNumber(), ILLEGALRETURNINVOID);
+		f.handleFault(lex.lineNumber(), "无返回值函数里有含值的返回语句");
+	}
+	else if (entry->link->returnType == RETINT && res.isChar) {
+		f.handleCourseFault(lex.lineNumber(), ILLEGALRETURNINNONVOID);
+		f.handleFault(lex.lineNumber(), "有返回值函数里类型不正确");
+	}
+	else if(entry->link->returnType==RETCHAR&&!res.isChar) {
+		f.handleCourseFault(lex.lineNumber(), ILLEGALRETURNINNONVOID);
+		f.handleFault(lex.lineNumber(), "有返回值函数里类型不正确");
+	}
+	hasReturned = true;
 	if (course) { out << "<返回语句>" << endl; }
 }
 
@@ -1167,14 +1240,22 @@ void GrammarAnalyzer::ifSentence() {
 }
 
 void GrammarAnalyzer::condition() {
-	expression();
+	ReturnBundle res1=expression();
+	if (res1.isChar) {
+		f.handleCourseFault(lex.lineNumber(), ILLEGALTYPEINCONDITION);
+		f.handleFault(lex.lineNumber(), "条件中必须使用整型");
+	}
 	//表达式
 	if (lex.sym().type == LSS || lex.sym().type == LEQ
 		|| lex.sym().type == GRE || lex.sym().type == GEQ
 		|| lex.sym().type == EQL || lex.sym().type == NEQ) {
 		getNextSym();
 		//读取关系运算符完成
-		expression();
+		ReturnBundle res2=expression();
+		if (res2.isChar) {
+			f.handleCourseFault(lex.lineNumber(), ILLEGALTYPEINCONDITION);
+			f.handleFault(lex.lineNumber(), "条件中必须使用整型");
+		}
 	}
 	if (course) { out << "<条件>" << endl; }
 }
@@ -1333,11 +1414,8 @@ void GrammarAnalyzer::loopSentence() {
 			f.handleFault(lex.lineNumber(), "未定义的标识符" + varname3);
 			error = true;
 		}
-		if (!error && (entry3->type == TYPEINTCONST || entry3->type == TYPECHARCONST)) {
-			f.handleCourseFault(lex.lineNumber(), MODIFYCONST);
-			f.handleFault(lex.lineNumber(), "不能改变常量的值");
-		}
-		else if (!(entry3 == NULL) && entry3->type != TYPEINT && entry3->type != TYPECHAR) {
+		 if (!(entry3 == NULL) && entry3->type != TYPEINT && entry3->type != TYPECHAR
+			 &&entry3->type!=TYPEINTCONST&&entry3->type!=TYPECHARCONST) {
 			//f.handleCourseFault(lex.lineNumber(), TYPEERROR);
 			f.handleFault(lex.lineNumber(), "不合法的变量类型");
 			error = true;
@@ -1481,15 +1559,19 @@ void GrammarAnalyzer::programme() {
 				}
 				else {
 					// todo handle fault
-					f.handleFault(lex.lineNumber(), "非法");
+					f.handleFault(lex.lineNumber(), "programme:void后非法字符");
 					f.terminate();
 				}
 			}
 			else if (lex.sym().type == CHARTK || lex.sym().type == INTTK) {
 				nonVoidFunctionDefination();
 			}
-			else {
+			else if (lex.sym().type == END) {
 				break;
+			}
+			else{
+				f.handleFault(lex.lineNumber(), "程序开头非法字符");
+				f.terminate();
 			}
 		}
 	}

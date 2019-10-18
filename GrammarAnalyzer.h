@@ -4,6 +4,9 @@
 #include"LexicalAnalyzer.h"
 #include"SymbolTable.h"
 using namespace std;
+struct ReturnBundle {
+	bool isChar=false;
+};
 class GrammarAnalyzer {
 public:
 	GrammarAnalyzer(FaultHandler& f,SymbolTable& s,LexicalAnalyzer& l,string file);
@@ -39,17 +42,17 @@ public:
 	void compoundSentence();
 
 	/*因子，会抛出异常*/
-	void factor();
+	ReturnBundle factor();
 	/*项，会让异常上溢*/
-	void term();
+	ReturnBundle term();
 	/*表达式，会让异常上溢*/
-	void expression();
+	ReturnBundle expression();
 	/*针对赋值语句和函数调用语句的预读分支，会让异常上溢*/
 	void assignAndCall();
 	/*赋值语句，会抛出异常*/
 	void assignSentence(string varname);//预读了名称
 	/*函数调用语句，会抛出异常*/
-	void functionCall(string name, bool mustReturn);//这个函数应该带走两括号
+	ReturnBundle functionCall(string name, bool mustReturn);//这个函数应该带走两括号
 	/*值参数表，会抛出异常*/
 	void parameterValueList(SymbolEntry* entry);
 	/*会抛出异常*/
@@ -66,14 +69,16 @@ public:
 
 	void programme();
 private:
+	void toNextSemicon();
+	void toNextBrace();
+
 	FaultHandler& f;
 	SymbolTable& table;
 	LexicalAnalyzer& lex;
 	bool course=false;
 	fstream out;
 	string currentScope ;
-	void toNextSemicon();
-	void toNextBrace();
 	bool globalVariableDeclearation = false;
 	bool lexicalTest = false;
+	bool hasReturned;
 };
