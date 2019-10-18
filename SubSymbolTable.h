@@ -25,6 +25,7 @@ struct FunctionLink {
 	ReturnType returnType;
 	int paraNum;
 	vector<SymbolType>paras;
+	vector<int>paraIds;
 	int tmpVarSize;
 	friend ostream& operator<<(ostream& stream,FunctionLink f);
 };

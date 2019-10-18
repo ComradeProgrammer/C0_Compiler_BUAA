@@ -7,7 +7,7 @@ FaultHandler::FaultHandler(string filename) {
 	messages[REDEFINED] = "redefined symbol";
 	messages[UNDEFINED] = "undifined symbol";
 	messages[PARANUMERROR] = "number of parameters does not match";
-	messages[TYPEERROR] = "type does not match";
+	messages[PARATYPEERROR] = "type does not match";
 	messages[NOSEMICN] = " ; required";
 	messages[NORPARENT] = ") required";
 	messages[NORBRACK] = "] required";

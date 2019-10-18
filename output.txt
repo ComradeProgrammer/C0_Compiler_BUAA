@@ -3,115 +3,361 @@ INTTK int
 IDENFR const1
 ASSIGN =
 INTCON 1
-<æ— ç¬¦å·æ•´æ•°>
-<æ•´æ•°>
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
 COMMA ,
 IDENFR const2
 ASSIGN =
 MINU -
 INTCON 100
-<æ— ç¬¦å·æ•´æ•°>
-<æ•´æ•°>
-<å¸¸é‡å®šä¹‰>
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<³£Á¿¶¨Òå>
 SEMICN ;
-CONSTTK const
-CHARTK char
-IDENFR const3
-ASSIGN =
-CHARCON _
-<å¸¸é‡å®šä¹‰>
-SEMICN ;
-<å¸¸é‡è¯´æ˜Ž>
+<³£Á¿ËµÃ÷>
 INTTK int
 IDENFR change1
-<å˜é‡å®šä¹‰>
+<±äÁ¿¶¨Òå>
 SEMICN ;
 CHARTK char
 IDENFR change3
-<å˜é‡å®šä¹‰>
+<±äÁ¿¶¨Òå>
 SEMICN ;
-<å˜é‡è¯´æ˜Ž>
+<±äÁ¿ËµÃ÷>
 INTTK int
 IDENFR gets1
-<å£°æ˜Žå¤´éƒ¨>
+<ÉùÃ÷Í·²¿>
 LPARENT (
 INTTK int
 IDENFR var1
 COMMA ,
 INTTK int
 IDENFR var2
-<å‚æ•°è¡¨>
+<²ÎÊý±í>
 RPARENT )
 LBRACE {
-IDENFR change1
-ASSIGN =
-IDENFR var1
-<å› å­>
-<é¡¹>
-PLUS +
-IDENFR var2
-<å› å­>
-<é¡¹>
-<è¡¨è¾¾å¼>
-<èµ‹å€¼è¯­å¥>
-SEMICN ;
-<è¯­å¥>
-RETURNTK return
+IFTK if
 LPARENT (
 IDENFR change1
-<å› å­>
-<é¡¹>
-<è¡¨è¾¾å¼>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+EQL ==
+INTCON 1
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+<Ìõ¼þ>
 RPARENT )
-<è¿”å›žè¯­å¥>
+LBRACE {
+RETURNTK return
+LPARENT (
+INTCON 0
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+RPARENT )
+<·µ»ØÓï¾ä>
 SEMICN ;
-<è¯­å¥>
-<è¯­å¥åˆ—>
-<å¤åˆè¯­å¥>
+<Óï¾ä>
+<Óï¾äÁÐ>
 RBRACE }
-<æœ‰è¿”å›žå€¼å‡½æ•°å®šä¹‰>
+<Óï¾ä>
+ELSETK else
+LBRACE {
+IFTK if
+LPARENT (
+IDENFR change1
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+EQL ==
+INTCON 2
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+<Ìõ¼þ>
+RPARENT )
+LBRACE {
+RETURNTK return
+LPARENT (
+INTCON 0
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+RPARENT )
+<·µ»ØÓï¾ä>
+SEMICN ;
+<Óï¾ä>
+<Óï¾äÁÐ>
+RBRACE }
+<Óï¾ä>
+ELSETK else
+IFTK if
+LPARENT (
+IDENFR change1
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+EQL ==
+INTCON 3
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+<Ìõ¼þ>
+RPARENT )
+LBRACE {
+RETURNTK return
+LPARENT (
+INTCON 0
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+RPARENT )
+<·µ»ØÓï¾ä>
+SEMICN ;
+<Óï¾ä>
+<Óï¾äÁÐ>
+RBRACE }
+<Óï¾ä>
+<Ìõ¼þÓï¾ä>
+<Óï¾ä>
+<Ìõ¼þÓï¾ä>
+<Óï¾ä>
+<Óï¾äÁÐ>
+RBRACE }
+<Óï¾ä>
+<Ìõ¼þÓï¾ä>
+<Óï¾ä>
+IFTK if
+LPARENT (
+INTCON 0
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+<Ìõ¼þ>
+RPARENT )
+LBRACE {
+RETURNTK return
+LPARENT (
+INTCON 0
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+RPARENT )
+<·µ»ØÓï¾ä>
+SEMICN ;
+<Óï¾ä>
+<Óï¾äÁÐ>
+RBRACE }
+<Óï¾ä>
+ELSETK else
+LBRACE {
+RETURNTK return
+LPARENT (
+INTCON 0
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+RPARENT )
+<·µ»ØÓï¾ä>
+SEMICN ;
+<Óï¾ä>
+<Óï¾äÁÐ>
+RBRACE }
+<Óï¾ä>
+<Ìõ¼þÓï¾ä>
+<Óï¾ä>
+<Óï¾äÁÐ>
+<¸´ºÏÓï¾ä>
+RBRACE }
+<ÓÐ·µ»ØÖµº¯Êý¶¨Òå>
+INTTK int
+IDENFR gets2
+<ÉùÃ÷Í·²¿>
+LPARENT (
+<²ÎÊý±í>
+RPARENT )
+LBRACE {
+IFTK if
+LPARENT (
+IDENFR change1
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+EQL ==
+INTCON 1
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+<Ìõ¼þ>
+RPARENT )
+LBRACE {
+RETURNTK return
+LPARENT (
+INTCON 0
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+RPARENT )
+<·µ»ØÓï¾ä>
+SEMICN ;
+<Óï¾ä>
+<Óï¾äÁÐ>
+RBRACE }
+<Óï¾ä>
+ELSETK else
+LBRACE {
+IFTK if
+LPARENT (
+IDENFR change1
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+EQL ==
+INTCON 2
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+<Ìõ¼þ>
+RPARENT )
+LBRACE {
+RETURNTK return
+LPARENT (
+INTCON 0
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+RPARENT )
+<·µ»ØÓï¾ä>
+SEMICN ;
+<Óï¾ä>
+<Óï¾äÁÐ>
+RBRACE }
+<Óï¾ä>
+ELSETK else
+IFTK if
+LPARENT (
+IDENFR change1
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+EQL ==
+INTCON 3
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+<Ìõ¼þ>
+RPARENT )
+LBRACE {
+RETURNTK return
+LPARENT (
+INTCON 0
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+RPARENT )
+<·µ»ØÓï¾ä>
+SEMICN ;
+<Óï¾ä>
+<Óï¾äÁÐ>
+RBRACE }
+<Óï¾ä>
+<Ìõ¼þÓï¾ä>
+<Óï¾ä>
+<Ìõ¼þÓï¾ä>
+<Óï¾ä>
+<Óï¾äÁÐ>
+RBRACE }
+<Óï¾ä>
+<Ìõ¼þÓï¾ä>
+<Óï¾ä>
+IFTK if
+LPARENT (
+INTCON 0
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+<Ìõ¼þ>
+RPARENT )
+LBRACE {
+RETURNTK return
+LPARENT (
+INTCON 0
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+RPARENT )
+<·µ»ØÓï¾ä>
+SEMICN ;
+<Óï¾ä>
+<Óï¾äÁÐ>
+RBRACE }
+<Óï¾ä>
+ELSETK else
+LBRACE {
+RETURNTK return
+LPARENT (
+INTCON 0
+<ÎÞ·ûºÅÕûÊý>
+<ÕûÊý>
+<Òò×Ó>
+<Ïî>
+<±í´ïÊ½>
+RPARENT )
+<·µ»ØÓï¾ä>
+SEMICN ;
+<Óï¾ä>
+<Óï¾äÁÐ>
+RBRACE }
+<Óï¾ä>
+<Ìõ¼þÓï¾ä>
+<Óï¾ä>
+<Óï¾äÁÐ>
+<¸´ºÏÓï¾ä>
+RBRACE }
+<ÓÐ·µ»ØÖµº¯Êý¶¨Òå>
 VOIDTK void
 MAINTK main
 LPARENT (
 RPARENT )
 LBRACE {
-PRINTFTK printf
-LPARENT (
-STRCON Hello World
-<å­—ç¬¦ä¸²>
-RPARENT )
-<å†™è¯­å¥>
-SEMICN ;
-<è¯­å¥>
-PRINTFTK printf
-LPARENT (
-IDENFR gets1
-LPARENT (
-INTCON 10
-<æ— ç¬¦å·æ•´æ•°>
-<æ•´æ•°>
-<å› å­>
-<é¡¹>
-<è¡¨è¾¾å¼>
-COMMA ,
-INTCON 20
-<æ— ç¬¦å·æ•´æ•°>
-<æ•´æ•°>
-<å› å­>
-<é¡¹>
-<è¡¨è¾¾å¼>
-<å€¼å‚æ•°è¡¨>
-RPARENT )
-<æœ‰è¿”å›žå€¼å‡½æ•°è°ƒç”¨è¯­å¥>
-<å› å­>
-<é¡¹>
-<è¡¨è¾¾å¼>
-RPARENT )
-<å†™è¯­å¥>
-SEMICN ;
-<è¯­å¥>
-<è¯­å¥åˆ—>
-<å¤åˆè¯­å¥>
+<Óï¾äÁÐ>
+<¸´ºÏÓï¾ä>
 RBRACE }
-<ä¸»å‡½æ•°>
-<ç¨‹åº>
+<Ö÷º¯Êý>
+<³ÌÐò>

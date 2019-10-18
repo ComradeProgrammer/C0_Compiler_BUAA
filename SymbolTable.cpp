@@ -26,9 +26,9 @@ SymbolEntry* SymbolTable::addSymbol(string currentScope, string name,bool isFunc
 		if(res!=NULL&&isFunction){
 			SubSymbolTable* newscope = new SubSymbolTable(name);
 			scope[name] = newscope;
-		}
-		if (debug) {
-			cout << "debug@SymbolTable:new scope added" << endl;
+			if (debug) {
+				cout << "debug@SymbolTable:new scope added" << endl;
+			}
 		}
 	}
 	if (res != NULL) {
