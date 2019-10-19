@@ -36,7 +36,7 @@ SymbolEntry* SubSymbolTable::getSymbolByName(string name) {
 }
 
 void SubSymbolTable::selfTest() {
-	SymbolEntry* tmp1=addSymbol("para1", false);
+	/*SymbolEntry* tmp1=addSymbol("para1", false);
 	if (tmp1->name != "para1"||tmp1->link!=NULL) {
 		cout << "error1";
 	}
@@ -63,7 +63,7 @@ void SubSymbolTable::selfTest() {
 	SymbolEntry* tmp7 = getSymbolByName("func1");
 	if (tmp7 != tmp4) {
 		cout << "error7";
-	}
+	}*/
 }
 
 ostream& operator<<(ostream& o,FunctionLink f) {

@@ -40,7 +40,7 @@ void FaultHandler::terminate() {
 }
 
 void FaultHandler::test() {
-	debugOn();
+	/*debugOn();
 	handleCourseFault(15, LEXICALERROR);
-	handleCourseFault(107,NORPARENT);
+	handleCourseFault(107,NORPARENT);*/
 }

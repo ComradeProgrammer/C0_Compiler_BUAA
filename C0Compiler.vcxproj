@@ -129,6 +129,7 @@
     <Text Include="grammarRegroup.txt" />
     <Text Include="testfile.txt" />
     <Text Include="output.txt" />
+    <Text Include="teststorage.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FaultHandler.cpp" />

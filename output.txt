@@ -1,36 +1,10 @@
-CONSTTK const
 INTTK int
-IDENFR const1
-ASSIGN =
-INTCON 0
-<无符号整数>
-<整数>
-<常量定义>
-SEMICN ;
-<常量说明>
-INTTK int
-IDENFR a
-COMMA ,
-IDENFR b
-COMMA ,
-IDENFR c
-<变量定义>
-SEMICN ;
-CHARTK char
-IDENFR d
-COMMA ,
-IDENFR e
-COMMA ,
-IDENFR f
-LBRACK [
-INTCON 1000
-<无符号整数>
-RBRACK ]
+IDENFR test
 <变量定义>
 SEMICN ;
 <变量说明>
-CHARTK char
-IDENFR fuck2
+INTTK int
+IDENFR test
 <声明头部>
 LPARENT (
 <参数表>
@@ -38,7 +12,7 @@ RPARENT )
 LBRACE {
 RETURNTK return
 LPARENT (
-CHARCON d
+IDENFR test
 <因子>
 <项>
 <表达式>
@@ -50,57 +24,4 @@ SEMICN ;
 <复合语句>
 RBRACE }
 <有返回值函数定义>
-INTTK int
-IDENFR fuck
-<声明头部>
-LPARENT (
-INTTK int
-IDENFR p1
-COMMA ,
-CHARTK char
-IDENFR p2
-<参数表>
-RPARENT )
-LBRACE {
-RETURNTK return
-LPARENT (
-INTCON 416564546
-<无符号整数>
-<整数>
-<因子>
-<项>
-<表达式>
-RPARENT )
-<返回语句>
-SEMICN ;
-<语句>
-<语句列>
-<复合语句>
-RBRACE }
-<有返回值函数定义>
-VOIDTK void
-MAINTK main
-LPARENT (
-RPARENT )
-LBRACE {
-IDENFR fuck
-LPARENT (
-CHARCON d
-<因子>
-<项>
-<表达式>
-COMMA ,
-IDENFR d
-<因子>
-<项>
-<表达式>
-<值参数表>
-RPARENT )
-<有返回值函数调用语句>
-SEMICN ;
-<语句>
-<语句列>
-<复合语句>
-RBRACE }
-<主函数>
 <程序>

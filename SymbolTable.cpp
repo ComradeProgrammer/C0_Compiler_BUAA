@@ -19,6 +19,7 @@ SymbolEntry* SymbolTable::addSymbol(string currentScope, string name,bool isFunc
 	SymbolEntry* res;
 	if (currentScope != "") {
 		SubSymbolTable* s = scope[currentScope];
+		if (s == NULL) { return NULL; }
 		res = s->addSymbol(name, isFunction);
 	}
 	else {
@@ -52,7 +53,9 @@ SymbolEntry* SymbolTable::getSymbolByName(string currentScope, string name) {
 	SymbolEntry* res;
 	if (currentScope != "") {
 		SubSymbolTable* s = scope[currentScope];
+		if (s == NULL) { return NULL; }
 		res = s->getSymbolByName(name);
+
 		if (res != NULL) {
 			if (debug) { cout << "variable Type:LOCAL" << endl; }
 			return res;
@@ -84,7 +87,7 @@ void SymbolTable::debugOn() {
 }
 
 void SymbolTable::selfTest() {
-	SymbolEntry* tmp1=addSymbol("", "var1", false);
+	/*SymbolEntry* tmp1=addSymbol("", "var1", false);
 	SymbolEntry* tmp2 = addSymbol("", "func1", true);
 	SymbolEntry* tmp3 = addSymbol("", "func2", true);
 
@@ -98,5 +101,5 @@ void SymbolTable::selfTest() {
 	SymbolEntry* tmp8 = getSymbolByName("func1", "var1");
 	SymbolEntry* tmp9 = getSymbolByName("", "var1");
 
-	SymbolEntry* tmp10 = getSymbolByName("", "func1");
+	SymbolEntry* tmp10 = getSymbolByName("", "func1");*/
 }
