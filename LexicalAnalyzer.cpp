@@ -95,12 +95,19 @@ Result LexicalAnalyzer::sym() {
 }
 int LexicalAnalyzer::getUnsignedInteger() {
 	int res = 0;
+
+	if (text[ptr] == '0') {
+		ptr++;
+		column++;
+		return 0;
+	}
 	while (ptr<text.size()&&isdigit(text[ptr])) {
 		res *= 10;
 		res += text[ptr] - '0';
 		ptr++;
 		column ++ ;
 	}
+
 	return res;
 }
 
@@ -135,10 +142,12 @@ string LexicalAnalyzer::getIdentifier() {
 
 Lexical LexicalAnalyzer::getNextSym() {
 	Result result;
+	newLine = false;
 	while (ptr<text.size()&&isspace(text[ptr])) {
 		if (text[ptr] == '\n') {
 			line++;
 			column = 1;
+			newLine = true;
 		}
 		else {
 			column++;
@@ -313,7 +322,8 @@ Lexical LexicalAnalyzer::getNextSym() {
 		break;
 	default:
 		if (isdigit(text[ptr])) {
-			int temp = getUnsignedInteger();
+			int temp=0;
+			temp = getUnsignedInteger();
 			res = INTCON;
 			result.value = temp;
 		}
@@ -344,6 +354,7 @@ Lexical LexicalAnalyzer::getNextSym() {
 }
 
 int LexicalAnalyzer::lineNumber() {
+	if (newLine) { return line - 1; }
 	return line;
 }
 

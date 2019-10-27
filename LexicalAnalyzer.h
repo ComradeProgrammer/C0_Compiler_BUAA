@@ -69,6 +69,7 @@ private:
 	int ptr;
 	int line;
 	int column;
+	bool newLine;
 	map<string, Lexical>reservedKey;
 	Result currentSym;
 	FaultHandler& faultHandler;

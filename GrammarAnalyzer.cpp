@@ -1195,6 +1195,10 @@ void GrammarAnalyzer::returnSentence() {
 			f.handleCourseFault(lex.lineNumber(), ILLEGALRETURNINVOID);
 			f.handleFault(lex.lineNumber(), "无返回值函数里有含值的返回语句");
 		}
+		else if ((entry->link->returnType == RETINT || entry->link->returnType == RETCHAR) && !hasValue) {
+			f.handleCourseFault(lex.lineNumber(), ILLEGALRETURNINNONVOID);
+			f.handleFault(lex.lineNumber(), "有返回值函数里类型不正确");
+		}
 		else if (entry->link->returnType == RETINT && res.isChar) {
 			f.handleCourseFault(lex.lineNumber(), ILLEGALRETURNINNONVOID);
 			f.handleFault(lex.lineNumber(), "有返回值函数里类型不正确");
