@@ -1,19 +1,29 @@
 ﻿#include"main.h"
 using namespace std;
+
 int main() {
     FaultHandler faultHandler("error.txt");
 	faultHandler.debugOn();
+
 	LexicalAnalyzer lexicalAnalyzer(faultHandler);
 	lexicalAnalyzer.readAll("testfile.txt");
-	SymbolTable symbol;
-	//test.selfTest();
 	lexicalAnalyzer.getNextSym();
-	GrammarAnalyzer g(faultHandler,symbol,lexicalAnalyzer,"output.txt");
-	g.homeworkOn(true,true);
-	//symbol.debugOn();
-	
-	g.programme();
+
+	SymbolTable symbolTable;
+	//	symbolTable.debugOn();
+	MidCode::table = &symbolTable;
+
+	MidCodeContainer container;
+	GrammarAnalyzer grammarAnalyzer(faultHandler,symbolTable,lexicalAnalyzer,container,"output.txt");
+	//grammarAnalyzer.homeworkOn(true,true);
+
+	//grammarAnalyzer.programme();
+
+	//=============测试===================
+	grammarAnalyzer.variableDeclearation();
+	grammarAnalyzer.assignAndCall();
+	cout << container;
 	system("pause");
+	//====================================
 	return 0;
 }
-/*词法分析中001应该是3个数但是我好像没改*/

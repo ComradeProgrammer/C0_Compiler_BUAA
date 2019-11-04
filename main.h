@@ -6,3 +6,5 @@
 #include"SubSymbolTable.h"
 #include"SymbolTable.h"
 #include"GrammarAnalyzer.h"
+#include"MidCode.h"
+#include"MidCodeContainer.h"

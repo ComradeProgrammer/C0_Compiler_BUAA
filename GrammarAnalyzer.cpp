@@ -1,8 +1,8 @@
 ﻿#include"GrammarAnalyzer.h"
 
 /*构造器函数*/
-GrammarAnalyzer::GrammarAnalyzer(FaultHandler& _f, SymbolTable& _s, LexicalAnalyzer& _l,string file)
-:f(_f),table(_s),lex(_l){
+GrammarAnalyzer::GrammarAnalyzer(FaultHandler& _f, SymbolTable& _s, LexicalAnalyzer& _l,MidCodeContainer& _raw,string file)
+:f(_f),table(_s),lex(_l),raw(_raw){
 	out.open(file,ios_base::trunc|ios_base::out);
 	currentScope="";
 }
@@ -57,7 +57,7 @@ int GrammarAnalyzer::integer() {
 		out << "<无符号整数>" << endl;
 		out << "<整数>" << endl;
 	}
-	return value;
+	return value*sign;
 }
 
 /*<常量声明>
@@ -743,9 +743,10 @@ ReturnBundle GrammarAnalyzer::factor() {
 			//检索符号表，检查该符号是否为数组类型
 			getNextSym();
 			//完成读取中括号
+			ReturnBundle index;
 			try {
-				ReturnBundle tmp=expression();
-				if (tmp.isChar) {
+				index=expression();
+				if (index.isChar) {
 					throw 0;
 				}
 			}
@@ -767,6 +768,12 @@ ReturnBundle GrammarAnalyzer::factor() {
 			if (entry->type == TYPECHARARRAY) {
 				res.isChar = true;
 			}
+			
+			res.id = MidCode::tmpVarAlloc();
+			res.isImmediate = false;
+			raw.midCodeInsert(MIDARRAYGET,res.id,
+				entry->id,false,index.id,index.isImmediate,MIDNOLABEL);
+			//生成中间代码
 		}
 		else if (lex.sym().type == LPARENT) {
 			//有返回值函数
@@ -782,6 +789,9 @@ ReturnBundle GrammarAnalyzer::factor() {
 			if (!error&&(entry->type == TYPECHAR || entry->type == TYPECHARCONST)) {
 				res.isChar = true;
 			}
+			res.id = entry->id;
+			res.isImmediate = false;
+			//生成中间代码
 		}
 	}
 	else if (lex.sym().type == LPARENT) {//（<表达式>）
@@ -797,16 +807,22 @@ ReturnBundle GrammarAnalyzer::factor() {
 		else {
 			getNextSym();
 		}
+		res.id = tmp.id;
+		res.isImmediate = tmp.isImmediate;
 	}
 	else if (lex.sym().type == INTCON|| lex.sym().type == PLUS|| lex.sym().type == MINU) {
 		//整数（由+-或整数开头）
 		int value = integer();
+		res.id = value;
+		res.isImmediate = true;
 		//读取整数
 	}
 	else if (lex.sym().type == CHARCON) {
 		char c = (char)(lex.sym().value);
 		getNextSym();
 		res.isChar = true;
+		res.id = c;
+		res.isImmediate = true;
 		//完成读取字符
 	}
 	else {
@@ -822,15 +838,23 @@ ReturnBundle GrammarAnalyzer::term() {
 	ReturnBundle res;
 	ReturnBundle res1=factor();
 	res.isChar = res1.isChar;
+	res.id = res1.id;
+	res.isImmediate = res1.isImmediate;
 	while (1) {
 		if (lex.sym().type != MULT && lex.sym().type != DIV) {
 			break;
 		}
 		res.isChar = false;
-		Lexical op = lex.sym().type;
+		MidCodeOp op = lex.sym().type==MULT?MIDMULT:MIDDIV;
 		getNextSym();
 		//读取完运算符号
 		ReturnBundle res2=factor();
+		//读取因子
+		int tmpVar = MidCode::tmpVarAlloc();
+		raw.midCodeInsert(op, tmpVar, res.id, res.isImmediate,
+			res2.id, res2.isImmediate, MIDNOLABEL);
+		res.id = tmpVar;
+		res.isImmediate = false;
 	}
 	if (course) { out << "<项>" << endl; }
 	return res;
@@ -840,7 +864,7 @@ ReturnBundle GrammarAnalyzer::term() {
 ReturnBundle GrammarAnalyzer::expression() {
 	ReturnBundle res;
 	int sign = 1;
-	bool calculated = false;
+	bool calculated = false;//标记是不是只有一项，供类型判断使用
 	if (lex.sym().type == PLUS || lex.sym().type == MINU) {
 		if (lex.sym().type == MINU) {
 			sign = -1;
@@ -852,16 +876,37 @@ ReturnBundle GrammarAnalyzer::expression() {
 
 	ReturnBundle res1= term();
 	res.isChar = res1.isChar;
+
+	res.id = res1.id;
+	res.isImmediate = res1.isImmediate;
+	if (sign == -1) {
+		if (res.isImmediate) {
+			res.id = -res.id;
+		}
+		else {
+			int tmpVar = MidCode::tmpVarAlloc();
+			raw.midCodeInsert(MIDNEGATE, tmpVar,
+				res.id, res.isImmediate, MIDUNUSED, false, MIDNOLABEL);
+			res.id = tmpVar;
+			res.isImmediate = false;
+		}
+	}
 	//读取第一项
 	while (1) {
 		if (lex.sym().type != PLUS && lex.sym().type != MINU) {
 			break;
 		}
-		Lexical op = lex.sym().type;
+		MidCodeOp op = lex.sym().type==PLUS?MIDADD:MIDSUB;
 		getNextSym();
 		//读取运算符号完成
 		ReturnBundle res2=term();
 		calculated = true;
+
+		int tmpVar = MidCode::tmpVarAlloc();
+		raw.midCodeInsert(op, tmpVar,
+			res.id, res.isImmediate, res2.id, res2.isImmediate, MIDNOLABEL);
+		res.id = tmpVar;
+		res.isImmediate = false;
 	}
 	res.isChar = res.isChar&&!calculated;
 	if (course) { out << "<表达式>" << endl; }
@@ -892,22 +937,28 @@ void GrammarAnalyzer::assignAndCall() {
 }
 /*<赋值语句>，已经过预读*/
 void GrammarAnalyzer::assignSentence(string varname) {
-	bool error = false,leftIsChar=false;
+	bool error = false, leftIsChar = false;
 	SymbolEntry* entry = table.getSymbolByName(currentScope, varname);
 	if (entry == NULL) {
 		f.handleCourseFault(lex.lineNumber(), UNDEFINED);
-		f.handleFault(lex.lineNumber(), "未定义的变量"+varname);
+		f.handleFault(lex.lineNumber(), "未定义的变量" + varname);
 		error = true;
 	}
-	else if (!error&&(entry->type == TYPECHARCONST || entry->type == TYPEINTCONST)) {
+	else if (!error && (entry->type == TYPECHARCONST || entry->type == TYPEINTCONST)) {
 		f.handleCourseFault(lex.lineNumber(), MODIFYCONST);
 		f.handleFault(lex.lineNumber(), "试图修改常量的值");
 		error = true;
 	}
-	else if (!error&&entry->type == TYPEFUNCTION) {
+	else if (!error && entry->type == TYPEFUNCTION) {
 		f.handleFault(lex.lineNumber(), "该文法中函数调用不能作为左值");
 		error = true;
 	}
+	int target = -1;
+	if (entry!=NULL) {
+		target = entry->id;
+	}
+	bool isArray = false;
+	ReturnBundle indexBundle;
 	//检查变量合法性
 	if (lex.sym().type == LBRACK) {//左值是数组
 		if (!error && entry->type != TYPECHARARRAY && entry->type != TYPEINTARRAY) {
@@ -916,10 +967,11 @@ void GrammarAnalyzer::assignSentence(string varname) {
 		}
 		//检查是不是数组类型的变量
 		getNextSym();
+		
 		//读取完了左括号
 		try {
-			ReturnBundle res = expression();
-			if (res.isChar) {
+			indexBundle = expression();
+			if (indexBundle.isChar) {
 				throw 0;
 			}
 		}
@@ -937,6 +989,7 @@ void GrammarAnalyzer::assignSentence(string varname) {
 			getNextSym();
 		}
 		//完成读取右括号
+		isArray = true;
 	}
 	if (!error&&(entry->type == TYPECHARARRAY || entry->type == TYPECHAR)) {
 		leftIsChar = true;
@@ -954,6 +1007,16 @@ void GrammarAnalyzer::assignSentence(string varname) {
 	if (res.isChar != leftIsChar) {
 		f.handleFault(lex.lineNumber(), "赋值语句中类型错误");
 	}
+
+	if (isArray) {
+		raw.midCodeInsert(MIDARRAYWRITE, target,
+			indexBundle.id, indexBundle.isImmediate, res.id, res.isImmediate, MIDNOLABEL);
+	}
+	else {
+		raw.midCodeInsert(MIDASSIGN, target,
+			res.id, res.isImmediate, MIDUNUSED, false, MIDNOLABEL);
+	}
+	//生成中间代码
 	if (course) { out << "<赋值语句>"<<endl; }
 }
 
@@ -1141,7 +1204,10 @@ void GrammarAnalyzer::printSentence() {
 	//读取左括号完成
 
 	if (lex.sym().type == STRCON) {
-		/*how to handle the string*/
+		/* handle the string*/
+		string constString = lex.sym().str;
+		int stringNo=table.addString(constString);
+
 		getNextSym();
 		if (course) { out << "<字符串>" << endl; }
 		if (lex.sym().type == COMMA) {

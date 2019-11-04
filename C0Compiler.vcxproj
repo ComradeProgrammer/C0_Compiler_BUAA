@@ -136,6 +136,8 @@
     <ClCompile Include="GrammarAnalyzer.cpp" />
     <ClCompile Include="LexicalAnalyzer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MidCodeContainer.cpp" />
+    <ClCompile Include="MideCode.cpp" />
     <ClCompile Include="SubSymbolTable.cpp" />
     <ClCompile Include="SymbolTable.cpp" />
   </ItemGroup>
@@ -144,6 +146,8 @@
     <ClInclude Include="GrammarAnalyzer.h" />
     <ClInclude Include="LexicalAnalyzer.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="MidCode.h" />
+    <ClInclude Include="MidCodeContainer.h" />
     <ClInclude Include="SubSymbolTable.h" />
     <ClInclude Include="SymbolTable.h" />
   </ItemGroup>

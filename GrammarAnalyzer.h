@@ -3,13 +3,17 @@
 #include<vector>
 #include"LexicalAnalyzer.h"
 #include"SymbolTable.h"
+#include"MidCode.h"
+#include"MidCodeContainer.h"
 using namespace std;
 struct ReturnBundle {
 	bool isChar=false;
+	int id=-1;
+	int isImmediate = false;
 };
 class GrammarAnalyzer {
 public:
-	GrammarAnalyzer(FaultHandler& f,SymbolTable& s,LexicalAnalyzer& l,string file);
+	GrammarAnalyzer(FaultHandler& f,SymbolTable& s,LexicalAnalyzer& l,MidCodeContainer& _raw, string file);
 	Lexical getNextSym();
 	void homeworkOn(bool _c,bool _l);
 	/*整数，会抛出异常*/
@@ -69,6 +73,7 @@ public:
 
 	void programme();
 private:
+	MidCodeContainer& raw;
 	void toNextSemicon();
 	void toNextBrace();
 

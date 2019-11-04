@@ -14,6 +14,9 @@ public:
 	SymbolEntry* addSymbol(string currentScope,string name,bool isFunction);
 	SymbolEntry* getSymbolByName(string currentScope,string name);
 	SymbolEntry* getSymbolById(int id);
+
+	int addString(string str);
+	string getString(int id);
 	void debugOn();
 	void selfTest();
 private:
@@ -22,4 +25,6 @@ private:
 	map<string, SubSymbolTable*>scope;
 	SubSymbolTable globalScope;
 	vector<SymbolEntry*>symbolId;
+	int stringCount;
+	vector<string> unnamedStrings;
 };

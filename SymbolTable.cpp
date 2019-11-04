@@ -1,6 +1,7 @@
 ﻿#include"SymbolTable.h"
 SymbolTable::SymbolTable():globalScope("") {
 	count = 0;
+	stringCount = 0;
 }
 
 SymbolTable::~SymbolTable() {
@@ -80,6 +81,16 @@ SymbolEntry* SymbolTable:: getSymbolById(int id) {
 		return NULL;
 	}
 	return symbolId[id];
+}
+
+string SymbolTable::getString(int id) {
+	return unnamedStrings[id];
+}
+
+int SymbolTable::addString(string str) {
+	unnamedStrings.push_back(str);
+	
+	return stringCount++;
 }
 
 void SymbolTable::debugOn() {

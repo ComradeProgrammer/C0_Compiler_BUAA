@@ -5,7 +5,7 @@
 using namespace std;
 /*用来标记符号类型*/
 enum SymbolType {
-	TYPEINT,
+	TYPEINT=0,
 	TYPECHAR,
 	TYPEINTARRAY,
 	TYPECHARARRAY,
@@ -15,7 +15,7 @@ enum SymbolType {
 };
 /*用来标记若符号为函数时返回类型*/
 enum ReturnType {
-	RETINT,
+	RETINT=0,
 	RETCHAR,
 	RETVOID
 };

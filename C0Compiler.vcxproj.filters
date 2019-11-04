@@ -19,6 +19,18 @@
     <Filter Include="源文件\FrontEnd">
       <UniqueIdentifier>{91729342-3e67-4f79-ab41-26fd3d57afd1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\InterMediateCode">
+      <UniqueIdentifier>{d15545e7-d4c4-443e-aa00-8c818fb871d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\InterMediateCode">
+      <UniqueIdentifier>{03c267b2-6bd5-4ab6-9850-06d667a44d4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\BackEnd">
+      <UniqueIdentifier>{a7e769c7-cc45-47af-9074-5831a96e8111}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\BackEnd">
+      <UniqueIdentifier>{df8a3b7f-60de-4fed-a6ad-7477513fdebd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="output.txt">
@@ -59,6 +71,12 @@
     <ClCompile Include="SymbolTable.cpp">
       <Filter>源文件\FrontEnd</Filter>
     </ClCompile>
+    <ClCompile Include="MideCode.cpp">
+      <Filter>源文件\InterMediateCode</Filter>
+    </ClCompile>
+    <ClCompile Include="MidCodeContainer.cpp">
+      <Filter>源文件\InterMediateCode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SymbolTable.h">
@@ -78,6 +96,12 @@
     </ClInclude>
     <ClInclude Include="main.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MidCode.h">
+      <Filter>头文件\InterMediateCode</Filter>
+    </ClInclude>
+    <ClInclude Include="MidCodeContainer.h">
+      <Filter>头文件\InterMediateCode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
