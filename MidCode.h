@@ -15,7 +15,7 @@ enum MidCodeOp {
 	MIDFUNC = 0,//函数声明 1-函数的符号表id 2-函数的返回值类型
 	MIDPARA,//函数形参声明 1-形式参数的编号id 2-参数的类型
 	MIDPUSH,//函数实参确定 1-实参的id
-	MIDCALL,//函数调用 2-函数的id
+	MIDCALL,//函数调用 1-函数的id
 	MIDRET,//函数返回 1-返回编号 若为-1则无返回值
 	MIDADD,
 	MIDSUB,
@@ -31,11 +31,15 @@ enum MidCodeOp {
 	MIDARRAYGET,// x=a[i],x的id为target，a的id为1,i的id为2
 	MIDARRAYWRITE,//a[i]=j a的id为target i的i为1 j的id为2
 	MIDASSIGN,//1-赋值的结果
+	MIDGOTO,//无条件跳转，1-跳转目标标号，此处立即数标识使用false
+	MIDBNZ,//条件为真跳转 1-所需的条件 2-目标标号
+	MIDBZ,//条件为假跳转 1-所需的条件 2-目标标号
 	MIDPRINTINT,//SYSCALL1 1-打印值的id
 	MIDPRINTCHAR,//SYSCALL11 1-打印值的id
 	MIDPRINTSTRING,//SYSCALL4 1-打印字符串的id
 	MIDREADINTEGER,//SYSCALL5 1-读入整数的id target-读入整数的id
 	MIDREADCHAR,//SYSCALL12 1-读入字符的id target-读入字符的id
+	MIDNOP,//对付跳转使用的，优化时候就都干掉了，什么都不要什么都不做
 };
 /*再这里记录一下*/
 class MidCode {
@@ -58,6 +62,7 @@ public:
 
 	friend ostream& operator<<(ostream& out, MidCode c);
 	static string getOperandName(int n,bool isImmediate);
+	static string getLabelName(int n);
 	
 	
 };

@@ -21,7 +21,11 @@ int main() {
 
 	//=============测试===================
 	grammarAnalyzer.variableDeclearation();
-	grammarAnalyzer.assignAndCall();
+	//grammarAnalyzer.nonVoidFunctionDefination();
+	//grammarAnalyzer.declearationHeader();	
+	//grammarAnalyzer.declearationHeader();
+	//grammarAnalyzer.assignAndCall();
+	grammarAnalyzer.ifSentence();
 	cout << container;
 	system("pause");
 	//====================================

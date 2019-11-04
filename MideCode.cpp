@@ -26,6 +26,17 @@ string MidCode::getOperandName(int n,bool isImmediate) {
 		return string("#TMP") + to_string(-n);
 	}
 }
+
+string MidCode::getLabelName(int n) {
+	if (n >= 0) {
+		SymbolEntry* entry = table->getSymbolById(n);
+		return entry->name;
+	}
+	else {
+		string tmp = "_label";
+		return tmp + to_string(-n);
+	}
+}
 ostream& operator<<(ostream& out, MidCode c) {
 	vector<string> type = { "int","char","void" };
 	map<MidCodeOp, string>ops;
@@ -40,7 +51,7 @@ ostream& operator<<(ostream& out, MidCode c) {
 	ops[MIDEQL] = "==";
 	ops[MIDNEQ] = "!=";
 	if (c.labelNo < -1) {
-		cout << "label" << c.labelNo << ": "<<endl;
+		cout << "_label" << -(c.labelNo) << ": "<<endl;
 	}
 	else if(c.labelNo>=0) {
 		cout <<MidCode::getOperandName(c.labelNo,false) << ": " << endl;
@@ -122,6 +133,17 @@ ostream& operator<<(ostream& out, MidCode c) {
 			break;
 		case MIDREADCHAR:
 			out << "syscall-12 " << MidCode::getOperandName(c.operand1,c.isImmediate1);
+			break;
+		case MIDGOTO:
+			out << "GOTO "<<MidCode::getLabelName(c.operand1);
+			break;
+		case MIDBNZ:
+		case MIDBZ:
+			out << ((c.op == MIDBZ) ? "BZ " : "BNZ ");
+			out << MidCode::getOperandName(c.operand1,c.isImmediate1) << " " << MidCode::getLabelName(c.operand2);
+			break;
+		case MIDNOP:
+			out << "nop";
 			break;
 		default:
 			out << "unknown instruction";

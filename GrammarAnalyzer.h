@@ -65,7 +65,7 @@ public:
 	void returnSentence();
 
 	void ifSentence();
-	void condition();
+	ReturnBundle condition();
 	void loopSentence();
 	/*会在此处理各种语句抛出的异常*/
 	void sentence();

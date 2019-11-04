@@ -1064,7 +1064,16 @@ ReturnBundle GrammarAnalyzer::functionCall(string name,bool mustReturn) {
 		getNextSym();
 	}
 	//右大括号读取完成
-
+	if (!error) {
+		raw.midCodeInsert(MIDCALL, MIDUNUSED,
+			entry->id, false, MIDUNUSED, false, MIDNOLABEL);
+		if (entry->link->returnType != RETVOID) {
+			res.id = MidCode::tmpVarAlloc();
+			raw.midCodeInsert(MIDASSIGN, res.id, -1, false,
+				MIDUNUSED, false, MIDNOLABEL);
+			res.isImmediate = false;
+		}
+	}
 	if (course) {
 		if (!error&&entry->link->returnType == RETVOID) {
 			out << "<无返回值函数调用语句>"<<endl;
@@ -1080,6 +1089,8 @@ ReturnBundle GrammarAnalyzer::functionCall(string name,bool mustReturn) {
 void GrammarAnalyzer::parameterValueList(SymbolEntry* entry) {
 	int paraNum = 0;
 	bool init = true, error = false;
+	vector<vector<int>> codeIndex;
+	vector<ReturnBundle>returnBundles;
 	if (entry == NULL) {
 		error = true;
 	}
@@ -1100,8 +1111,12 @@ void GrammarAnalyzer::parameterValueList(SymbolEntry* entry) {
 		else {
 			init = false;
 		}
-
+		int probe1 = raw.getIndex();
 		ReturnBundle res1=expression();
+		returnBundles.push_back(res1);
+		int probe2 = raw.getIndex();
+
+		codeIndex.push_back({ probe1,probe2 });
 		//读取实参的表达式
 		bool leftIsChar=false;
 		if (!error&&paraNum < entry->link->paraNum) {
@@ -1119,6 +1134,26 @@ void GrammarAnalyzer::parameterValueList(SymbolEntry* entry) {
 		f.handleCourseFault(lex.lineNumber(), PARANUMERROR);
 		f.handleFault(lex.lineNumber(), "函数参数个数不正确");
 		throw 0;
+	}
+
+	if (codeIndex.size() > 0) {
+		vector<vector<MidCode>>codeSegment;
+		for (int i = 0; i < codeIndex.size(); i++) {
+			vector<MidCode>paraCode(raw.getIterator(codeIndex[i][0]), raw.getIterator(codeIndex[i][1]));
+			codeSegment.push_back(paraCode);
+		}
+		int eraseStart = codeIndex[0][0];
+		int eraseEnd = codeIndex[codeIndex.size() - 1][1];
+		raw.erase(eraseStart, eraseEnd);
+		//调整参数计算顺序
+		for (int i = codeSegment.size() - 1; i >= 0; i--) {
+			raw.midCodeInsert(codeSegment[i]);
+		}
+	}
+	for (int i = 0; i < returnBundles.size();i++) {
+		raw.midCodeInsert(MIDPUSH, MIDUNUSED,
+			returnBundles[i].id, returnBundles[i].isImmediate,
+			MIDUNUSED, false, MIDNOLABEL);
 	}
 	//检查参数是否对应（个数，应该还有参数类型的标记）
 	if (course) { out << "<值参数表>" << endl; }
@@ -1293,7 +1328,7 @@ void GrammarAnalyzer::ifSentence() {
 	getNextSym();
 	//完成读取左括号
 
-	condition();
+	ReturnBundle conditionBundle=condition();
 	//读取条件
 
 	if (lex.sym().type != RPARENT) {
@@ -1304,20 +1339,36 @@ void GrammarAnalyzer::ifSentence() {
 		getNextSym();
 	}
 	//读取右括号
-
+	int label1 = MidCode::labelAlloc();
+	raw.midCodeInsert(MIDBZ, MIDUNUSED,
+		conditionBundle.id, conditionBundle.isImmediate, label1,false,MIDNOLABEL);
+	//生成if的头部
 	sentence();
 	//语句
 	if (lex.sym().type == ELSETK) {
+		int label2 = MidCode::labelAlloc();
+		raw.midCodeInsert(MIDGOTO, MIDUNUSED, label2, false, MIDUNUSED, false, MIDNOLABEL);
+		raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label1);
 		getNextSym();
 		//读取else完成
 		sentence();
 		//读取语句
+		raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label2);
+	}
+	else {
+		raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label1);
 	}
 	if (course) { out << "<条件语句>" << endl; }
 }
 
-void GrammarAnalyzer::condition() {
+ReturnBundle GrammarAnalyzer::condition() {
+	
 	ReturnBundle res1=expression();
+
+	ReturnBundle res;
+	res.isChar = false;
+	res.isImmediate = res1.isImmediate;
+	res.id = res1.id;
 	if (res1.isChar) {
 		f.handleCourseFault(lex.lineNumber(), ILLEGALTYPEINCONDITION);
 		f.handleFault(lex.lineNumber(), "条件中必须使用整型");
@@ -1326,6 +1377,27 @@ void GrammarAnalyzer::condition() {
 	if (lex.sym().type == LSS || lex.sym().type == LEQ
 		|| lex.sym().type == GRE || lex.sym().type == GEQ
 		|| lex.sym().type == EQL || lex.sym().type == NEQ) {
+		MidCodeOp op;
+		switch (lex.sym().type) {
+		case LSS:
+			op = MIDLSS;
+			break;
+		case LEQ:
+			op = MIDLEQ;
+			break;
+		case GRE:
+			op = MIDGRE;
+			break;
+		case GEQ:
+			op = MIDGEQ;
+			break;
+		case EQL:
+			op = MIDEQL;
+			break;
+		case NEQ:
+			op = MIDNEQ;
+			break;
+		}
 		getNextSym();
 		//读取关系运算符完成
 		ReturnBundle res2=expression();
@@ -1333,8 +1405,15 @@ void GrammarAnalyzer::condition() {
 			f.handleCourseFault(lex.lineNumber(), ILLEGALTYPEINCONDITION);
 			f.handleFault(lex.lineNumber(), "条件中必须使用整型");
 		}
+		int tmpVar = MidCode::tmpVarAlloc();
+		raw.midCodeInsert(op, tmpVar,
+			res.id, res.isImmediate,
+			res2.id, res2.isImmediate, MIDNOLABEL);
+		res.id = tmpVar;
+		res.isImmediate = false;
 	}
 	if (course) { out << "<条件>" << endl; }
+	return res;
 }
 
 void GrammarAnalyzer::loopSentence() {

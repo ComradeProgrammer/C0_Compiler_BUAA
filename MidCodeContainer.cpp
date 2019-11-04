@@ -1,4 +1,5 @@
 #include"MidCodeContainer.h"
+
 int MidCodeContainer::midCodeInsert(MidCodeOp op, int target,
 	int operand1,bool isImmediate1,
 	int operand2, bool isImmediate2,
@@ -16,9 +17,26 @@ int MidCodeContainer::midCodeInsert(MidCodeOp op, int target,
 	return no;
 }
 
+void MidCodeContainer::midCodeInsert(vector<MidCode>& tmp) {
+	for (MidCode& i : tmp) {
+		v.push_back(i);
+	}
+}
 ostream& operator<<(ostream& out, MidCodeContainer c) {
 	for (int i = 0; i < c.v.size(); i++) {
 		out << c.v[i];
 	}
 	return out;
+}
+
+int MidCodeContainer::getIndex() {
+	return v.size();
+}
+
+vector<MidCode>::iterator MidCodeContainer::getIterator(int index) {
+	return v.begin() + index;
+}
+
+void MidCodeContainer::erase(int start,int end) {
+	v.erase(v.begin() + start, v.begin() + end);
 }
