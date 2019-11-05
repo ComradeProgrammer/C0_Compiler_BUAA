@@ -35,10 +35,10 @@ enum MidCodeOp {
 	MIDBNZ,//条件为真跳转 1-所需的条件 2-目标标号
 	MIDBZ,//条件为假跳转 1-所需的条件 2-目标标号
 	MIDPRINTINT,//SYSCALL1 1-打印值的id
-	MIDPRINTCHAR,//SYSCALL11 1-打印值的id
+	MIDPRINTCHAR,//SYSCALL11 1-打印字符的id
 	MIDPRINTSTRING,//SYSCALL4 1-打印字符串的id
-	MIDREADINTEGER,//SYSCALL5 1-读入整数的id target-读入整数的id
-	MIDREADCHAR,//SYSCALL12 1-读入字符的id target-读入字符的id
+	MIDREADINTEGER,//SYSCALL5 target-读入整数的id
+	MIDREADCHAR,//SYSCALL12  target-读入字符的id
 	MIDNOP,//对付跳转使用的，优化时候就都干掉了，什么都不要什么都不做
 };
 /*再这里记录一下*/

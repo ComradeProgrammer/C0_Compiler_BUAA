@@ -1,5 +1,14 @@
-int a[100],b[100],c,d,e;
-if(d==c){
+const int const1 = 1, const2 = -100;
+const char const3 = '_';
+int change1;
+char change3;
+int gets1(int var1,int var2){
+   change1 = var1 + var2  ;
+   return (change1);
 }
-else{
+void main(){
+    change1 = 10;
+   printf("Hello World");
+   printf(gets1(10, 20));
+	return;
 }

@@ -314,7 +314,6 @@ void GrammarAnalyzer::nonVoidFunctionDefination() {
 		string functionName;
 		declearationHeader(retType,functionName);
 		//获取变量名和返回类型完成
-
 		if (lex.sym().type != LPARENT) {//参数表的左括号
 			f.handleFault(lex.lineNumber(), "缺少参数表");
 			//todo 错误处理待定;
@@ -332,7 +331,11 @@ void GrammarAnalyzer::nonVoidFunctionDefination() {
 			entry->link->returnType = retType == INTTK ? RETINT : RETCHAR;
 			entry->type = TYPEFUNCTION;
 		}
-
+		if (entry != NULL) {
+			raw.midCodeInsert(MIDFUNC, MIDUNUSED,
+				entry->id, false,
+				retType == RETINT ? MIDINT : MIDCHAR, false, MIDNOLABEL);
+		}
 		parameterList(entry);
 		//填入符号表信息
 
@@ -396,6 +399,11 @@ void GrammarAnalyzer::nonVoidFunctionDefination(Lexical retType,string functionN
 			entry->link->returnType = retType == INTTK ? RETINT : RETCHAR;
 			entry->type = TYPEFUNCTION;
 			//写入符号表
+		}
+		if (entry != NULL) {
+			raw.midCodeInsert(MIDFUNC, MIDUNUSED,
+				entry->id, false,
+				retType == RETINT ? MIDINT : MIDCHAR, false, MIDNOLABEL);
 		}
 		parameterList(entry);
 		//参数表
@@ -468,7 +476,11 @@ void GrammarAnalyzer::voidFunctionDefination() {
 		}
 		getNextSym();
 		//读走了左括号
-		
+		if (entry != NULL) {
+			raw.midCodeInsert(MIDFUNC, MIDUNUSED,
+				entry->id, false,
+				MIDVOID, false, MIDNOLABEL);
+		}
 		parameterList(entry);
 		//参数表读取完成
 
@@ -530,6 +542,12 @@ void GrammarAnalyzer::mainFunctionDefination() {
 			entry->link->returnType = RETVOID;
 			entry->type = TYPEFUNCTION;
 			// 写入符号表完成
+		}
+
+		if (entry != NULL) {
+			raw.midCodeInsert(MIDFUNC, MIDUNUSED,
+				entry->id, false,
+				MIDVOID, false, MIDNOLABEL);
 		}
 
 		if (lex.sym().type != LPARENT) {
@@ -687,10 +705,11 @@ void GrammarAnalyzer::parameterList(SymbolEntry* entry) {
 			throw 0;
 		}
 		string paraname = lex.sym().str;
+		SymbolEntry* paraentry=NULL;
 		if (!error) {
 			entry->link->paras.push_back(paratype);//存储参数类型
 			string scope = entry->name;//获取函数作用域
-			SymbolEntry* paraentry = table.addSymbol(scope, paraname, false);
+			 paraentry = table.addSymbol(scope, paraname, false);
 			if (paraentry == NULL) {
 				f.handleCourseFault(lex.lineNumber(), REDEFINED);
 				f.handleFault(lex.lineNumber(), "参数名重定义" + paraname);
@@ -704,6 +723,11 @@ void GrammarAnalyzer::parameterList(SymbolEntry* entry) {
 		getNextSym();
 		//读取参数名称完成
 		paraNum++;
+		if (paraentry != NULL) {
+			raw.midCodeInsert(MIDPARA, MIDUNUSED,
+				paraentry->id, false,
+				paratype == TYPEINT ? MIDINT : MIDCHAR, false, MIDNOLABEL);
+		}
 	}
 	if (!error) { entry->link->paraNum = paraNum; }
 	if (course) { out << "<参数表>" << endl; }
@@ -1210,6 +1234,8 @@ void GrammarAnalyzer::scanSentence() {
 		//依据符号表信息检查变量是否合法
 		getNextSym();
 		//标识符读取完成
+		MidCodeOp op = entry->type == TYPEINT ? MIDREADINTEGER : MIDREADCHAR;
+		raw.midCodeInsert(op, entry->id, MIDUNUSED, false, MIDUNUSED, false, MIDNOLABEL);
 	}
 
 	if (lex.sym().type != RPARENT) {
@@ -1242,19 +1268,37 @@ void GrammarAnalyzer::printSentence() {
 		/* handle the string*/
 		string constString = lex.sym().str;
 		int stringNo=table.addString(constString);
+		raw.midCodeInsert(MIDPRINTSTRING, MIDUNUSED,
+			stringNo, false, MIDUNUSED, false, MIDNOLABEL);
 
 		getNextSym();
 		if (course) { out << "<字符串>" << endl; }
 		if (lex.sym().type == COMMA) {
 			getNextSym();
 			//读取逗号完成
-			expression();
+			ReturnBundle res=expression();
 			//直接读取表达式
+			if (res.isChar) {
+				raw.midCodeInsert(MIDPRINTCHAR, MIDUNUSED,
+					res.id, res.isImmediate, MIDUNUSED, false, MIDNOLABEL);
+			}
+			else {
+				raw.midCodeInsert(MIDPRINTINT, MIDUNUSED,
+					res.id, res.isImmediate, MIDUNUSED, false, MIDNOLABEL);
+			}
 		}
 	}
 	else { 
-		expression();
+		ReturnBundle res = expression();
 		//直接读取表达式
+		if (res.isChar) {
+			raw.midCodeInsert(MIDPRINTCHAR, MIDUNUSED,
+				res.id, res.isImmediate, MIDUNUSED, false, MIDNOLABEL);
+		}
+		else {
+			raw.midCodeInsert(MIDPRINTINT, MIDUNUSED,
+				res.id, res.isImmediate, MIDUNUSED, false, MIDNOLABEL);
+		}
 	}
 	
 	if (lex.sym().type != RPARENT) {
@@ -1264,6 +1308,7 @@ void GrammarAnalyzer::printSentence() {
 	else {
 		getNextSym();
 	}
+	raw.midCodeInsert(MIDPRINTCHAR, MIDUNUSED, '\n', true, MIDUNUSED, false, MIDNOLABEL);
 	if (course) { out << "<写语句>" << endl; }
 }
 
@@ -1310,6 +1355,14 @@ void GrammarAnalyzer::returnSentence() {
 		}
 	}
 	hasReturned = true;
+	if (hasValue) {
+		raw.midCodeInsert(MIDRET, MIDUNUSED, res.id, res.isImmediate,
+			MIDUNUSED, false, MIDNOLABEL);
+	}
+	else {
+		raw.midCodeInsert(MIDRET, MIDUNUSED, MIDUNUSED, false,
+			MIDUNUSED, false, MIDNOLABEL);
+	}
 	if (course) { out << "<返回语句>" << endl; }
 }
 
@@ -1427,9 +1480,12 @@ void GrammarAnalyzer::loopSentence() {
 			throw 0;
 		}
 		getNextSym();
+		int label1 = MidCode::labelAlloc();
+		int label2 = MidCode::labelAlloc();
+		raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label1);
 		//读取左括号
 
-		condition();
+		ReturnBundle conditionBundle = condition();
 		//读取条件语句
 		if (lex.sym().type != RPARENT) {
 			f.handleCourseFault(lex.lineNumber(), NORPARENT);
@@ -1439,11 +1495,24 @@ void GrammarAnalyzer::loopSentence() {
 			getNextSym();
 		}
 		//读取右括号完成
+
+		raw.midCodeInsert(MIDBZ,MIDUNUSED,
+			conditionBundle.id,conditionBundle.isImmediate,
+			label2,false,MIDNOLABEL);
+		//生成while头部
 		sentence();
+
+		raw.midCodeInsert(MIDGOTO, MIDUNUSED, label1, false,
+			MIDUNUSED, false, MIDNOLABEL);
+		raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label2);
 	}
 	else if (lex.sym().type == DOTK) {
 		getNextSym();
 		//读取do符号完成
+
+		int label1 = MidCode::labelAlloc();
+		raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label1);
+		
 		sentence();
 		//读取句子
 		if (lex.sym().type != WHILETK) {
@@ -1461,7 +1530,7 @@ void GrammarAnalyzer::loopSentence() {
 		}
 		getNextSym();
 		//读取左括号
-		condition();
+		ReturnBundle conditionBundle=condition();
 		//读取条件语句
 		if (lex.sym().type != RPARENT) {
 			f.handleCourseFault(lex.lineNumber(), NORPARENT);
@@ -1471,6 +1540,9 @@ void GrammarAnalyzer::loopSentence() {
 			getNextSym();
 		}
 		//读取右括号
+		raw.midCodeInsert(MIDBNZ, MIDUNUSED,
+			conditionBundle.id, conditionBundle.isImmediate,
+			label1, false, MIDNOLABEL);
 	}
 	else if (lex.sym().type == FORTK) {
 		getNextSym();
@@ -1510,8 +1582,14 @@ void GrammarAnalyzer::loopSentence() {
 			getNextSym();
 		}
 		//读取赋值符完成
-		expression();
+		ReturnBundle resA= expression();
 		//读取所赋的表达式
+		raw.midCodeInsert(MIDASSIGN, entry1->id,
+			resA.id, resA.isImmediate, MIDUNUSED, false, MIDNOLABEL);
+		int label1 = MidCode::labelAlloc();
+		int label2 = MidCode::labelAlloc();
+		raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label1);
+		//生成第一部分中间代码
 		if (lex.sym().type != SEMICN) {
 			f.handleCourseFault(lex.lineNumber(), NOSEMICN);
 			f.handleFault(lex.lineNumber(), "需要;");
@@ -1520,7 +1598,10 @@ void GrammarAnalyzer::loopSentence() {
 			getNextSym();
 		}
 		//读取分号完成
-		condition();
+		ReturnBundle conditionBundle=condition();
+		raw.midCodeInsert(MIDBZ, MIDUNUSED,
+			conditionBundle.id, conditionBundle.isImmediate, label2, false, MIDNOLABEL);
+		//生成条件部分代码
 		//读取条件完成
 		if (lex.sym().type != SEMICN) {
 			f.handleCourseFault(lex.lineNumber(), NOSEMICN);
@@ -1581,7 +1662,7 @@ void GrammarAnalyzer::loopSentence() {
 			f.handleFault(lex.lineNumber(), "需要运算符");
 			throw 0;
 		}
-		Lexical op = lex.sym().type;
+		MidCodeOp op = lex.sym().type==PLUS?MIDADD:MIDSUB;
 		getNextSym();
 		//读取加减号完成
 		if (lex.sym().type != INTCON) {
@@ -1602,6 +1683,12 @@ void GrammarAnalyzer::loopSentence() {
 		}
 		//读取右括号完成
 		sentence();
+
+		raw.midCodeInsert(op, entry2->id,
+			entry3->id, false, step, true, MIDNOLABEL);
+		raw.midCodeInsert(MIDGOTO, MIDUNUSED,label1, false, MIDUNUSED, false, MIDNOLABEL);
+		raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label2);
+		//生成头部第三部分
 	}
 	else {
 		f.handleFault(lex.lineNumber(), "非法的循环语句");

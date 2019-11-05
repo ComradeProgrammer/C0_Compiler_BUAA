@@ -119,7 +119,7 @@ ostream& operator<<(ostream& out, MidCode c) {
 			out << "=" << MidCode::getOperandName(c.operand1, c.isImmediate1);
 			break;
 		case MIDPRINTINT:
-			out << "syscal-l1 " << MidCode::getOperandName(c.operand1,c.isImmediate1);
+			out << "syscall-1 " << MidCode::getOperandName(c.operand1,c.isImmediate1);
 			break;
 		case MIDPRINTCHAR:
 			out << "syscall-11 " << MidCode::getOperandName(c.operand1, c.isImmediate1);
@@ -129,10 +129,10 @@ ostream& operator<<(ostream& out, MidCode c) {
 			out << MidCode::table->getString(c.operand1);
 			break;
 		case MIDREADINTEGER:
-			out<<"syscall-5 "<< MidCode::getOperandName(c.operand1,c.isImmediate1);
+			out << MidCode::getOperandName(c.target, false) <<" = syscall-5 ";
 			break;
 		case MIDREADCHAR:
-			out << "syscall-12 " << MidCode::getOperandName(c.operand1,c.isImmediate1);
+			out << MidCode::getOperandName(c.target, false) << " = syscall-12 " ;
 			break;
 		case MIDGOTO:
 			out << "GOTO "<<MidCode::getLabelName(c.operand1);

@@ -17,15 +17,18 @@ int main() {
 	GrammarAnalyzer grammarAnalyzer(faultHandler,symbolTable,lexicalAnalyzer,container,"output.txt");
 	//grammarAnalyzer.homeworkOn(true,true);
 
-	//grammarAnalyzer.programme();
+	grammarAnalyzer.programme();
 
 	//=============测试===================
-	grammarAnalyzer.variableDeclearation();
+	//grammarAnalyzer.variableDeclearation();
 	//grammarAnalyzer.nonVoidFunctionDefination();
 	//grammarAnalyzer.declearationHeader();	
 	//grammarAnalyzer.declearationHeader();
 	//grammarAnalyzer.assignAndCall();
-	grammarAnalyzer.ifSentence();
+	//grammarAnalyzer.ifSentence();
+	//grammarAnalyzer.loopSentence();
+	//grammarAnalyzer.voidFunctionDefination();
+	//grammarAnalyzer.sentenceSeries();
 	cout << container;
 	system("pause");
 	//====================================
