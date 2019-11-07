@@ -97,6 +97,12 @@ void SymbolTable::debugOn() {
 	debug = true;
 }
 
+SubSymbolTable* SymbolTable::getSubSymbolTableByName(string s) {
+	if (s == "") {
+		return &globalScope;
+	}
+	return scope[s];
+}
 void SymbolTable::selfTest() {
 	/*SymbolEntry* tmp1=addSymbol("", "var1", false);
 	SymbolEntry* tmp2 = addSymbol("", "func1", true);

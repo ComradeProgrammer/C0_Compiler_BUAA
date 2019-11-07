@@ -38,6 +38,7 @@ struct SymbolEntry {
 	string scope;//会自动设置
 	int initValue;
 	unsigned int addr;
+	bool isParameter = false;
 	int dimension=0;
 	FunctionLink* link=NULL;//会自动设置
 	friend ostream& operator<<(ostream& stream,SymbolEntry s);
@@ -50,7 +51,7 @@ public:
 	~SubSymbolTable();
 	SymbolEntry* addSymbol(string name,bool isFuntion);
 	SymbolEntry* getSymbolByName(string name);
-
+	void dumpMidCode(ostream& out);
 	void selfTest();
 private:
 	string nameScope;

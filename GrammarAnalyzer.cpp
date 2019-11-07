@@ -716,6 +716,7 @@ void GrammarAnalyzer::parameterList(SymbolEntry* entry) {
 			}
 			else {
 				paraentry->type = paratype;
+				paraentry->isParameter = true;
 				entry->link->paraIds.push_back(paraentry->id);//存储参数是谁
 				//写入符号表
 			}

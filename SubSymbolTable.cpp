@@ -85,6 +85,37 @@ ostream& operator<<(ostream& o,FunctionLink f) {
 	return o;
 }
 
+void SubSymbolTable::dumpMidCode(ostream& out) {
+	/*导出变量定义处的中间代码*/
+	map<string, SymbolEntry*>::iterator itr = symbolMap.begin();
+	for (itr = symbolMap.begin(); itr != symbolMap.end(); itr++) {
+		if (itr->second->isParameter == true) {
+			continue;
+		}
+		if (itr->second->type == TYPEINTCONST) {
+			out << "const int " << itr->first << endl;
+		}
+		else if (itr->second->type == TYPECHARCONST) {
+			out << "const char " << itr->first << endl;
+		}
+		else if (itr->second->type == TYPEINT) {
+			out << "int " << itr->first << endl;
+		}
+		else if (itr->second->type == TYPECHAR) {
+			out << "int " << itr->first << endl;
+		}
+		else if (itr->second->type == TYPEINTARRAY) {
+			out << "int " << itr->first
+				<< "[" << itr->second->dimension << "]" << endl;
+		}
+		else if (itr->second->type == TYPECHARARRAY) {
+			out << "int " << itr->first
+				<< "[" << itr->second->dimension << "]" << endl;
+		}
+	}
+}
+
+
 ostream& operator<<(ostream& o,SymbolEntry s) {
 	o << "symbol entry content" << endl;
 	o << "\tname:" << s.name;

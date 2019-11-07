@@ -1,14 +1,12 @@
-const int const1 = 1, const2 = -100;
-const char const3 = '_';
-int change1;
-char change3;
-int gets1(int var1,int var2){
-   change1 = var1 + var2  ;
-   return (change1);
+const int c1=0;
+const char c2='d';
+int a[100],b,c,d;
+char i,j[100];
+
+void func1(){
+	int i,j,k;
+	i=i+1;
 }
 void main(){
-    change1 = 10;
-   printf("Hello World");
-   printf(gets1(10, 20));
-	return;
+	
 }

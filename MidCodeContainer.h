@@ -15,6 +15,7 @@ public:
 	int getIndex();//返回新的一条指令将会被填入的位置的下标
 	vector<MidCode>::iterator getIterator(int index);//返回指定位置的迭代器
 	void erase(int start, int end);//擦除从start-end的指令
+	void removeNops();
 private:
 	vector<MidCode>v;
 };

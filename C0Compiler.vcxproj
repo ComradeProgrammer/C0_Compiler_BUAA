@@ -132,6 +132,7 @@
     <Text Include="teststorage.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Block.cpp" />
     <ClCompile Include="FaultHandler.cpp" />
     <ClCompile Include="GrammarAnalyzer.cpp" />
     <ClCompile Include="LexicalAnalyzer.cpp" />
@@ -142,6 +143,7 @@
     <ClCompile Include="SymbolTable.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Block.h" />
     <ClInclude Include="FaultHandler.h" />
     <ClInclude Include="GrammarAnalyzer.h" />
     <ClInclude Include="LexicalAnalyzer.h" />

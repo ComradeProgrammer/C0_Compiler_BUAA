@@ -14,7 +14,7 @@ public:
 	SymbolEntry* addSymbol(string currentScope,string name,bool isFunction);
 	SymbolEntry* getSymbolByName(string currentScope,string name);
 	SymbolEntry* getSymbolById(int id);
-
+	SubSymbolTable* getSubSymbolTableByName(string s);
 	int addString(string str);
 	string getString(int id);
 	void debugOn();

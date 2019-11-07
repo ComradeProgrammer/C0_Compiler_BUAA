@@ -77,6 +77,9 @@
     <ClCompile Include="MidCodeContainer.cpp">
       <Filter>源文件\InterMediateCode</Filter>
     </ClCompile>
+    <ClCompile Include="Block.cpp">
+      <Filter>源文件\BackEnd</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SymbolTable.h">
@@ -102,6 +105,9 @@
     </ClInclude>
     <ClInclude Include="MidCodeContainer.h">
       <Filter>头文件\InterMediateCode</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.h">
+      <Filter>头文件\BackEnd</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
