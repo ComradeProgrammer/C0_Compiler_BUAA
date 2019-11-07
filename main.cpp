@@ -29,6 +29,7 @@ int main() {
 	//grammarAnalyzer.loopSentence();
 	//grammarAnalyzer.voidFunctionDefination();
 	//grammarAnalyzer.sentenceSeries();
+	container.removeNops();
 	cout << container;
 	system("pause");
 	//====================================

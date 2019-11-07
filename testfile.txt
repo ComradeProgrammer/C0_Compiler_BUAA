@@ -5,7 +5,12 @@ char i,j[100];
 
 void func1(){
 	int i,j,k;
-	i=i+1;
+	do{
+		do{
+			j=j+1;
+		}
+		while(i>j)
+	}while(i>j)
 }
 void main(){
 	

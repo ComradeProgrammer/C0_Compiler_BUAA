@@ -57,8 +57,11 @@ void MidCodeContainer::removeNops() {
 				int oldLabel = v[i].labelNo;
 				int newLabel = v[i + 1].labelNo;
 				for (int j = 0; j < v.size(); j++) {
-					if (v[j].labelNo == oldLabel) {
-						v[j].labelNo = newLabel;
+					if (v[j].op == MIDGOTO && v[j].operand1 == oldLabel) {
+						v[j].operand1 = newLabel;
+					}
+					else if ((v[j].op == MIDBNZ || v[j].op == MIDBZ) && v[j].operand2 == oldLabel) {
+						v[j].operand2 =newLabel;
 					}
 				}
 				v.erase(v.begin() + i, v.begin() + i + 1);
