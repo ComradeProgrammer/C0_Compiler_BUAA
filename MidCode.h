@@ -6,6 +6,7 @@
 #define MIDUNUSED -1
 #include<iostream>
 #include<vector>
+#include<set>
 #include"SymbolTable.h"
 using namespace std;
 /*自己的规定：printf，scanf都直接展开在函数代码里*/

@@ -8,3 +8,5 @@
 #include"GrammarAnalyzer.h"
 #include"MidCode.h"
 #include"MidCodeContainer.h"
+#include"Block.h"
+#include"FlowChart.h"

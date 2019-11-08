@@ -51,10 +51,10 @@ ostream& operator<<(ostream& out, MidCode c) {
 	ops[MIDEQL] = "==";
 	ops[MIDNEQ] = "!=";
 	if (c.labelNo < -1) {
-		cout << "_label" << -(c.labelNo) << ": "<<endl;
+		out << "_label" << -(c.labelNo) << ": "<<endl;
 	}
 	else if(c.labelNo>=0) {
-		cout <<MidCode::getOperandName(c.labelNo,false) << ": " << endl;
+		out <<MidCode::getOperandName(c.labelNo,false) << ": " << endl;
 	}
 	switch (c.op) {
 		case MIDFUNC:

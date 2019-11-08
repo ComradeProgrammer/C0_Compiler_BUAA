@@ -2,6 +2,8 @@
 using namespace std;
 
 int main() {
+	fstream f;
+	f.open("debug.txt", ios_base::trunc | ios_base::out);
     FaultHandler faultHandler("error.txt");
 	faultHandler.debugOn();
 
@@ -31,6 +33,8 @@ int main() {
 	//grammarAnalyzer.sentenceSeries();
 	container.removeNops();
 	cout << container;
+	FlowChart flowchart(container);
+	f << flowchart;
 	system("pause");
 	//====================================
 	return 0;

@@ -51,6 +51,9 @@
     <Text Include="teststorage.txt">
       <Filter>资源文件</Filter>
     </Text>
+    <Text Include="debug.txt">
+      <Filter>资源文件</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -80,6 +83,9 @@
     <ClCompile Include="Block.cpp">
       <Filter>源文件\BackEnd</Filter>
     </ClCompile>
+    <ClCompile Include="FlowChart.cpp">
+      <Filter>源文件\BackEnd</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SymbolTable.h">
@@ -107,6 +113,9 @@
       <Filter>头文件\InterMediateCode</Filter>
     </ClInclude>
     <ClInclude Include="Block.h">
+      <Filter>头文件\BackEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="FlowChart.h">
       <Filter>头文件\BackEnd</Filter>
     </ClInclude>
   </ItemGroup>

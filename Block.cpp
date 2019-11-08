@@ -16,3 +16,22 @@ void Block::addPrev(Block* b) {
 void Block::addNext(Block* b) {
 	next.push_back(b);
 }
+
+ostream& operator<<(ostream& out, Block b) {
+	out << "====Block"<<b.id<<"====" << endl;
+	out << "prev:[";
+	for (Block* i : b.prev) {
+		out << i->id << ",";
+	}
+	out << "]" << endl;
+	for (MidCode& i : b.v) {
+		out << i;
+	}
+	out << "next:[";
+	for (Block* i : b.next) {
+		out << i->id << ",";
+	}
+	out << "]" << endl;
+	out << "=============="<<endl;
+	return out;
+}

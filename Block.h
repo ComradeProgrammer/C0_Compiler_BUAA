@@ -14,6 +14,7 @@ public:
 	void insert(MidCode c);
 	void addPrev(Block* b);
 	void addNext(Block* b);
+	friend ostream& operator<<(ostream& out, Block b);
 private:
 	vector<MidCode>v;
 };

@@ -2,16 +2,20 @@ const int c1=0;
 const char c2='d';
 int a[100],b,c,d;
 char i,j[100];
-
+void func2(){
+	b=b+1;
+}
 void func1(){
 	int i,j,k;
 	do{
 		do{
 			j=j+1;
+			func2();
 		}
 		while(i>j)
 	}while(i>j)
 }
+
 void main(){
 	
 }

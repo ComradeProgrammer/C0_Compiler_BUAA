@@ -124,6 +124,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="debug.txt" />
     <Text Include="error.txt" />
     <Text Include="grammar.txt" />
     <Text Include="grammarRegroup.txt" />
@@ -134,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="FaultHandler.cpp" />
+    <ClCompile Include="FlowChart.cpp" />
     <ClCompile Include="GrammarAnalyzer.cpp" />
     <ClCompile Include="LexicalAnalyzer.cpp" />
     <ClCompile Include="main.cpp" />
@@ -145,6 +147,7 @@
   <ItemGroup>
     <ClInclude Include="Block.h" />
     <ClInclude Include="FaultHandler.h" />
+    <ClInclude Include="FlowChart.h" />
     <ClInclude Include="GrammarAnalyzer.h" />
     <ClInclude Include="LexicalAnalyzer.h" />
     <ClInclude Include="main.h" />
