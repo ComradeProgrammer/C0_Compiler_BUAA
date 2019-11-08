@@ -31,11 +31,11 @@ int main() {
 	//grammarAnalyzer.loopSentence();
 	//grammarAnalyzer.voidFunctionDefination();
 	//grammarAnalyzer.sentenceSeries();
+	//====================================
 	container.removeNops();
 	cout << container;
 	FlowChart flowchart(container);
 	f << flowchart;
 	system("pause");
-	//====================================
 	return 0;
 }

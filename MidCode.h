@@ -30,7 +30,7 @@ enum MidCodeOp {
 	MIDNEQ,
 	MIDNEGATE,//取相反数，1-被取反的数
 	MIDARRAYGET,// x=a[i],x的id为target，a的id为1,i的id为2
-	MIDARRAYWRITE,//a[i]=j a的id为target i的i为1 j的id为2
+	MIDARRAYWRITE,//a[i]=j a的id为target i的iD为1 j的id为2
 	MIDASSIGN,//1-赋值的结果
 	MIDGOTO,//无条件跳转，1-跳转目标标号，此处立即数标识使用false
 	MIDBNZ,//条件为真跳转 1-所需的条件 2-目标标号

@@ -3,6 +3,7 @@ prev:[2,]
 void func2()
 #TMP2 = b + 1
 b=#TMP2
+ret 
 next:[3,]
 ==============
 ====Block1====
@@ -28,10 +29,16 @@ next:[4,2,]
 prev:[3,]
 #TMP5 = i > j
 BNZ #TMP5 _label3
-next:[2,]
+next:[5,2,]
 ==============
 ====Block5====
+prev:[4,]
+ret 
+next:[]
+==============
+====Block6====
 prev:[]
 void main()
+ret 
 next:[]
 ==============

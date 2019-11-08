@@ -28,6 +28,9 @@ FlowChart::FlowChart(MidCodeContainer& c) {
 			if (c.v[i].op == MIDFUNC) {
 				currentFunction = c.v[i].operand1;
 				callToBlock[currentFunction] = block;
+				if (c.v[i].operand1 == MidCode::table->mainSymbolId) {
+					start = block;
+				}
 			}
 			if ((c.v[i].op != MIDFUNC) &&
 				(i != 0 && c.v[i - 1].op != MIDRET && c.v[i - 1].op != MIDGOTO&&
@@ -84,6 +87,7 @@ FlowChart::FlowChart(MidCodeContainer& c) {
 		}
 	}
 	chart.erase(chart.begin());//É¾µôµÚÒ»¸öNULL
+	end = *(chart.end() - 1);
 }
 
 ostream& operator<<(ostream& out, FlowChart f) {
@@ -92,3 +96,4 @@ ostream& operator<<(ostream& out, FlowChart f) {
 	}
 	return out;
 }
+

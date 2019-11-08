@@ -19,6 +19,7 @@ public:
 	string getString(int id);
 	void debugOn();
 	void selfTest();
+	int mainSymbolId;
 private:
 	int count;
 	bool debug=false;

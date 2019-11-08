@@ -41,7 +41,9 @@ SymbolEntry* SymbolTable::addSymbol(string currentScope, string name,bool isFunc
 		cout << "debug@SymbolTable:duplicate name found" << endl;
 	}
 	if (debug) { cout << "==============================" << endl; }
-	
+	if (name == "main") {
+		mainSymbolId = res->id;
+	}
 	return res;
 }
 

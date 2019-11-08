@@ -4,6 +4,7 @@ int a[100],b,c,d;
 char i,j[100];
 void func2(){
 	b=b+1;
+	return;
 }
 void func1(){
 	int i,j,k;
@@ -14,8 +15,9 @@ void func1(){
 		}
 		while(i>j)
 	}while(i>j)
+	return;
 }
 
 void main(){
-	
+	return;
 }
