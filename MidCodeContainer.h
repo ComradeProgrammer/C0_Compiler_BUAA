@@ -6,6 +6,8 @@
 using namespace std;
 class MidCodeContainer {
 public:
+	vector<MidCode>v;
+
 	int midCodeInsert(MidCodeOp op,int target,
 		int opreand1,bool isImmediate1,
 		int opreand2,bool isImmediate,
@@ -16,5 +18,5 @@ public:
 	vector<MidCode>::iterator getIterator(int index);//返回指定位置的迭代器
 	void erase(int start, int end);//擦除从start-end的指令
 	void removeNops();
-	vector<MidCode>v;
+	
 };

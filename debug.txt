@@ -1,44 +1,76 @@
 ====Block0====
-prev:[2,]
-void func2()
-#TMP2 = b + 1
-b=#TMP2
-ret 
-next:[3,]
+void main()
+#TMP2 = x > 0
+BZ #TMP2 _label2
+	prev:[]
+	next:[1,5,]
+	use:[x,]
+	def:[#TMP2,]
+	activeIn:[x,a,]
+	activeOut:[x,a,]
 ==============
 ====Block1====
-prev:[]
-void func1()
-next:[2,]
+i=0
+	prev:[0,]
+	next:[2,]
+	use:[]
+	def:[i,]
+	activeIn:[]
+	activeOut:[i,]
 ==============
 ====Block2====
-prev:[1,3,4,]
 _label3: 
-#TMP3 = j + 1
-j=#TMP3
-call func2
-next:[0,]
+#TMP3 = i < 5
+BZ #TMP3 _label4
+	prev:[1,3,]
+	next:[3,4,]
+	use:[i,]
+	def:[#TMP3,]
+	activeIn:[i,]
+	activeOut:[i,]
 ==============
 ====Block3====
-prev:[0,]
-#TMP4 = i > j
-BNZ #TMP4 _label3
-next:[4,2,]
+#TMP4 = i * i
+a[i] =#TMP4
+i = i + 1
+GOTO _label3
+	prev:[2,]
+	next:[2,]
+	use:[i,]
+	def:[#TMP4,]
+	activeIn:[i,]
+	activeOut:[i,]
 ==============
 ====Block4====
-prev:[3,]
-#TMP5 = i > j
-BNZ #TMP5 _label3
-next:[5,2,]
+_label4: 
+j=0
+GOTO _label5
+	prev:[2,]
+	next:[6,]
+	use:[]
+	def:[j,]
+	activeIn:[]
+	activeOut:[]
 ==============
 ====Block5====
-prev:[4,]
-ret 
-next:[]
+_label2: 
+#TMP5 = a [ x ] 
+#TMP6 = #TMP5 + 1
+y=#TMP6
+	prev:[0,]
+	next:[6,]
+	use:[x,a,]
+	def:[#TMP6,#TMP5,y,]
+	activeIn:[x,a,]
+	activeOut:[]
 ==============
 ====Block6====
-prev:[]
-void main()
-ret 
-next:[]
+_label5: 
+nop
+	prev:[5,4,]
+	next:[]
+	use:[]
+	def:[]
+	activeIn:[]
+	activeOut:[]
 ==============

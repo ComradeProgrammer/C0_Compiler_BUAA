@@ -1,23 +1,13 @@
-const int c1=0;
-const char c2='d';
-int a[100],b,c,d;
-char i,j[100];
-void func2(){
-	b=b+1;
-	return;
-}
-void func1(){
-	int i,j,k;
-	do{
-		do{
-			j=j+1;
-			func2();
-		}
-		while(i>j)
-	}while(i>j)
-	return;
-}
-
+int x,y,i,j;
+int a[100];
 void main(){
-	return;
+	if(x>0){
+		for( i=0;i<5;i=i+1){
+			a[i]=i*i;
+		}
+		j=0;
+	}
+	else{
+		y=a[x]+1;
+	}
 }

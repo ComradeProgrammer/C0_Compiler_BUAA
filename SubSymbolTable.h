@@ -11,7 +11,8 @@ enum SymbolType {
 	TYPECHARARRAY,
 	TYPEINTCONST,
 	TYPECHARCONST,
-	TYPEFUNCTION
+	TYPEFUNCTION,
+	TYPETMP
 };
 /*用来标记若符号为函数时返回类型*/
 enum ReturnType {

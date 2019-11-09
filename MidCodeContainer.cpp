@@ -50,7 +50,7 @@ void MidCodeContainer::erase(int start,int end) {
 void MidCodeContainer::removeNops() {
 	for (int i = 0; i < v.size(); i++) {
 		if (v[i].op == MIDNOP) {
-			if (i + 1 >= v.size()) {
+			if (i + 1 >= v.size()||v[i+1].op==MIDFUNC) {
 				continue;
 			}
 			else if (v[i + 1].labelNo != MIDNOLABEL) {

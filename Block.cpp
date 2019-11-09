@@ -41,16 +41,16 @@ void Block::useDefScan() {
 			||i.op==MIDPRINTINT||i.op==MIDPRINTCHAR) {
 			if (!i.isImmediate1) {
 				def.erase(i.operand1);
-				def.erase(i.operand2);
+				use.insert(i.operand1);
 			}
 		}
 		//使用operand1并返回值，其中assign需要考虑排除-1
 		else if (i.op == MIDNEGATE || i.op == MIDASSIGN) {
 			use.erase(i.target);
 			def.insert(i.target);
-			if (!i.isImmediate1&&i.operand1!=-1) {
+			if ((!i.isImmediate1)&&i.operand1!=-1) {
 				def.erase(i.operand1);
-				def.erase(i.operand2);
+				use.insert(i.operand1);
 			}
 			
 		}
@@ -80,8 +80,8 @@ bool Block::activeVariableAnalyzeEpoch() {
 		activeOut = setUnion(activeOut, i->activeIn);
 	}
 	set<int>tmp = setDifference(activeOut, def);
-	activeIn = setUnion(activeIn, use);
-	return oldsize == activeIn.size();
+	activeIn = setUnion(tmp, use);
+	return oldsize != activeIn.size();
 
 }
 
@@ -108,19 +108,47 @@ set<int>Block::setDifference(set<int> a, set<int> b) {
 }
 ostream& operator<<(ostream& out, Block b) {
 	out << "====Block"<<b.id<<"====" << endl;
-	out << "prev:[";
+	
+	for (MidCode& i : b.v) {
+		out << i;
+	}
+
+	out << "\t" << "prev:[";
 	for (Block* i : b.prev) {
 		out << i->id << ",";
 	}
 	out << "]" << endl;
-	for (MidCode& i : b.v) {
-		out << i;
-	}
-	out << "next:[";
+
+	out << "\t" << "next:[";
 	for (Block* i : b.next) {
 		out << i->id << ",";
 	}
 	out << "]" << endl;
+
+	out << "\t" << "use:[";
+	for (int i : b.use) {
+		out << MidCode::getOperandName(i, false) << ",";
+	}
+	out << "]" << endl;
+
+	out << "\t" << "def:[";
+	for (int i : b.def) {
+		out << MidCode::getOperandName(i, false) << ",";
+	}
+	out << "]" << endl;
+
+	out << "\t" << "activeIn:[";
+	for (int i : b.activeIn) {
+		out << MidCode::getOperandName(i, false) << ",";
+	}
+	out << "]" << endl;
+
+	out << "\t" << "activeOut:[";
+	for (int i : b.activeOut) {
+		out << MidCode::getOperandName(i, false) << ",";
+	}
+	out << "]" << endl;
+
 	out << "=============="<<endl;
 	return out;
 }

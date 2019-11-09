@@ -7,7 +7,8 @@ using namespace std;
 class Block {
 public:
 	static int count;
-	int id;
+	int id; 
+	int functionId;
 	vector<Block*>prev;
 	vector<Block*>next;
 	set<int>def;

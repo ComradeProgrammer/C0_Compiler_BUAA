@@ -2,8 +2,7 @@
 using namespace std;
 
 int main() {
-	fstream f;
-	f.open("debug.txt", ios_base::trunc | ios_base::out);
+	
     FaultHandler faultHandler("error.txt");
 	faultHandler.debugOn();
 
@@ -34,8 +33,12 @@ int main() {
 	//====================================
 	container.removeNops();
 	cout << container;
+	fstream f;
+	f.open("debug.txt", ios_base::trunc | ios_base::out);
 	FlowChart flowchart(container);
+	flowchart.activeVariableAnalyze();
 	f << flowchart;
+
 	system("pause");
 	return 0;
 }

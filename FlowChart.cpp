@@ -28,9 +28,10 @@ FlowChart::FlowChart(MidCodeContainer& c) {
 			if (c.v[i].op == MIDFUNC) {
 				currentFunction = c.v[i].operand1;
 				callToBlock[currentFunction] = block;
-				if (c.v[i].operand1 == MidCode::table->mainSymbolId) {
+				block->functionId = currentFunction;
+				/*if (c.v[i].operand1 == MidCode::table->mainSymbolId) {
 					start = block;
-				}
+				}*/
 			}
 			if ((c.v[i].op != MIDFUNC) &&
 				(i != 0 && c.v[i - 1].op != MIDRET && c.v[i - 1].op != MIDGOTO&&
@@ -56,7 +57,7 @@ FlowChart::FlowChart(MidCodeContainer& c) {
 		if (c.v[i].labelNo != MIDNOLABEL) {
 			labelToBlock[c.v[i].labelNo] = block;
 		}
-		if (c.v[i].labelNo == MIDRET) {
+		if (c.v[i].op == MIDRET) {
 			retToBlock[currentFunction].insert(block);
 		}
 		codeToBlock[i] = block;
@@ -87,8 +88,26 @@ FlowChart::FlowChart(MidCodeContainer& c) {
 		}
 	}
 	chart.erase(chart.begin());//É¾µôµÚÒ»¸öNULL
-	end = *(chart.end() - 1);
+	/*end = *(chart.end() - 1);*/
 }
+
+void FlowChart::activeVariableAnalyze() {
+	for (Block* i : chart) {
+		i->useDefScan();
+	}
+	int n = chart.size();
+	while (1) {
+		bool changed = false;
+		for(int i=n-1;i>=0;i--){
+			bool status=chart[i]->activeVariableAnalyzeEpoch();
+			changed = changed || status;
+		}
+		if (!changed) {
+			break;
+		}
+	}
+}
+
 
 ostream& operator<<(ostream& out, FlowChart f) {
 	for (Block* i : f.chart) {
