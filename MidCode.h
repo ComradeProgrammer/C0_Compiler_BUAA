@@ -64,6 +64,4 @@ public:
 	friend ostream& operator<<(ostream& out, MidCode c);
 	static string getOperandName(int n,bool isImmediate);
 	static string getLabelName(int n);
-	
-	
 };

@@ -15,6 +15,7 @@ public:
 	set<int>use;
 	set<int>activeIn;
 	set<int>activeOut;
+	vector<MidCode>v;
 
 	Block();
 	void insert(MidCode c);
@@ -25,6 +26,6 @@ public:
 	friend ostream& operator<<(ostream& out, Block b);
 	set<int> setUnion(set<int> a, set<int> b);
 	set<int> setDifference(set<int> a, set<int> b);
-private:
-	vector<MidCode>v;
+
+	
 };

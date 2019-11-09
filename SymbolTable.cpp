@@ -79,8 +79,11 @@ SymbolEntry* SymbolTable::getSymbolByName(string currentScope, string name) {
 }
 
 SymbolEntry* SymbolTable:: getSymbolById(int id) {
-	if (id < 0 || id >= symbolId.size()) {
+	if ( id >= symbolId.size()) {
 		return NULL;
+	}
+	else if (id < 0) {
+		return tmpSymbolId[id];
 	}
 	return symbolId[id];
 }
@@ -105,6 +108,35 @@ SubSymbolTable* SymbolTable::getSubSymbolTableByName(string s) {
 	}
 	return scope[s];
 }
+
+SymbolEntry* SymbolTable::addTmpSymbol(string function, int id) {
+	SubSymbolTable* subtable = scope[function];
+	SymbolEntry*res= subtable->addTmpSymbol(id);
+	tmpSymbolId[id] = res;
+	return res;
+}
+
+ostream& operator<<(ostream& out, SymbolTable& t) {
+	out << "global:" << endl;
+	out << t.globalScope;
+	for (auto& i : t.scope) {
+		out << i.first << ":" << endl;
+		out << *(i.second);
+	}
+	return out;
+}
+
+map<int, vector<int>> SymbolTable::summary() {
+	map<int, vector<int>>res;
+	globalScope.summaryAndReport();
+	for (auto& i : scope) {
+		int id = globalScope.getSymbolByName(i.first)->id;
+		vector<int>tmp=i.second->summaryAndReport();
+		res[id] = tmp;
+	}
+	return res;
+}
+
 void SymbolTable::selfTest() {
 	/*SymbolEntry* tmp1=addSymbol("", "var1", false);
 	SymbolEntry* tmp2 = addSymbol("", "func1", true);

@@ -14,7 +14,7 @@ public:
 	void addLink(Block* from,Block* to);
 	friend ostream& operator<<(ostream& out, FlowChart f);
 	void activeVariableAnalyze();
-	//void summarize();
+	void summarize();
 private:
 	vector<Block*>chart;
 };

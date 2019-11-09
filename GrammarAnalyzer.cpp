@@ -1175,7 +1175,7 @@ void GrammarAnalyzer::parameterValueList(SymbolEntry* entry) {
 			raw.midCodeInsert(codeSegment[i]);
 		}
 	}
-	for (int i = returnBundles.size()-1; i>=0;i--) {
+	for (int i = 0; i< returnBundles.size();i++) {
 		raw.midCodeInsert(MIDPUSH, MIDUNUSED,
 			returnBundles[i].id, returnBundles[i].isImmediate,
 			MIDUNUSED, false, MIDNOLABEL);

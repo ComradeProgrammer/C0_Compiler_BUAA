@@ -108,7 +108,89 @@ void FlowChart::activeVariableAnalyze() {
 	}
 }
 
-
+void FlowChart::summarize() {
+	map<int, set<int>>tmpVar;
+	for (Block* i : chart) {
+		int functionId = i->functionId;
+		for (MidCode& j : i->v) {
+			switch (j.op) {
+				//operand1 only
+				case MIDPUSH:
+				case MIDRET:
+				case MIDBNZ:
+				case MIDBZ:
+				case MIDPRINTINT:
+				case MIDPRINTCHAR:
+					if (!j.isImmediate1 && j.operand1!= -1) {
+						tmpVar[functionId].insert(j.operand1);
+					}
+					break;
+				//all
+				case MIDADD:
+				case MIDSUB:
+				case MIDMULT:
+				case MIDDIV:
+				case MIDLSS:
+				case MIDLEQ:
+				case MIDGRE:
+				case MIDGEQ:
+				case MIDEQL:
+				case MIDNEQ:
+					if (!j.isImmediate1&&j.operand1<0) {
+						tmpVar[functionId].insert(j.operand1);
+					}
+					if (!j.isImmediate2 && j.operand2 < 0) {
+						tmpVar[functionId].insert(j.operand2);
+					}
+					if (j.target < 0) {
+						tmpVar[functionId].insert(j.target);
+					}
+					break;
+				//target and operand1 only
+				case MIDNEGATE:
+				case MIDASSIGN:
+					if (j.target < 0) {
+						tmpVar[functionId].insert(j.target);
+					}
+					if (!j.isImmediate1 && j.operand1 != -1&&j.operand1<0) {
+						tmpVar[functionId].insert(j.operand1);
+					}
+					break;
+				//target and operand2
+				case MIDARRAYGET:
+					if (j.target < 0) {
+						tmpVar[functionId].insert(j.target);
+					}
+					if (!j.isImmediate2&&j.operand2<0) {
+						tmpVar[functionId].insert(j.operand2);
+					}
+					break;
+					//operand1 and operand2
+				case MIDARRAYWRITE:
+					if (!j.isImmediate1 && j.operand1 < 0) {
+						tmpVar[functionId].insert(j.operand1);
+					}
+					if (!j.isImmediate2 && j.operand2 < 0) {
+						tmpVar[functionId].insert(j.operand2);
+					}
+					break;
+				// TARGET ONLY
+				case MIDREADINTEGER:
+				case MIDREADCHAR:
+					if (j.target < 0) {
+						tmpVar[functionId].insert(j.target);
+					}
+					break;
+			}
+		}
+	}
+	for (map<int, set<int>>::iterator i = tmpVar.begin(); i != tmpVar.end(); i++) {
+		string name = MidCode::table->getSymbolById(i->first)->name;
+		for (int j : i->second) {
+			MidCode::table->addTmpSymbol(name, j);
+		}
+	}
+}
 ostream& operator<<(ostream& out, FlowChart f) {
 	for (Block* i : f.chart) {
 		out << (*i);

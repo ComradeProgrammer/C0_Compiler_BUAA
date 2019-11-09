@@ -13,7 +13,7 @@ int main() {
 	SymbolTable symbolTable;
 	//	symbolTable.debugOn();
 	MidCode::table = &symbolTable;
-
+	SubSymbolTable::table = &symbolTable;
 	MidCodeContainer container;
 	GrammarAnalyzer grammarAnalyzer(faultHandler,symbolTable,lexicalAnalyzer,container,"output.txt");
 	//grammarAnalyzer.homeworkOn(true,true);
@@ -32,13 +32,16 @@ int main() {
 	//grammarAnalyzer.sentenceSeries();
 	//====================================
 	container.removeNops();
-	cout << container;
 	fstream f;
 	f.open("debug.txt", ios_base::trunc | ios_base::out);
+	f << container;
+	f << endl << endl;
 	FlowChart flowchart(container);
-	flowchart.activeVariableAnalyze();
-	f << flowchart;
-
+	//flowchart.activeVariableAnalyze();
+	//f << flowchart;
+	flowchart.summarize();
+	symbolTable.summary();
+	cout << symbolTable;
 	system("pause");
 	return 0;
 }

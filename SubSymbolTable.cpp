@@ -1,5 +1,7 @@
 ﻿#include"SubSymbolTable.h"
+#include"SymbolTable.h"
 #include<iostream>
+SymbolTable* SubSymbolTable::table = nullptr;
 SubSymbolTable::SubSymbolTable(string _nameScope){
 	nameScope = _nameScope;
 }
@@ -35,6 +37,80 @@ SymbolEntry* SubSymbolTable::getSymbolByName(string name) {
 	}
 }
 
+SymbolEntry* SubSymbolTable::addTmpSymbol(int id) {
+	SymbolEntry* entry = new SymbolEntry();
+	entry->type = TYPETMP;
+	entry->id = id;
+	return entry;
+}
+vector<int> SubSymbolTable::summaryAndReport() {
+
+	//第一个数是参数+局部变量大小，第二个数是参数大小
+	//分配的地址是以sp为界的，char int全是一个字存储
+	vector<int>res;
+	int size = 0;
+	int parasize=0;
+	//临时变量
+	for (auto& i:tmpSymbolMap) {
+		i.second->addr = size;
+		size += 4;
+	}
+	//int数组
+	for (auto& i : symbolMap) {
+		if (i.second->type == TYPEINTARRAY&&!i.second->isParameter) {
+			i.second->addr = size;
+			size += (i.second->dimension) * 4;
+		}
+	}
+	//char数组
+	for (auto& i : symbolMap) {
+		if (i.second->type == TYPECHARARRAY && !i.second->isParameter) {
+			i.second->addr = size;
+			size += (i.second->dimension) * 4;
+		}
+	}
+	//int变量
+	for (auto& i : symbolMap) {
+		if (i.second->type == TYPEINT && !i.second->isParameter) {
+			i.second->addr = size;
+			size += 4;
+		}
+	}
+	//char变量
+	for (auto& i : symbolMap) {
+		if (i.second->type == TYPECHAR && !i.second->isParameter) {
+			i.second->addr = size;
+			size += 4;
+		}
+	}
+	//整型常数
+	for (auto& i : symbolMap) {
+		if (i.second->type == TYPEINTCONST && !i.second->isParameter) {
+			i.second->addr = size;
+			size += 4;
+		}
+	}
+	//字符型常数
+	for (auto& i : symbolMap) {
+		if (i.second->type == TYPECHARCONST && !i.second->isParameter) {
+			i.second->addr = size;
+			size += 4;
+		}
+	}
+	if (nameScope != "") {
+		//参数
+		SymbolEntry* functionEntry = SubSymbolTable::table->getSymbolByName("", nameScope);
+		for (int i : functionEntry->link->paraIds) {
+			SymbolEntry* entry = SubSymbolTable::table->getSymbolById(i);
+			entry->addr = size;
+			size += 4;
+			parasize += 4;
+		}
+	}
+	res.push_back(size);
+	res.push_back(parasize);
+	return res;
+}
 void SubSymbolTable::selfTest() {
 	/*SymbolEntry* tmp1=addSymbol("para1", false);
 	if (tmp1->name != "para1"||tmp1->link!=NULL) {
@@ -66,24 +142,6 @@ void SubSymbolTable::selfTest() {
 	}*/
 }
 
-ostream& operator<<(ostream& o,FunctionLink f) {
-	o << "\tsymbol entry link content" << endl;
-	string s = f.returnType == RETINT ? "int" :
-		f.returnType == RETCHAR ? "char" :
-		f.returnType == RETVOID ? "void" :
-		"INVALID";
-	o << "\t\treturnType:" << s<<endl;
-	o << "\t\tparaNum:" << f.paraNum << endl;
-	o << "\t\tparas:[";
-	for (int i = 0; i < f.paras.size(); i++) {
-		string tmp = f.paras[i] == TYPEINT ? "int" :
-			f.paras[i] == TYPECHAR ? "char" :
-			"INVALID";
-		o << tmp << " ";
-	}
-	o << "]" << endl;
-	return o;
-}
 
 void SubSymbolTable::dumpMidCode(ostream& out) {
 	/*导出变量定义处的中间代码*/
@@ -115,10 +173,26 @@ void SubSymbolTable::dumpMidCode(ostream& out) {
 	}
 }
 
+ostream& operator<<(ostream& o, FunctionLink& f) {
+	//o << "\tsymbol entry link content" << endl;
+	string s = f.returnType == RETINT ? "int" :
+		f.returnType == RETCHAR ? "char" :
+		f.returnType == RETVOID ? "void" :
+		"INVALID";
+	o << "\t\treturnType:" << s ;
+	o << "\tparaNum:" << f.paraNum;
+	o << "\tparas:[";
+	for (int i = 0; i < f.paras.size(); i++) {
+		
+		o << f.paraIds[i] << " ";
+	}
+	o << "]" ;
+	return o;
+}
 
-ostream& operator<<(ostream& o,SymbolEntry s) {
-	o << "symbol entry content" << endl;
-	o << "\tname:" << s.name;
+ostream& operator<<(ostream& o,SymbolEntry& s) {
+	//o << "symbol entry content" << endl;
+	o << "name:" << s.name;
 	o << "\tid:" << s.id;
 	string tmp;
 	switch(s.type){
@@ -143,17 +217,33 @@ ostream& operator<<(ostream& o,SymbolEntry s) {
 	case TYPEFUNCTION:
 		tmp = "function";
 		break; 
+	case TYPETMP:
+		tmp = "tmpVariable";
+		break;
 	}
-	o << "\ttype:" <<tmp<< endl;
-	o << "\tscope:" << s.scope << endl;
-	o << "\tinitValue:" << s.initValue << endl;
-	o << "\taddr:" << s.addr << endl;
-	o << "\tdimension:" << s.dimension << endl;
+	o << "\ttype:" <<tmp;
+	o << "\tscope:" << s.scope ;
+	//o << "\tinitValue:" << s.initValue << endl;
+	o << "\taddr:" << s.addr ;
+	o << "\tdimension:" << s.dimension;
 	if (s.link != NULL){
-		o<<(*s.link);
+		o<<"\nlink:"<<(*s.link)<<endl;
 	}
 	else {
-		cout<<"link:NULL"<<endl;
+		o<<"link:NULL"<<endl;
 	}
 	return o;
+}
+
+ostream& operator<<(ostream& out, SubSymbolTable& t) {
+	for (auto& i : t.symbolMap) {
+		out << *(i.second);
+	}
+	if (t.nameScope != "") {
+		for (auto& i : t.tmpSymbolMap) {
+			out << "tmp" << -(i.second->id);
+			out << " " << "addr:" << i.second->addr;
+		}
+	}
+	return out;
 }
