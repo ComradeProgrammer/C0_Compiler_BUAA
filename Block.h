@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include<vector>
 #include<set>
 #include"MidCode.h"
@@ -7,8 +7,8 @@ using namespace std;
 class Block {
 public:
 	static int count;
-	int id; 
-	int functionId;
+	int id;//每个block有唯一确定的id 
+	int functionId;//所属函数id
 	vector<Block*>prev;
 	vector<Block*>next;
 	set<int>def;
@@ -23,9 +23,10 @@ public:
 	void addNext(Block* b);
 	void useDefScan();
 	bool activeVariableAnalyzeEpoch();
+	vector<vector<int>>conflictEdgeAnalyze();
 	friend ostream& operator<<(ostream& out, Block b);
-	set<int> setUnion(set<int> a, set<int> b);
-	set<int> setDifference(set<int> a, set<int> b);
+	static set<int> setUnion(set<int> a, set<int> b);
+	static set<int> setDifference(set<int> a, set<int> b);
 
 	
 };

@@ -1,4 +1,4 @@
-#include"MidCodeContainer.h"
+﻿#include"MidCodeContainer.h"
 
 int MidCodeContainer::midCodeInsert(MidCodeOp op, int target,
 	int operand1,bool isImmediate1,

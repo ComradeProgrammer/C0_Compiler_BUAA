@@ -20,10 +20,12 @@ public:
 	SubSymbolTable* getSubSymbolTableByName(string s);
 	int addString(string str);
 	string getString(int id);
+
 	map<int, vector<int>> summary();
 
 	void debugOn();
 	void selfTest();
+	void dumpMipsCodeHeader(ostream& f);
 	friend ostream& operator<<(ostream& out, SymbolTable& t);
 private:
 	int count;
@@ -34,4 +36,5 @@ private:
 	map<int,SymbolEntry*>tmpSymbolId;
 	int stringCount;
 	vector<string> unnamedStrings;
+
 };

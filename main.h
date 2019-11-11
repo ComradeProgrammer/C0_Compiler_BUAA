@@ -10,3 +10,4 @@
 #include"MidCodeContainer.h"
 #include"Block.h"
 #include"FlowChart.h"
+#include"MipsGenerator.h"

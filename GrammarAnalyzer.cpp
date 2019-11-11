@@ -505,13 +505,18 @@ void GrammarAnalyzer::voidFunctionDefination() {
 		currentScope = functionName;
 		compoundSentence();
 		currentScope = "";
-
+		if (entry != NULL) {
+			raw.midCodeInsert(MIDRET, MIDUNUSED,
+				MIDUNUSED, false,
+				MIDUNUSED, false, MIDNOLABEL);
+		}
 		if (lex.sym().type != RBRACE) {
 			f.handleFault(lex.lineNumber(), "缺少}");
 			throw 0;
 		}
 		getNextSym();
 		//读取右大括号完成
+		
 	}
 	catch (int e) {
 		toNextBrace();

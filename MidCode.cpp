@@ -1,4 +1,4 @@
-#include"MidCode.h"
+﻿#include"MidCode.h"
 #include<map>
 SymbolTable* MidCode::table = nullptr;
 int MidCode::labelCount = -2;

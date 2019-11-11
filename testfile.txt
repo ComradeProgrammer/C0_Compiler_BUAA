@@ -1,11 +1,19 @@
-int gi1,gi2,gi3;
-int gArray[100];
-char gcArray[100],gc1,gc2;
-void function1(int p1,char p2){
-	const int l1=5;
-	int l4,l5;
-	gi1=p1+p2;
-}
 void main(){
+              int a,c;
+              char b,d;
+              scanf(a,b,c,d);
+              printf("a: ",a);
+              printf("b: ",b);
+              printf("c: ",c);
+              printf("d: ",d);
+              scanf(a,c);
+              scanf(b,d);
+              printf("a+1: ",a+1);
+              printf("b+1: ",b+1);
+              printf("c+1: ",c+1);
+              printf("d+1: ",d+1);
+              printf("a+c: ",a+c);
+              printf("b+d: ",b+d);
+          }
 
-}
+

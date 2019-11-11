@@ -2,7 +2,6 @@
 using namespace std;
 
 int main() {
-	
     FaultHandler faultHandler("error.txt");
 	faultHandler.debugOn();
 
@@ -19,29 +18,25 @@ int main() {
 	//grammarAnalyzer.homeworkOn(true,true);
 
 	grammarAnalyzer.programme();
-
-	//=============测试===================
-	//grammarAnalyzer.variableDeclearation();
-	//grammarAnalyzer.nonVoidFunctionDefination();
-	//grammarAnalyzer.declearationHeader();	
-	//grammarAnalyzer.declearationHeader();
-	//grammarAnalyzer.assignAndCall();
-	//grammarAnalyzer.ifSentence();
-	//grammarAnalyzer.loopSentence();
-	//grammarAnalyzer.voidFunctionDefination();
-	//grammarAnalyzer.sentenceSeries();
-	//====================================
 	container.removeNops();
 	fstream f;
 	f.open("debug.txt", ios_base::trunc | ios_base::out);
 	f << container;
 	f << endl << endl;
-	FlowChart flowchart(container);
-	//flowchart.activeVariableAnalyze();
-	//f << flowchart;
+	MipsGenerator mips;
+	mips.outputFile("mips.txt");
+	FlowChart flowchart(container, mips);
+	flowchart.optimize();
 	flowchart.summarize();
-	symbolTable.summary();
-	cout << symbolTable;
+	f << flowchart << endl << endl;
+	f << symbolTable << endl << endl;
+	flowchart.conflictEdgeAnalyze();
+	mips.printConflictMap(f);
+	f << endl << endl;
+	mips.globalRegisterAlloc();
+	mips.printRegisterAllocStatus(f);
+	mips.generateProgramHeader();
+	flowchart.go();
 	system("pause");
 	return 0;
 }

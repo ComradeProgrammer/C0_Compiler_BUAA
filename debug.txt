@@ -1,18 +1,114 @@
-int gArray[100]
-int gc1
-int gc2
-int gcArray[100]
-int gi1
-int gi2
-int gi3
-void function1()
-const int l1
-int l4
-int l5
-para int p1
-para char p2
-#TMP2 = p1 + p2
-gi1=#TMP2
 void main()
+int a
+int b
+int c
+int d
+a = syscall-5 
+b = syscall-12 
+c = syscall-5 
+d = syscall-12 
+syscall-4 a: 
+syscall-1 a
+syscall-4 b: 
+syscall-11 b
+syscall-4 c: 
+syscall-1 c
+syscall-4 d: 
+syscall-11 d
+a = syscall-5 
+c = syscall-5 
+b = syscall-12 
+d = syscall-12 
+syscall-4 a+1: 
+#TMP2 = a + 1
+syscall-1 #TMP2
+syscall-4 b+1: 
+#TMP3 = b + 1
+syscall-1 #TMP3
+syscall-4 c+1: 
+#TMP4 = c + 1
+syscall-1 #TMP4
+syscall-4 d+1: 
+#TMP5 = d + 1
+syscall-1 #TMP5
+syscall-4 a+c: 
+#TMP6 = a + c
+syscall-1 #TMP6
+syscall-4 b+d: 
+#TMP7 = b + d
+syscall-1 #TMP7
 
 
+====Block0====
+void main()
+a = syscall-5 
+b = syscall-12 
+c = syscall-5 
+d = syscall-12 
+syscall-4 a: 
+syscall-1 a
+syscall-4 b: 
+syscall-11 b
+syscall-4 c: 
+syscall-1 c
+syscall-4 d: 
+syscall-11 d
+a = syscall-5 
+c = syscall-5 
+b = syscall-12 
+d = syscall-12 
+syscall-4 a+1: 
+#TMP2 = a + 1
+syscall-1 #TMP2
+syscall-4 b+1: 
+#TMP3 = b + 1
+syscall-1 #TMP3
+syscall-4 c+1: 
+#TMP4 = c + 1
+syscall-1 #TMP4
+syscall-4 d+1: 
+#TMP5 = d + 1
+syscall-1 #TMP5
+syscall-4 a+c: 
+#TMP6 = a + c
+syscall-1 #TMP6
+syscall-4 b+d: 
+#TMP7 = b + d
+syscall-1 #TMP7
+	prev:[]
+	next:[]
+	use:[]
+	def:[#TMP7,#TMP6,#TMP5,#TMP4,#TMP3,#TMP2,a,c,b,d,]
+	activeIn:[]
+	activeOut:[]
+==============
+
+
+global:
+name:main	id:0	type:function	scope:	addr:-1	dimension:0
+link:		returnType:void	paraNum:0	paras:[]
+main:
+name:a	id:1	type:int	scope:main	addr:24	dimension:0link:NULL
+name:b	id:3	type:char	scope:main	addr:32	dimension:0link:NULL
+name:c	id:2	type:int	scope:main	addr:28	dimension:0link:NULL
+name:d	id:4	type:char	scope:main	addr:36	dimension:0link:NULL
+tmp7 addr:0
+tmp6 addr:4
+tmp5 addr:8
+tmp4 addr:12
+tmp3 addr:16
+tmp2 addr:20
+
+
+
+
+-7:-2
+-6:-2
+-5:-2
+-4:-2
+-3:-2
+-2:-2
+1:-2
+2:-2
+3:-2
+4:-2

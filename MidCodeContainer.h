@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include<iostream>
 #include<vector>
 #include<string>
@@ -14,9 +14,9 @@ public:
 		int label);
 	void midCodeInsert(vector<MidCode>&tmp);
 	friend ostream& operator<<(ostream& out, MidCodeContainer c);
-	int getIndex();//·µ»ØĞÂµÄÒ»ÌõÖ¸Áî½«»á±»ÌîÈëµÄÎ»ÖÃµÄÏÂ±ê
-	vector<MidCode>::iterator getIterator(int index);//·µ»ØÖ¸¶¨Î»ÖÃµÄµü´úÆ÷
-	void erase(int start, int end);//²Á³ı´Óstart-endµÄÖ¸Áî
+	int getIndex();//è¿”å›æ–°çš„ä¸€æ¡æŒ‡ä»¤å°†ä¼šè¢«å¡«å…¥çš„ä½ç½®çš„ä¸‹æ ‡
+	vector<MidCode>::iterator getIterator(int index);//è¿”å›æŒ‡å®šä½ç½®çš„è¿­ä»£å™¨
+	void erase(int start, int end);//æ“¦é™¤ä»start-endçš„æŒ‡ä»¤
 	void removeNops();
 	
 };

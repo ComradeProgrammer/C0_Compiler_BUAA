@@ -41,6 +41,7 @@ SymbolEntry* SubSymbolTable::addTmpSymbol(int id) {
 	SymbolEntry* entry = new SymbolEntry();
 	entry->type = TYPETMP;
 	entry->id = id;
+	tmpSymbolMap[id] = entry;
 	return entry;
 }
 vector<int> SubSymbolTable::summaryAndReport() {
@@ -54,12 +55,14 @@ vector<int> SubSymbolTable::summaryAndReport() {
 	for (auto& i:tmpSymbolMap) {
 		i.second->addr = size;
 		size += 4;
+		sequence.push_back(i.second->id);
 	}
 	//int数组
 	for (auto& i : symbolMap) {
 		if (i.second->type == TYPEINTARRAY&&!i.second->isParameter) {
 			i.second->addr = size;
 			size += (i.second->dimension) * 4;
+			sequence.push_back(i.second->id);
 		}
 	}
 	//char数组
@@ -67,6 +70,7 @@ vector<int> SubSymbolTable::summaryAndReport() {
 		if (i.second->type == TYPECHARARRAY && !i.second->isParameter) {
 			i.second->addr = size;
 			size += (i.second->dimension) * 4;
+			sequence.push_back(i.second->id);
 		}
 	}
 	//int变量
@@ -74,6 +78,7 @@ vector<int> SubSymbolTable::summaryAndReport() {
 		if (i.second->type == TYPEINT && !i.second->isParameter) {
 			i.second->addr = size;
 			size += 4;
+			sequence.push_back(i.second->id);
 		}
 	}
 	//char变量
@@ -81,6 +86,7 @@ vector<int> SubSymbolTable::summaryAndReport() {
 		if (i.second->type == TYPECHAR && !i.second->isParameter) {
 			i.second->addr = size;
 			size += 4;
+			sequence.push_back(i.second->id);
 		}
 	}
 	//整型常数
@@ -88,6 +94,7 @@ vector<int> SubSymbolTable::summaryAndReport() {
 		if (i.second->type == TYPEINTCONST && !i.second->isParameter) {
 			i.second->addr = size;
 			size += 4;
+			sequence.push_back(i.second->id);
 		}
 	}
 	//字符型常数
@@ -95,14 +102,16 @@ vector<int> SubSymbolTable::summaryAndReport() {
 		if (i.second->type == TYPECHARCONST && !i.second->isParameter) {
 			i.second->addr = size;
 			size += 4;
+			sequence.push_back(i.second->id);
 		}
 	}
+
 	if (nameScope != "") {
 		//参数
 		SymbolEntry* functionEntry = SubSymbolTable::table->getSymbolByName("", nameScope);
 		for (int i : functionEntry->link->paraIds) {
 			SymbolEntry* entry = SubSymbolTable::table->getSymbolById(i);
-			entry->addr = size;
+			entry->addr = size+4;
 			size += 4;
 			parasize += 4;
 		}
@@ -242,7 +251,7 @@ ostream& operator<<(ostream& out, SubSymbolTable& t) {
 	if (t.nameScope != "") {
 		for (auto& i : t.tmpSymbolMap) {
 			out << "tmp" << -(i.second->id);
-			out << " " << "addr:" << i.second->addr;
+			out << " " << "addr:" << i.second->addr<<endl;
 		}
 	}
 	return out;

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #define MIDINT 0
 #define MIDCHAR 1
 #define MIDVOID 2
@@ -9,15 +9,15 @@
 #include<set>
 #include"SymbolTable.h"
 using namespace std;
-/*×Ô¼ºµÄ¹æ¶¨£ºprintf£¬scanf¶¼Ö±½ÓÕ¹¿ªÔÚº¯Êý´úÂëÀï*/
-/*ÔÚ¸³ÖµÓï¾äÖÐ-1ºÅ±äÁ¿Áô¸øRETÕâ¸öÌØÊâ±äÁ¿£¬ÆäËûÇé¿ö-1Ìî³äÎÞÓÃµÄ²Ù×÷Êý*/
-/*±êÇ©ÖÐ-1ºÅ±äÁ¿±êÖ¾×ÅÃ»ÓÐ±êÇ©*/
+/*è‡ªå·±çš„è§„å®šï¼šprintfï¼Œscanféƒ½ç›´æŽ¥å±•å¼€åœ¨å‡½æ•°ä»£ç é‡Œ*/
+/*åœ¨èµ‹å€¼è¯­å¥ä¸­-1å·å˜é‡ç•™ç»™RETè¿™ä¸ªç‰¹æ®Šå˜é‡ï¼Œå…¶ä»–æƒ…å†µ-1å¡«å……æ— ç”¨çš„æ“ä½œæ•°*/
+/*æ ‡ç­¾ä¸­-1å·å˜é‡æ ‡å¿—ç€æ²¡æœ‰æ ‡ç­¾*/
 enum MidCodeOp {
-	MIDFUNC = 0,//º¯ÊýÉùÃ÷ 1-º¯ÊýµÄ·ûºÅ±íid 2-º¯ÊýµÄ·µ»ØÖµÀàÐÍ
-	MIDPARA,//º¯ÊýÐÎ²ÎÉùÃ÷ 1-ÐÎÊ½²ÎÊýµÄ±àºÅid 2-²ÎÊýµÄÀàÐÍ
-	MIDPUSH,//º¯ÊýÊµ²ÎÈ·¶¨ 1-Êµ²ÎµÄid
-	MIDCALL,//º¯Êýµ÷ÓÃ 1-º¯ÊýµÄid
-	MIDRET,//º¯Êý·µ»Ø 1-·µ»Ø±àºÅ ÈôÎª-1ÔòÎÞ·µ»ØÖµ
+	MIDFUNC = 0,//å‡½æ•°å£°æ˜Ž 1-å‡½æ•°çš„ç¬¦å·è¡¨id 2-å‡½æ•°çš„è¿”å›žå€¼ç±»åž‹
+	MIDPARA,//å‡½æ•°å½¢å‚å£°æ˜Ž 1-å½¢å¼å‚æ•°çš„ç¼–å·id 2-å‚æ•°çš„ç±»åž‹
+	MIDPUSH,//å‡½æ•°å®žå‚ç¡®å®š 1-å®žå‚çš„id
+	MIDCALL,//å‡½æ•°è°ƒç”¨ 1-å‡½æ•°çš„id
+	MIDRET,//å‡½æ•°è¿”å›ž 1-è¿”å›žç¼–å· è‹¥ä¸º-1åˆ™æ— è¿”å›žå€¼
 	MIDADD,
 	MIDSUB,
 	MIDMULT,
@@ -28,21 +28,21 @@ enum MidCodeOp {
 	MIDGEQ,
 	MIDEQL,
 	MIDNEQ,
-	MIDNEGATE,//È¡Ïà·´Êý£¬1-±»È¡·´µÄÊý
-	MIDARRAYGET,// x=a[i],xµÄidÎªtarget£¬aµÄidÎª1,iµÄidÎª2
-	MIDARRAYWRITE,//a[i]=j aµÄidÎªtarget iµÄiDÎª1 jµÄidÎª2
-	MIDASSIGN,//1-¸³ÖµµÄ½á¹û
-	MIDGOTO,//ÎÞÌõ¼þÌø×ª£¬1-Ìø×ªÄ¿±ê±êºÅ£¬´Ë´¦Á¢¼´Êý±êÊ¶Ê¹ÓÃfalse
-	MIDBNZ,//Ìõ¼þÎªÕæÌø×ª 1-ËùÐèµÄÌõ¼þ 2-Ä¿±ê±êºÅ
-	MIDBZ,//Ìõ¼þÎª¼ÙÌø×ª 1-ËùÐèµÄÌõ¼þ 2-Ä¿±ê±êºÅ
-	MIDPRINTINT,//SYSCALL1 1-´òÓ¡ÖµµÄid
-	MIDPRINTCHAR,//SYSCALL11 1-´òÓ¡×Ö·ûµÄid
-	MIDPRINTSTRING,//SYSCALL4 1-´òÓ¡×Ö·û´®µÄid
-	MIDREADINTEGER,//SYSCALL5 target-¶ÁÈëÕûÊýµÄid
-	MIDREADCHAR,//SYSCALL12  target-¶ÁÈë×Ö·ûµÄid
-	MIDNOP,//¶Ô¸¶Ìø×ªÊ¹ÓÃµÄ£¬ÓÅ»¯Ê±ºò¾Í¶¼¸ÉµôÁË£¬Ê²Ã´¶¼²»ÒªÊ²Ã´¶¼²»×ö
+	MIDNEGATE,//å–ç›¸åæ•°ï¼Œ1-è¢«å–åçš„æ•°ï¼Œtargetç»“æžœ
+	MIDARRAYGET,// x=a[i],xçš„idä¸ºtargetï¼Œaçš„idä¸º1,içš„idä¸º2
+	MIDARRAYWRITE,//a[i]=j açš„idä¸ºtarget içš„iDä¸º1 jçš„idä¸º2
+	MIDASSIGN,//1-èµ‹å€¼çš„ç»“æžœtargetç»“æžœ
+	MIDGOTO,//æ— æ¡ä»¶è·³è½¬ï¼Œ1-è·³è½¬ç›®æ ‡æ ‡å·ï¼Œæ­¤å¤„ç«‹å³æ•°æ ‡è¯†ä½¿ç”¨false
+	MIDBNZ,//æ¡ä»¶ä¸ºçœŸè·³è½¬ 1-æ‰€éœ€çš„æ¡ä»¶ 2-ç›®æ ‡æ ‡å·
+	MIDBZ,//æ¡ä»¶ä¸ºå‡è·³è½¬ 1-æ‰€éœ€çš„æ¡ä»¶ 2-ç›®æ ‡æ ‡å·
+	MIDPRINTINT,//SYSCALL1 1-æ‰“å°å€¼çš„id
+	MIDPRINTCHAR,//SYSCALL11 1-æ‰“å°å­—ç¬¦çš„id
+	MIDPRINTSTRING,//SYSCALL4 1-æ‰“å°å­—ç¬¦ä¸²çš„id
+	MIDREADINTEGER,//SYSCALL5 target-è¯»å…¥æ•´æ•°çš„id
+	MIDREADCHAR,//SYSCALL12  target-è¯»å…¥å­—ç¬¦çš„id
+	MIDNOP,//å¯¹ä»˜è·³è½¬ä½¿ç”¨çš„ï¼Œä¼˜åŒ–æ—¶å€™å°±éƒ½å¹²æŽ‰äº†ï¼Œä»€ä¹ˆéƒ½ä¸è¦ä»€ä¹ˆéƒ½ä¸åš
 };
-/*ÔÙÕâÀï¼ÇÂ¼Ò»ÏÂ*/
+/*å†è¿™é‡Œè®°å½•ä¸€ä¸‹*/
 class MidCode {
 public:
 	static SymbolTable* table;
@@ -53,10 +53,10 @@ public:
 
 	MidCodeOp op;
 	int target;
-	//µÚÒ»²Ù×÷Êý
+	//ç¬¬ä¸€æ“ä½œæ•°
 	int operand1;
 	bool isImmediate1 = false;
-	//µÚ¶þ²Ù×÷Êý
+	//ç¬¬äºŒæ“ä½œæ•°
 	int operand2;
 	bool isImmediate2 = false;
 	int labelNo = -1;

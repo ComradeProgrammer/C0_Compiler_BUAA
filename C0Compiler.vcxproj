@@ -128,6 +128,7 @@
     <Text Include="error.txt" />
     <Text Include="grammar.txt" />
     <Text Include="grammarRegroup.txt" />
+    <Text Include="mips.txt" />
     <Text Include="testfile.txt" />
     <Text Include="output.txt" />
     <Text Include="teststorage.txt" />
@@ -140,7 +141,8 @@
     <ClCompile Include="LexicalAnalyzer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MidCodeContainer.cpp" />
-    <ClCompile Include="MideCode.cpp" />
+    <ClCompile Include="MidCode.cpp" />
+    <ClCompile Include="MipsGenerator.cpp" />
     <ClCompile Include="SubSymbolTable.cpp" />
     <ClCompile Include="SymbolTable.cpp" />
   </ItemGroup>
@@ -153,6 +155,7 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="MidCode.h" />
     <ClInclude Include="MidCodeContainer.h" />
+    <ClInclude Include="MipsGenerator.h" />
     <ClInclude Include="SubSymbolTable.h" />
     <ClInclude Include="SymbolTable.h" />
   </ItemGroup>

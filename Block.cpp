@@ -1,4 +1,4 @@
-#include"Block.h"
+﻿#include"Block.h"
 int Block::count = 0;
 
 Block::Block() {
@@ -17,10 +17,11 @@ void Block::addNext(Block* b) {
 	next.push_back(b);
 }
 
+/*扫描这个基本块中的use def集合*/
 void Block::useDefScan() {
 	for (int ii = v.size() - 1; ii >= 0;ii--) {
 		MidCode i = v[ii];
-		//��������ַ����,ע������������
+		//正常三地址运算,注意立即数问题
 		if (i.op == MIDADD || i.op == MIDSUB || i.op == MIDMULT
 			|| i.op == MIDDIV || i.op == MIDLSS || i.op == MIDLEQ
 			|| i.op == MIDGRE || i.op == MIDGEQ || i.op == MIDEQL
@@ -36,15 +37,15 @@ void Block::useDefScan() {
 				use.insert(i.operand2);
 			}
 		}
-		//ֻʹ��operand1
+		//只使用operand1
 		else if (i.op == MIDPUSH || i.op == MIDRET||i.op==MIDBNZ||i.op==MIDBZ
 			||i.op==MIDPRINTINT||i.op==MIDPRINTCHAR) {
-			if (!i.isImmediate1) {
+			if (!i.isImmediate1&&i.operand1!=-1) {
 				def.erase(i.operand1);
 				use.insert(i.operand1);
 			}
 		}
-		//ʹ��operand1������ֵ������assign��Ҫ�����ų�-1
+		//使用operand1并返回值，其中assign需要考虑排除-1
 		else if (i.op == MIDNEGATE || i.op == MIDASSIGN) {
 			use.erase(i.target);
 			def.insert(i.target);
@@ -54,7 +55,7 @@ void Block::useDefScan() {
 			}
 			
 		}
-		//����д����ֻ��ʹ��2�������������ǲ����target���Ӱ�죬��Ϊ�����ַû��
+		//数组写操作只会使用2个操作数，但是不会对target造成影响，因为数组地址没变
 		else if (i.op == MIDARRAYWRITE) {
 			if (!i.isImmediate1) {
 				def.erase(i.operand1);
@@ -64,7 +65,7 @@ void Block::useDefScan() {
 				def.erase(i.operand2);
 				use.insert(i.operand2);
 			}
-		}//ֻʹ��target
+		}//只使用target
 		else if (i.op == MIDREADCHAR || i.op == MIDREADINTEGER) {
 			use.erase(i.target);
 			def.insert(i.target);
@@ -72,7 +73,6 @@ void Block::useDefScan() {
 
 	}
 }
-
 
 bool Block::activeVariableAnalyzeEpoch() {
 	int oldsize = activeIn.size();
@@ -83,6 +83,68 @@ bool Block::activeVariableAnalyzeEpoch() {
 	activeIn = setUnion(tmp, use);
 	return oldsize != activeIn.size();
 
+}
+
+vector<vector<int>>Block::conflictEdgeAnalyze(){
+	/*冲突边的构建原则是，只要在变量定义处活跃的变量全都算是冲突*/
+	vector<vector<int>>res;
+	set<int>localActive;
+	localActive = activeOut;
+	for (int line = v.size() - 1; line >= 0; line--) {
+		MidCode i = v[line];
+		//正常三地址运算
+		if (i.op == MIDADD || i.op == MIDSUB || i.op == MIDMULT
+			|| i.op == MIDDIV || i.op == MIDLSS || i.op == MIDLEQ
+			|| i.op == MIDGRE || i.op == MIDGEQ || i.op == MIDEQL
+			|| i.op == MIDNEQ || i.op == MIDARRAYGET) {
+			localActive.erase(i.target);
+			if (!i.isImmediate1) {
+				localActive.insert(i.operand1);
+			}
+			if (!i.isImmediate2) {
+				localActive.insert(i.operand2);
+			}
+		}
+		//只使用operand1
+		else if (i.op == MIDPUSH || i.op == MIDRET || i.op == MIDBNZ || i.op == MIDBZ
+			|| i.op == MIDPRINTINT || i.op == MIDPRINTCHAR) {
+			if (!i.isImmediate1&&i.operand1!=-1) {
+				localActive.insert(i.operand1);
+			}
+		}
+		//使用operand1并返回值，其中assign需要考虑排除-1
+		else if (i.op == MIDNEGATE || i.op == MIDASSIGN) {
+			localActive.erase(i.target);
+			if (!i.isImmediate1 && i.operand1 != -1) {
+				localActive.insert(i.operand1);
+			}
+		}
+		//数组写操作只会使用2个操作数，但是不会对target造成影响，因为数组地址没变
+		else if (i.op == MIDARRAYWRITE) {
+			if (!i.isImmediate1) {
+				localActive.insert(i.operand1);
+			}
+			if (!i.isImmediate2) {
+				localActive.insert(i.operand2);
+			}
+		}
+		//只有target
+		else if (i.op == MIDREADCHAR || i.op == MIDREADINTEGER) {
+			localActive.erase(i.target);
+		}
+		//现在找有target的计算冲突边
+		if (i.op == MIDADD || i.op == MIDSUB || i.op == MIDMULT
+			|| i.op == MIDDIV || i.op == MIDLSS || i.op == MIDLEQ
+			|| i.op == MIDGRE || i.op == MIDGEQ || i.op == MIDEQL
+			|| i.op == MIDNEQ || i.op == MIDARRAYGET ||
+			i.op == MIDNEGATE || i.op == MIDASSIGN ||
+			i.op == MIDREADCHAR || i.op == MIDREADINTEGER) {
+			for (int j : localActive) {
+				res.push_back({ i.target,j });
+			}
+		}
+	}
+	return res;
 }
 
 set<int>Block::setUnion(set<int> a, set<int> b) {

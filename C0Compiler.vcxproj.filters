@@ -54,6 +54,9 @@
     <Text Include="debug.txt">
       <Filter>资源文件</Filter>
     </Text>
+    <Text Include="mips.txt">
+      <Filter>资源文件</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -68,9 +71,6 @@
     <ClCompile Include="GrammarAnalyzer.cpp">
       <Filter>源文件\FrontEnd</Filter>
     </ClCompile>
-    <ClCompile Include="MideCode.cpp">
-      <Filter>源文件\Midcode&amp;Symbol</Filter>
-    </ClCompile>
     <ClCompile Include="MidCodeContainer.cpp">
       <Filter>源文件\Midcode&amp;Symbol</Filter>
     </ClCompile>
@@ -84,6 +84,12 @@
       <Filter>源文件\Midcode&amp;Symbol</Filter>
     </ClCompile>
     <ClCompile Include="SubSymbolTable.cpp">
+      <Filter>源文件\Midcode&amp;Symbol</Filter>
+    </ClCompile>
+    <ClCompile Include="MipsGenerator.cpp">
+      <Filter>源文件\BackEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="MidCode.cpp">
       <Filter>源文件\Midcode&amp;Symbol</Filter>
     </ClCompile>
   </ItemGroup>
@@ -117,6 +123,9 @@
     </ClInclude>
     <ClInclude Include="SubSymbolTable.h">
       <Filter>头文件\Midcode&amp;Symbol</Filter>
+    </ClInclude>
+    <ClInclude Include="MipsGenerator.h">
+      <Filter>头文件\BackEnd</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

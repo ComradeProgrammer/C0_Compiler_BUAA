@@ -79,7 +79,7 @@ SymbolEntry* SymbolTable::getSymbolByName(string currentScope, string name) {
 }
 
 SymbolEntry* SymbolTable:: getSymbolById(int id) {
-	if ( id >= symbolId.size()) {
+	if ( id >= (int)(symbolId.size())) {
 		return NULL;
 	}
 	else if (id < 0) {
@@ -112,6 +112,7 @@ SubSymbolTable* SymbolTable::getSubSymbolTableByName(string s) {
 SymbolEntry* SymbolTable::addTmpSymbol(string function, int id) {
 	SubSymbolTable* subtable = scope[function];
 	SymbolEntry*res= subtable->addTmpSymbol(id);
+	res->scope = function;
 	tmpSymbolId[id] = res;
 	return res;
 }
@@ -137,20 +138,26 @@ map<int, vector<int>> SymbolTable::summary() {
 	return res;
 }
 
+void SymbolTable::dumpMipsCodeHeader(ostream& f) {
+	for (int i = 0; i < unnamedStrings.size(); i++) {
+		f << "string$" << i << ": .asciiz \"" << unnamedStrings[i]<<"\""<<endl;
+	}
+	f << ".align 2" << endl;
+	vector<int> sequence = globalScope.sequence;
+	for (int i : sequence) {
+		SymbolEntry* entry = getSymbolById(i);
+		if (entry->type == TYPEINT || entry->type == TYPECHAR) {
+			f << entry->name << ": .space " << 4<<endl;
+		}
+		else if (entry->type == TYPEINTCONST || entry->type == TYPECHARCONST) {
+			f << entry->name << ": .word " << entry->initValue<<endl;
+		}
+
+		else if (entry->type == TYPEINTARRAY || entry->type == TYPECHARARRAY) {
+			f<<entry->name << ": .space " << entry->dimension*4 << endl;
+		}
+	}
+}
 void SymbolTable::selfTest() {
-	/*SymbolEntry* tmp1=addSymbol("", "var1", false);
-	SymbolEntry* tmp2 = addSymbol("", "func1", true);
-	SymbolEntry* tmp3 = addSymbol("", "func2", true);
 
-	SymbolEntry* tmp4 = addSymbol("", "var1", false);
-	SymbolEntry* tmp5 = addSymbol("", "func1", true);
-
-	SymbolEntry* tmp6 = addSymbol("func1","var2", false);
-	SymbolEntry* tmp7 = addSymbol("func1", "var1", false);
-
-
-	SymbolEntry* tmp8 = getSymbolByName("func1", "var1");
-	SymbolEntry* tmp9 = getSymbolByName("", "var1");
-
-	SymbolEntry* tmp10 = getSymbolByName("", "func1");*/
 }
