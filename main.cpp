@@ -45,7 +45,7 @@ int main() {
 	mips.printRegisterAllocStatus(f);
 	mips.generateProgramHeader();
 	flowchart.go();*/
-	system("pause");
+	//system("pause");
 
 	return 0;
 }

@@ -59,6 +59,11 @@ void MipsTranslator::translateBlock(Block* b) {
 			translate(res);
 		}
 	}
+	for (int i = 0; i < TMPREG; i++) {
+		if (Tstatus[i] == REGVAR && Tuser[i] != -1) {
+			varReg[Tuser[i]] = -1;
+		}
+	}
 }
 
 
@@ -123,9 +128,10 @@ void MipsTranslator::SregisterAlloc() {
 			}
 		}
 	}
+	/*
 	for (int i : globalVariable) {
 		cout << i << ":" << varReg[i] << endl;
-	}
+	}*/
 }
 
 vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
@@ -133,10 +139,10 @@ vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 	//返回第一个数是返回的寄存器编号，第二个数是需要写回的变量，如果没有就是-1
 	//返回时寄存器已被注册，var是-1代表临时存数使用，不登记只分出
 	//如果已经分配了寄存器
-	if (!isImmediate&&var!=-1&&varReg[var] != -1) {
+	if (!isImmediate&&var!=-1&&varReg[var] >0) {
 		return { varReg[var],-1 };
 	}
-	else {
+	else{
 		//寻找寄存器
 		for (int i = 0; i < TMPREG; i++) {
 			if (Tstatus[i] == REGFREE) {
@@ -204,7 +210,7 @@ void MipsTranslator::setReport(map<int, vector<int>>_report) {
 
 int MipsTranslator::loadOperand(int var, int isImmediate
 	, vector<int>conflictVar, vector<int> conflictReg) {
-	if (var!=-1&&!isImmediate && varReg[var] != -1) {
+	if (var!=-1&&!isImmediate && varReg[var] >0) {
 		//已分配寄存器
 		return varReg[var];
 	}
@@ -223,7 +229,7 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 		if (var == -1) { return res[0]; }
 		SymbolEntry* entry = MidCode::table->getSymbolById(var);
 		if (entry->scope != "") {
-			if (entry->type == TYPEINT || entry->type == TYPECHAR
+			if (entry->type == TYPEINT || entry->type == TYPECHAR || entry->type == TYPETMP
 				||entry->type==TYPEINTCONST||entry->type==TYPECHARCONST) {
 				int bias = entry->addr;
 				out << "lw " << name[res[0]] << "," << bias << "($sp)";
@@ -256,7 +262,7 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 
 void MipsTranslator::writeback(int var,int reg) {
 	SymbolEntry* entry = MidCode::table->getSymbolById(var);
-	if ((entry->type == TYPEINT || entry->type == TYPECHAR) && entry->scope != "") {
+	if ((entry->type == TYPEINT || entry->type == TYPECHAR||entry->type==TYPETMP) && entry->scope != "") {
 		//int char类型的局部变量
 		int bias = entry->addr;
 		out << "sw " << name[reg] << "," << bias << "($sp)";
@@ -264,7 +270,7 @@ void MipsTranslator::writeback(int var,int reg) {
 		out << endl;
 	}
 
-	else if (entry->scope == "" && (entry->type == TYPEINT || entry->type == TYPECHAR)) {
+	else if (entry->scope == "" && (entry->type == TYPEINT || entry->type == TYPECHAR || entry->type == TYPETMP)) {
 		out << "sw " << name[reg] << "," << entry->name;
 		out << "#write back global variable " << entry->name;
 		out << endl;
@@ -282,12 +288,24 @@ void MipsTranslator::translate(MidCode c) {
 			SymbolEntry* s = MidCode::table->getSymbolById(c.operand1);
 			out << s->name << ":" << endl;
 			if (s->name != "main") {
-				out << "sw $ra," << report[s->id][0] - report[s->id][1]+32 << "($sp)";
+				out << "sw $ra," << report[s->id][0] - report[s->id][1] + 32 << "($sp)";
 				out << "#save the return value" << endl;
 				for (int i = 0; i < GLOBALREG; i++) {
 					out << "sw " << name[i + 16] << "," << report[s->id][0] - report[s->id][1] + i * 4 << "($sp)" << endl;
 				}
 			}
+			else {
+				out << "addiu $sp,$sp," << -report[s->id][0] - report[s->id][1] << endl;
+			}
+			SubSymbolTable* tmp = MidCode::table->getSubSymbolTableByName(s->name);
+			for (auto& i : tmp->symbolMap) {
+				if (i.second->type == TYPEINTCONST || i.second->type == TYPECHARCONST) {
+					//bug
+					out << "li $v1," << i.second->initValue << endl;
+					out << "sw $v1," << i.second->addr << "($sp)" << endl;
+				}
+			}
+			
 			break;
 		}
 		case MIDCALL:
@@ -299,34 +317,37 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDRET:
 		{
-			if (c.operand1 != -1 && !c.isImmediate1) {
-				//返回值不是空且不是立即数
-				if (varReg[c.operand1] != -1) {
-					out << "move $v0," << name[varReg[c.operand1]];
-					//已经保存在寄存器中
-				}
-				else {
-					//返回的肯定不能是数组名；
-					SymbolEntry* s = MidCode::table->getSymbolById(c.operand1);
-					if (s->scope == "") {
-						out << "lw $v0," << s->name << endl;
+			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
+			if (func->name != "main") {
+				if (c.operand1 != -1 && !c.isImmediate1) {
+					//返回值不是空且不是立即数
+					if (varReg[c.operand1] > 0) {
+						out << "move $v0," << name[varReg[c.operand1]];
+						//已经保存在寄存器中
 					}
 					else {
-						out << "lw $v0," << s->addr << "($sp)" << endl;
+						//返回的肯定不能是数组名；
+						SymbolEntry* s = MidCode::table->getSymbolById(c.operand1);
+						if (s->scope == "") {
+							out << "lw $v0," << s->name << endl;
+						}
+						else {
+							out << "lw $v0," << s->addr << "($sp)" << endl;
+						}
 					}
 				}
+				else if (c.isImmediate1) {
+					out << "li $v0," << c.operand1 << endl;
+				}
+				for (int i = 0; i < GLOBALREG; i++) {
+					out << "lw " << name[i + 16] << "," << report[currentFunction][0] -
+						report[currentFunction][1] + i * 4 << "($sp)" << endl;
+				}
+				out << "lw $ra," << report[currentFunction][0]
+					- report[currentFunction][1] + 32 << "($sp)" << endl;
+				out << "addiu $sp,$sp," << report[currentFunction][1] + 36 << endl;
+				out << "jr $ra" << endl;
 			}
-			else if (c.isImmediate1) {
-				out << "li $v0," << c.operand1<< endl;
-			}
-			for (int i = 0; i < GLOBALREG; i++) {
-				out << "lw " << name[i + 16] << "," << report[currentFunction][0] -
-					report[currentFunction][1] + i * 4 << "($sp)" << endl;
-			}
-			out << "lw $ra," << report[currentFunction][0]
-				- report[currentFunction][1] + 32<<"($sp)" << endl;
-			out << "addiu $sp,$sp," << report[currentFunction][1] + 36<<endl;
-			out << "jr $ra" << endl;
 			break;
 		}
 		case MIDADD:
@@ -350,6 +371,7 @@ void MipsTranslator::translate(MidCode c) {
 
 			out << "addu " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c<<endl;
+			specialVarwriteback(c.target, false);
 			break;
 		}
 		case MIDSUB:
@@ -373,6 +395,7 @@ void MipsTranslator::translate(MidCode c) {
 
 			out << "subu " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
+			specialVarwriteback(c.target, false);
 			break;
 		}
 		case MIDMULT:
@@ -396,6 +419,7 @@ void MipsTranslator::translate(MidCode c) {
 
 			out << "mul " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
+			specialVarwriteback(c.target, false);
 			break;
 		}
 		case MIDDIV:
@@ -420,6 +444,7 @@ void MipsTranslator::translate(MidCode c) {
 			out << "div "  << name[operand1] << "," << name[operand2]<<endl;
 			out << "mflo " << name[target];
 			out << "#" << c << endl;
+			specialVarwriteback(c.target, false);
 			break;
 		}
 		case MIDLSS:
@@ -443,6 +468,7 @@ void MipsTranslator::translate(MidCode c) {
 
 			out << "slt " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
+			specialVarwriteback(c.target, false);
 			break;
 		}
 		case MIDLEQ:
@@ -466,6 +492,7 @@ void MipsTranslator::translate(MidCode c) {
 
 			out << "sle " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
+			specialVarwriteback(c.target, false);
 			break;
 		}
 		case MIDGRE:
@@ -489,6 +516,7 @@ void MipsTranslator::translate(MidCode c) {
 
 			out << "sgt " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
+			specialVarwriteback(c.target, false);
 			break;
 		}
 		case MIDGEQ:
@@ -512,6 +540,7 @@ void MipsTranslator::translate(MidCode c) {
 
 			out << "sge " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
+			specialVarwriteback(c.target, false);
 			break;
 		}
 		case MIDEQL:
@@ -535,6 +564,7 @@ void MipsTranslator::translate(MidCode c) {
 
 			out << "seq " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
+			specialVarwriteback(c.target, false);
 			break;
 		}
 		case MIDNEQ:
@@ -558,6 +588,7 @@ void MipsTranslator::translate(MidCode c) {
 
 			out << "sne " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
+			specialVarwriteback(c.target, false);
 			break;
 		}
 		case MIDNEGATE:
@@ -571,8 +602,9 @@ void MipsTranslator::translate(MidCode c) {
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
 				{ target });
 
-			out << "subu $0," << name[operand1] ;
+			out << "subu "<<name[target]<<",$0," << name[operand1] ;
 			out << "#" << c << endl;
+			specialVarwriteback(c.target, false);
 			break;
 		}
 		case MIDARRAYGET: 
@@ -590,7 +622,12 @@ void MipsTranslator::translate(MidCode c) {
 
 			SymbolEntry* s = MidCode::table->getSymbolById(c.operand1);
 			if (s->scope == "") {
-				out << "lw " << name[target] << "," << s->name << "(" << name[operand2] << ")";
+				conflictVar.clear();
+				conflictVar.push_back(c.target);
+				if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
+				int tmpreg = loadOperand(-1, false, conflictVar, { target,operand2 });
+				out << "sll " << name[tmpreg] << "," << name[operand2] << ",2" << endl;
+				out << "lw " << name[target] << "," << s->name << "(" << name[tmpreg] << ")" << endl;;
 				out << "#" << c << endl;
 			}
 			else {
@@ -598,11 +635,12 @@ void MipsTranslator::translate(MidCode c) {
 				conflictVar.push_back(c.target);
 				if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
 				int tmpreg = loadOperand(-1, false, conflictVar, { target,operand2 });
-				out << "sll " << name[tmpreg] << "," << name[operand2] << ",2"<<endl;
+				out << "sll " << name[tmpreg] << "," << name[operand2] << ",2" << endl;
 				out << "addu " << name[tmpreg] << "," << name[tmpreg] << ",$sp" << endl;
 				out << "lw " << name[target] << "," << s->addr<<"("<<name[tmpreg]<<")";
 				out << "#" << c << endl;
 			}
+			specialVarwriteback(c.target, false);
 			break;
 		}
 		case MIDARRAYWRITE:
@@ -621,7 +659,12 @@ void MipsTranslator::translate(MidCode c) {
 			
 			SymbolEntry* s = MidCode::table->getSymbolById(c.target);
 			if (s->scope == "") {
-				out << "sw " << name[operand2] << "," << s->name << "("<<name[operand1] << ")";
+				conflictVar.clear();
+				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
+				if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
+				int tmpreg = loadOperand(-1, false, conflictVar, { operand1,operand2 });
+				out << "sll " << name[tmpreg] << "," << name[operand1] << ",2" << endl;
+				out << "sw " << name[operand2] << "," << s->name << "("<<name[tmpreg] << ")"<<endl;
 				out << "#" << c << endl;
 			}
 			else {
@@ -651,8 +694,13 @@ void MipsTranslator::translate(MidCode c) {
 				}
 				else {
 					SymbolEntry* s = MidCode::table->getSymbolById(c.operand1);
-					if (varReg[c.operand1] == -1) {
-						out << "lw " << name[target] << "," << s->addr << "($sp)";
+					if (varReg[c.operand1] <=0) {
+						if (s->scope != "") {
+							out << "lw " << name[target] << "," << s->addr << "($sp)";
+						}
+						else {
+							out << "lw " << name[target] << "," << s->name<<endl;
+						}
 					}
 					else {
 						out << "move " << name[target] << "," << name[varReg[c.operand1]];
@@ -660,6 +708,7 @@ void MipsTranslator::translate(MidCode c) {
 					out << "#" << c << endl;
 				}
 			}
+			specialVarwriteback(c.target, false);
 			break;
 		}
 		case MIDGOTO:
@@ -686,7 +735,7 @@ void MipsTranslator::translate(MidCode c) {
 		{
 			if (!c.isImmediate1) {
 				//不是立即数
-				if (varReg[c.operand1] != -1) {
+				if (varReg[c.operand1] >0) {
 					out << "move $a0," << name[varReg[c.operand1]]<<endl;
 					//已经保存在寄存器中
 				}
@@ -712,7 +761,7 @@ void MipsTranslator::translate(MidCode c) {
 		{
 			if (!c.isImmediate1) {
 				//不是立即数
-				if (varReg[c.operand1] != -1) {
+				if (varReg[c.operand1]>0) {
 					out << "move $a0," << name[varReg[c.operand1]]<<endl;
 					//已经保存在寄存器中
 				}
@@ -747,6 +796,7 @@ void MipsTranslator::translate(MidCode c) {
 			out << "li $v0,12" << endl;
 			out << "syscall" << endl;
 			out << "move " << name[target] <<",$v0"<< endl;
+			specialVarwriteback(c.target, false);
 			break;
 		}
 		case MIDREADINTEGER:
@@ -755,6 +805,7 @@ void MipsTranslator::translate(MidCode c) {
 			out << "li $v0,5" << endl;
 			out << "syscall" << endl;
 			out << "move " << name[target] << ",$v0" << endl;
+			specialVarwriteback(c.target, false);
 			break;
 		}
 		case MIDNOP:
@@ -778,5 +829,19 @@ void MipsTranslator::translate(vector<MidCode>c) {
 		/*if (i >= 0 && i <= 3) {
 			out << "move $a" << i << "," << name[tmpreg] << endl;
 		}*/
+	}
+}
+
+void MipsTranslator::specialVarwriteback(int var, bool isImmediate) {
+	if (isImmediate||var==-1) {
+		return;
+	}
+	SymbolEntry* e = MidCode::table->getSymbolById(var);
+	int reg = varReg[var];
+	if ((e->scope == "" || e->isParameter)) {
+		writeback(var,varReg[var]);
+		Tuser[getTmpRegIndex(varReg[var])] = -1;
+		Tstatus[getTmpRegIndex(varReg[var])] =REGFREE;
+		varReg[var] = -1;
 	}
 }

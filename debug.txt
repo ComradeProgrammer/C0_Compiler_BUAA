@@ -1,58 +1,53 @@
-void fuck()
-para int a
-para int b
+const int d
+const int e
+const int f
+int a
+int b
+int c
+void main()
+a=d
+b=e
+syscall-4 a
 syscall-1 a
 syscall-11 10
-syscall-4 together with
-syscall-11 10
+syscall-4 b
 syscall-1 b
 syscall-11 10
-ret 
-void main()
-push 17231171
-push 17231181
-call fuck
+syscall-4 c
+syscall-1 c
+syscall-11 10
 
 ====Block0====
-void fuck()
-para int a
-para int b
+void main()
+a=d
+b=e
+syscall-4 a
 syscall-1 a
 syscall-11 10
-syscall-4 together with
-syscall-11 10
+syscall-4 b
 syscall-1 b
 syscall-11 10
-ret 
+syscall-4 c
+syscall-1 c
+syscall-11 10
 	prev:[]
 	next:[]
-	use:[a,b,]
-	def:[]
-	activeIn:[a,b,]
-	activeOut:[]
-==============
-====Block1====
-void main()
-push 17231171
-push 17231181
-call fuck
-	prev:[]
-	next:[]
-	use:[]
-	def:[]
-	activeIn:[]
+	use:[d,e,c,]
+	def:[a,b,]
+	activeIn:[d,e,c,]
 	activeOut:[]
 ==============
 
 
 global:
-name:fuck	id:0	type:function	scope:	addr:-1	dimension:0
-link:		returnType:void	paraNum:2	paras:[1 2 ]
+name:d	id:0	type:const int	scope:	addr:0	dimension:0link:NULL
+name:e	id:1	type:const int	scope:	addr:4	dimension:0link:NULL
+name:f	id:2	type:const int	scope:	addr:8	dimension:0link:NULL
 name:main	id:3	type:function	scope:	addr:-1	dimension:0
 link:		returnType:void	paraNum:0	paras:[]
-fuck:
-name:a	id:1	type:int	scope:fuck	addr:36	dimension:0link:NULL
-name:b	id:2	type:int	scope:fuck	addr:40	dimension:0link:NULL
 main:
+name:a	id:4	type:int	scope:main	addr:0	dimension:0link:NULL
+name:b	id:5	type:int	scope:main	addr:4	dimension:0link:NULL
+name:c	id:6	type:int	scope:main	addr:8	dimension:0link:NULL
 
 

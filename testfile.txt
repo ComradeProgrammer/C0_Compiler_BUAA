@@ -1,11 +1,10 @@
-
-void fuck(int a,int b){
-	printf(a);
-	printf("together with");
-	printf(b);
-}
-
+const int d=5,e=6,f=7;
 void main(){
+	int a,b,c;
+	a=d;
+	b=e;
 	
-	fuck(17231171,17231181);
+	printf("a",a);
+	printf("b",b);
+	printf("c",c);
 }

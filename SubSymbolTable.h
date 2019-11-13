@@ -61,7 +61,7 @@ public:
 	friend ostream& operator<<(ostream& out, SubSymbolTable& t);
 	void selfTest();
 	vector<int>sequence;
-private:
+
 	string nameScope;
 	map<string, SymbolEntry*>symbolMap;
 	map<int, SymbolEntry*>tmpSymbolMap;

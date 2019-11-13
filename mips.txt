@@ -1,51 +1,47 @@
 .globl main
 .data:
-string$0: .asciiz "together with"
+string$0: .asciiz "a"
+string$1: .asciiz "b"
+string$2: .asciiz "c"
 .align 2
+d: .word 5
+e: .word 6
+f: .word 7
 .text:
-fuck:
-sw $ra,32($sp)#save the return value
-sw $s0,0($sp)
-sw $s1,4($sp)
-sw $s2,8($sp)
-sw $s3,12($sp)
-sw $s4,16($sp)
-sw $s5,20($sp)
-sw $s6,24($sp)
-sw $s7,28($sp)
-lw $a0,36($sp)
-li $v0,1
-syscall #printint
-li $a0,10
-li $v0,11
-syscall #printchar
+main:
+addiu $sp,$sp,-12
+lw $t0,0($sp)#load variablea
+lw $t0,d
+#a=d
+
+lw $t1,4($sp)#load variableb
+lw $t1,e
+#b=e
+
 la $a0,string$0
 li $v0,4
 syscall #printstring
-li $a0,10
-li $v0,11
-syscall #printchar
-lw $a0,40($sp)
+move $a0,$t0
 li $v0,1
 syscall #printint
 li $a0,10
 li $v0,11
 syscall #printchar
-lw $s0,0($sp)
-lw $s1,4($sp)
-lw $s2,8($sp)
-lw $s3,12($sp)
-lw $s4,16($sp)
-lw $s5,20($sp)
-lw $s6,24($sp)
-lw $s7,28($sp)
-lw $ra,32($sp)
-addiu $sp,$sp,44
-jr $ra
-main:
-li $t0,17231171# load immediate17231171
-sw $t0,-8($sp)
-li $t1,17231181# load immediate17231181
-sw $t1,-4($sp)
-addiu $sp,$sp,-44
-jal fuck
+la $a0,string$1
+li $v0,4
+syscall #printstring
+move $a0,$t1
+li $v0,1
+syscall #printint
+li $a0,10
+li $v0,11
+syscall #printchar
+la $a0,string$2
+li $v0,4
+syscall #printstring
+move $a0,$s0
+li $v0,1
+syscall #printint
+li $a0,10
+li $v0,11
+syscall #printchar

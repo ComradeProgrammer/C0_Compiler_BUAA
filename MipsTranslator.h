@@ -47,7 +47,19 @@ private:
 	void writeback(int var,int reg);
 	void translate(MidCode c);
 	void translate(vector<MidCode>c);
-
+	void specialVarwriteback(int var,bool isImmediate);
+	inline int getTmpRegIndex(int i){
+		if (i == 24) {
+			return 8;
+		}
+		else if (i == 25) {
+			return 9;
+		}
+		else {
+			return i - 8;
+		}
+	}
+	//当前策略:全局变量，参数不得占用临时寄存器，必须立即写回
 
 
 
