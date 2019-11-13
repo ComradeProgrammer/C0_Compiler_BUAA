@@ -2,6 +2,9 @@
 using namespace std;
 
 int main() {
+	fstream f;
+	f.open("debug.txt", ios_base::trunc | ios_base::out);
+
     FaultHandler faultHandler("error.txt");
 	faultHandler.debugOn();
 
@@ -13,16 +16,21 @@ int main() {
 	//	symbolTable.debugOn();
 	MidCode::table = &symbolTable;
 	SubSymbolTable::table = &symbolTable;
-	MidCodeContainer container;
-	GrammarAnalyzer grammarAnalyzer(faultHandler,symbolTable,lexicalAnalyzer,container,"output.txt");
+
+	MipsTranslator mips("mips.txt");
+
+	MidCodeFramework frame(mips);
+	GrammarAnalyzer grammarAnalyzer(faultHandler,symbolTable,lexicalAnalyzer,frame,"output.txt");
 	//grammarAnalyzer.homeworkOn(true,true);
 
 	grammarAnalyzer.programme();
-	container.removeNops();
-	fstream f;
-	f.open("debug.txt", ios_base::trunc | ios_base::out);
-	f << container;
+	frame.optimize();
+	f << frame;
 	f << endl << endl;
+	f << symbolTable;
+	f << endl << endl;
+	frame.generateMips();
+	/*
 	MipsGenerator mips;
 	mips.outputFile("mips.txt");
 	FlowChart flowchart(container, mips);
@@ -36,7 +44,8 @@ int main() {
 	mips.globalRegisterAlloc();
 	mips.printRegisterAllocStatus(f);
 	mips.generateProgramHeader();
-	flowchart.go();
+	flowchart.go();*/
 	system("pause");
+
 	return 0;
 }

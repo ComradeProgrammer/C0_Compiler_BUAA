@@ -1,8 +1,8 @@
 ﻿#include"GrammarAnalyzer.h"
 
 /*构造器函数*/
-GrammarAnalyzer::GrammarAnalyzer(FaultHandler& _f, SymbolTable& _s, LexicalAnalyzer& _l,MidCodeContainer& _raw,string file)
-:f(_f),table(_s),lex(_l),raw(_raw){
+GrammarAnalyzer::GrammarAnalyzer(FaultHandler& _f, SymbolTable& _s, LexicalAnalyzer& _l,MidCodeFramework& _raw,string file)
+:f(_f),table(_s),raw(_raw), lex(_l) {
 	out.open(file,ios_base::trunc|ios_base::out);
 	currentScope="";
 }
@@ -321,7 +321,7 @@ void GrammarAnalyzer::nonVoidFunctionDefination() {
 		}
 		getNextSym();
 		//处理左括号完成
-
+		raw.functionStart(functionName);
 		SymbolEntry* entry = table.addSymbol(currentScope, functionName, true);//插入符号表项
 		if (entry == NULL) {
 			f.handleCourseFault(lex.lineNumber(), REDEFINED);
@@ -371,6 +371,7 @@ void GrammarAnalyzer::nonVoidFunctionDefination() {
 		}
 		getNextSym();
 		//获取右大括号
+		raw.functionEnd();
 	}
 	catch (int e) {
 		toNextBrace();
@@ -381,6 +382,7 @@ void GrammarAnalyzer::nonVoidFunctionDefination() {
 /*有返回值函数定义，供包装器调用使用，不会抛出异常*/
 void GrammarAnalyzer::nonVoidFunctionDefination(Lexical retType,string functionName) {
 	hasReturned = false;
+	raw.functionStart(functionName);
 	try {
 		if (lex.sym().type != LPARENT) {//参数表的左括号
 			f.handleFault(lex.lineNumber(), "缺少参数表");
@@ -439,6 +441,7 @@ void GrammarAnalyzer::nonVoidFunctionDefination(Lexical retType,string functionN
 		}
 		getNextSym();
 		//右大括号读取完成
+		raw.functionEnd();
 	}
 	catch (int e) {
 		toNextBrace();
@@ -469,11 +472,12 @@ void GrammarAnalyzer::voidFunctionDefination() {
 			entry->link->returnType = RETVOID;
 			entry->type = TYPEFUNCTION;
 		}
-
+		raw.functionStart(functionName);
 		if (lex.sym().type != LPARENT) {
 			f.handleFault(lex.lineNumber(), "缺少参数表");
 			throw 0;
 		}
+
 		getNextSym();
 		//读走了左括号
 		if (entry != NULL) {
@@ -516,7 +520,7 @@ void GrammarAnalyzer::voidFunctionDefination() {
 		}
 		getNextSym();
 		//读取右大括号完成
-		
+		raw.functionEnd();
 	}
 	catch (int e) {
 		toNextBrace();
@@ -537,7 +541,7 @@ void GrammarAnalyzer::mainFunctionDefination() {
 		string functionName = "main";
 		getNextSym();
 		//读取main标识符
-
+		raw.functionStart(functionName);
 		SymbolEntry* entry = table.addSymbol(currentScope, functionName, true);
 		if (entry == NULL) {
 			f.handleCourseFault(lex.lineNumber(), REDEFINED);
@@ -589,6 +593,7 @@ void GrammarAnalyzer::mainFunctionDefination() {
 		}
 		getNextSym();
 		//读入右大括号完成
+		raw.functionEnd();
 	}
 	catch (int e) {
 		toNextBrace();
@@ -1119,8 +1124,8 @@ ReturnBundle GrammarAnalyzer::functionCall(string name,bool mustReturn) {
 void GrammarAnalyzer::parameterValueList(SymbolEntry* entry) {
 	int paraNum = 0;
 	bool init = true, error = false;
-	vector<vector<int>> codeIndex;
-	vector<ReturnBundle>returnBundles;
+	vector<vector<int>> codeIndex;//存储中间代码的下标
+	vector<ReturnBundle>returnBundles;//存储returnBundles
 	if (entry == NULL) {
 		error = true;
 	}
@@ -1141,12 +1146,12 @@ void GrammarAnalyzer::parameterValueList(SymbolEntry* entry) {
 		else {
 			init = false;
 		}
-		int probe1 = raw.getIndex();
+		int probe1 = raw.getIndex();//获取参数值计算开始的代码（超尾式下标）
 		ReturnBundle res1=expression();
-		returnBundles.push_back(res1);
+		returnBundles.push_back(res1);//获取参数值计算结束的代码（超尾式下标）
 		int probe2 = raw.getIndex();
 
-		codeIndex.push_back({ probe1,probe2 });
+		codeIndex.push_back({ probe1,probe2 });//记录起止点
 		//读取实参的表达式
 		bool leftIsChar=false;
 		if (!error&&paraNum < entry->link->paraNum) {
@@ -1167,7 +1172,7 @@ void GrammarAnalyzer::parameterValueList(SymbolEntry* entry) {
 	}
 
 	if (codeIndex.size() > 0) {
-		vector<vector<MidCode>>codeSegment;
+		vector<vector<MidCode>>codeSegment;//保存切出来的代码片段
 		for (int i = 0; i < codeIndex.size(); i++) {
 			vector<MidCode>paraCode(raw.getIterator(codeIndex[i][0]), raw.getIterator(codeIndex[i][1]));
 			codeSegment.push_back(paraCode);

@@ -1,7 +1,8 @@
 ﻿#include"Block.h"
 int Block::count = 0;
 
-Block::Block() {
+Block::Block(int _functionId) {
+	functionId = _functionId;
 	id = count++;
 }
 
@@ -19,8 +20,8 @@ void Block::addNext(Block* b) {
 
 /*扫描这个基本块中的use def集合*/
 void Block::useDefScan() {
-	for (int ii = v.size() - 1; ii >= 0;ii--) {
-		MidCode i = v[ii];
+	for (int index = v.size() - 1; index >= 0;index--) {
+		MidCode i = v[index];
 		//正常三地址运算,注意立即数问题
 		if (i.op == MIDADD || i.op == MIDSUB || i.op == MIDMULT
 			|| i.op == MIDDIV || i.op == MIDLSS || i.op == MIDLEQ
@@ -37,7 +38,7 @@ void Block::useDefScan() {
 				use.insert(i.operand2);
 			}
 		}
-		//只使用operand1
+		//只使用operand1,ret存在使得需要考虑-1问题
 		else if (i.op == MIDPUSH || i.op == MIDRET||i.op==MIDBNZ||i.op==MIDBZ
 			||i.op==MIDPRINTINT||i.op==MIDPRINTCHAR) {
 			if (!i.isImmediate1&&i.operand1!=-1) {
@@ -104,6 +105,17 @@ vector<vector<int>>Block::conflictEdgeAnalyze(){
 			if (!i.isImmediate2) {
 				localActive.insert(i.operand2);
 			}
+			for (int j : localActive) {
+				if (i.target != j) {
+					res.push_back({ j,i.target });
+				}
+				if (!i.isImmediate1 && i.operand1 != -1&&i.operand1!=j) {
+					res.push_back({ j,i.operand1 });
+				}
+				if (!i.isImmediate2 && i.operand2 != -1 && i.operand2 != j) {
+					res.push_back({ j,i.operand2 });
+				}
+			}
 		}
 		//只使用operand1
 		else if (i.op == MIDPUSH || i.op == MIDRET || i.op == MIDBNZ || i.op == MIDBZ
@@ -111,12 +123,25 @@ vector<vector<int>>Block::conflictEdgeAnalyze(){
 			if (!i.isImmediate1&&i.operand1!=-1) {
 				localActive.insert(i.operand1);
 			}
+			for (int j : localActive) {
+				if (!i.isImmediate1 && i.operand1 != -1 && i.operand1 != j) {
+					res.push_back({ j,i.operand1 });
+				}
+			}
 		}
 		//使用operand1并返回值，其中assign需要考虑排除-1
 		else if (i.op == MIDNEGATE || i.op == MIDASSIGN) {
 			localActive.erase(i.target);
 			if (!i.isImmediate1 && i.operand1 != -1) {
 				localActive.insert(i.operand1);
+			}
+			for (int j : localActive) {
+				if (i.target != j) {
+					res.push_back({ j,i.target });
+				}
+				if (!i.isImmediate1 && i.operand1 != -1 && i.operand1 != j) {
+					res.push_back({ j,i.operand1 });
+				}
 			}
 		}
 		//数组写操作只会使用2个操作数，但是不会对target造成影响，因为数组地址没变
@@ -127,20 +152,22 @@ vector<vector<int>>Block::conflictEdgeAnalyze(){
 			if (!i.isImmediate2) {
 				localActive.insert(i.operand2);
 			}
+			for (int j : localActive) {
+				if (!i.isImmediate1 && i.operand1 != -1 && i.operand1 != j) {
+					res.push_back({ j,i.operand1 });
+				}
+				if (!i.isImmediate2 && i.operand2 != -1 && i.operand2 != j) {
+					res.push_back({ j,i.operand2 });
+				}
+			}
 		}
 		//只有target
 		else if (i.op == MIDREADCHAR || i.op == MIDREADINTEGER) {
 			localActive.erase(i.target);
-		}
-		//现在找有target的计算冲突边
-		if (i.op == MIDADD || i.op == MIDSUB || i.op == MIDMULT
-			|| i.op == MIDDIV || i.op == MIDLSS || i.op == MIDLEQ
-			|| i.op == MIDGRE || i.op == MIDGEQ || i.op == MIDEQL
-			|| i.op == MIDNEQ || i.op == MIDARRAYGET ||
-			i.op == MIDNEGATE || i.op == MIDASSIGN ||
-			i.op == MIDREADCHAR || i.op == MIDREADINTEGER) {
 			for (int j : localActive) {
-				res.push_back({ i.target,j });
+				if (i.target != j) {
+					res.push_back({ j,i.target });
+				}
 			}
 		}
 	}

@@ -28,7 +28,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>ClangCL</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -136,26 +136,28 @@
   <ItemGroup>
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="FaultHandler.cpp" />
-    <ClCompile Include="FlowChart.cpp" />
+    <ClCompile Include="FlowGraph.cpp" />
     <ClCompile Include="GrammarAnalyzer.cpp" />
     <ClCompile Include="LexicalAnalyzer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MidCodeContainer.cpp" />
     <ClCompile Include="MidCode.cpp" />
-    <ClCompile Include="MipsGenerator.cpp" />
+    <ClCompile Include="MidCodeFrameWork.cpp" />
+    <ClCompile Include="MipsTranslator.cpp" />
     <ClCompile Include="SubSymbolTable.cpp" />
     <ClCompile Include="SymbolTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Block.h" />
     <ClInclude Include="FaultHandler.h" />
-    <ClInclude Include="FlowChart.h" />
+    <ClInclude Include="FlowGraph.h" />
     <ClInclude Include="GrammarAnalyzer.h" />
     <ClInclude Include="LexicalAnalyzer.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="MidCode.h" />
     <ClInclude Include="MidCodeContainer.h" />
-    <ClInclude Include="MipsGenerator.h" />
+    <ClInclude Include="MidCodeFramework.h" />
+    <ClInclude Include="MipsTranslator.h" />
     <ClInclude Include="SubSymbolTable.h" />
     <ClInclude Include="SymbolTable.h" />
   </ItemGroup>

@@ -4,7 +4,7 @@
 #include"LexicalAnalyzer.h"
 #include"SymbolTable.h"
 #include"MidCode.h"
-#include"MidCodeContainer.h"
+#include"MidCodeFramework.h"
 using namespace std;
 struct ReturnBundle {
 	bool isChar=false;
@@ -13,7 +13,7 @@ struct ReturnBundle {
 };
 class GrammarAnalyzer {
 public:
-	GrammarAnalyzer(FaultHandler& f,SymbolTable& s,LexicalAnalyzer& l,MidCodeContainer& _raw, string file);
+	GrammarAnalyzer(FaultHandler& f,SymbolTable& s,LexicalAnalyzer& l,MidCodeFramework& _raw, string file);
 	Lexical getNextSym();
 	void homeworkOn(bool _c,bool _l);
 	/*整数，会抛出异常*/
@@ -94,7 +94,7 @@ public:
 
 	void programme();
 private:
-	MidCodeContainer& raw;
+	MidCodeFramework& raw;
 	void toNextSemicon();
 	void toNextBrace();
 

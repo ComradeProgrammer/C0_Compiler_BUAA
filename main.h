@@ -9,5 +9,5 @@
 #include"MidCode.h"
 #include"MidCodeContainer.h"
 #include"Block.h"
-#include"FlowChart.h"
-#include"MipsGenerator.h"
+#include"FlowGraph.h"
+#include"MipsTranslator.h"

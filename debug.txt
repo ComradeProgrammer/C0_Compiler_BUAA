@@ -1,114 +1,58 @@
-void main()
-int a
-int b
-int c
-int d
-a = syscall-5 
-b = syscall-12 
-c = syscall-5 
-d = syscall-12 
-syscall-4 a: 
+void fuck()
+para int a
+para int b
 syscall-1 a
-syscall-4 b: 
-syscall-11 b
-syscall-4 c: 
-syscall-1 c
-syscall-4 d: 
-syscall-11 d
-a = syscall-5 
-c = syscall-5 
-b = syscall-12 
-d = syscall-12 
-syscall-4 a+1: 
-#TMP2 = a + 1
-syscall-1 #TMP2
-syscall-4 b+1: 
-#TMP3 = b + 1
-syscall-1 #TMP3
-syscall-4 c+1: 
-#TMP4 = c + 1
-syscall-1 #TMP4
-syscall-4 d+1: 
-#TMP5 = d + 1
-syscall-1 #TMP5
-syscall-4 a+c: 
-#TMP6 = a + c
-syscall-1 #TMP6
-syscall-4 b+d: 
-#TMP7 = b + d
-syscall-1 #TMP7
-
+syscall-11 10
+syscall-4 together with
+syscall-11 10
+syscall-1 b
+syscall-11 10
+ret 
+void main()
+push 17231171
+push 17231181
+call fuck
 
 ====Block0====
-void main()
-a = syscall-5 
-b = syscall-12 
-c = syscall-5 
-d = syscall-12 
-syscall-4 a: 
+void fuck()
+para int a
+para int b
 syscall-1 a
-syscall-4 b: 
-syscall-11 b
-syscall-4 c: 
-syscall-1 c
-syscall-4 d: 
-syscall-11 d
-a = syscall-5 
-c = syscall-5 
-b = syscall-12 
-d = syscall-12 
-syscall-4 a+1: 
-#TMP2 = a + 1
-syscall-1 #TMP2
-syscall-4 b+1: 
-#TMP3 = b + 1
-syscall-1 #TMP3
-syscall-4 c+1: 
-#TMP4 = c + 1
-syscall-1 #TMP4
-syscall-4 d+1: 
-#TMP5 = d + 1
-syscall-1 #TMP5
-syscall-4 a+c: 
-#TMP6 = a + c
-syscall-1 #TMP6
-syscall-4 b+d: 
-#TMP7 = b + d
-syscall-1 #TMP7
+syscall-11 10
+syscall-4 together with
+syscall-11 10
+syscall-1 b
+syscall-11 10
+ret 
+	prev:[]
+	next:[]
+	use:[a,b,]
+	def:[]
+	activeIn:[a,b,]
+	activeOut:[]
+==============
+====Block1====
+void main()
+push 17231171
+push 17231181
+call fuck
 	prev:[]
 	next:[]
 	use:[]
-	def:[#TMP7,#TMP6,#TMP5,#TMP4,#TMP3,#TMP2,a,c,b,d,]
+	def:[]
 	activeIn:[]
 	activeOut:[]
 ==============
 
 
 global:
-name:main	id:0	type:function	scope:	addr:-1	dimension:0
+name:fuck	id:0	type:function	scope:	addr:-1	dimension:0
+link:		returnType:void	paraNum:2	paras:[1 2 ]
+name:main	id:3	type:function	scope:	addr:-1	dimension:0
 link:		returnType:void	paraNum:0	paras:[]
+fuck:
+name:a	id:1	type:int	scope:fuck	addr:36	dimension:0link:NULL
+name:b	id:2	type:int	scope:fuck	addr:40	dimension:0link:NULL
 main:
-name:a	id:1	type:int	scope:main	addr:24	dimension:0link:NULL
-name:b	id:3	type:char	scope:main	addr:32	dimension:0link:NULL
-name:c	id:2	type:int	scope:main	addr:28	dimension:0link:NULL
-name:d	id:4	type:char	scope:main	addr:36	dimension:0link:NULL
-tmp7 addr:0
-tmp6 addr:4
-tmp5 addr:8
-tmp4 addr:12
-tmp3 addr:16
-tmp2 addr:20
 
 
-
-
--7:-2
--6:-2
--5:-2
--4:-2
--3:-2
--2:-2
-1:-2
-2:-2
-3:-2
-4:-2

@@ -17,7 +17,7 @@ public:
 	set<int>activeOut;
 	vector<MidCode>v;
 
-	Block();
+	Block(int _functionId);
 	void insert(MidCode c);
 	void addPrev(Block* b);
 	void addNext(Block* b);

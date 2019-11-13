@@ -23,14 +23,11 @@ void MidCodeContainer::midCodeInsert(vector<MidCode>& tmp) {
 	}
 }
 ostream& operator<<(ostream& out, MidCodeContainer c) {
-	MidCode::table->getSubSymbolTableByName("")->dumpMidCode(out);
-	for (int i = 0; i < c.v.size(); i++) {
-		out << c.v[i];
-		if (c.v[i].op == MIDFUNC) {
-			SymbolEntry* tmp = MidCode::table->getSymbolById(c.v[i].operand1);
-			MidCode::table->getSubSymbolTableByName(tmp->name)->dumpMidCode(out);
-		}
+	MidCode::table->getSubSymbolTableByName(c.functionName)->dumpMidCode(out);
+	for (MidCode& code : c.v) {
+		out << code;
 	}
+
 	return out;
 }
 
@@ -75,3 +72,4 @@ void MidCodeContainer::removeNops() {
 		}
 	}
 }
+

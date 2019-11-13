@@ -111,7 +111,7 @@ vector<int> SubSymbolTable::summaryAndReport() {
 		SymbolEntry* functionEntry = SubSymbolTable::table->getSymbolByName("", nameScope);
 		for (int i : functionEntry->link->paraIds) {
 			SymbolEntry* entry = SubSymbolTable::table->getSymbolById(i);
-			entry->addr = size+4;
+			entry->addr = size+36;
 			size += 4;
 			parasize += 4;
 		}

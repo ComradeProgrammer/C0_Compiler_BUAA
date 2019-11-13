@@ -1,19 +1,11 @@
+
+void fuck(int a,int b){
+	printf(a);
+	printf("together with");
+	printf(b);
+}
+
 void main(){
-              int a,c;
-              char b,d;
-              scanf(a,b,c,d);
-              printf("a: ",a);
-              printf("b: ",b);
-              printf("c: ",c);
-              printf("d: ",d);
-              scanf(a,c);
-              scanf(b,d);
-              printf("a+1: ",a+1);
-              printf("b+1: ",b+1);
-              printf("c+1: ",c+1);
-              printf("d+1: ",d+1);
-              printf("a+c: ",a+c);
-              printf("b+d: ",b+d);
-          }
-
-
+	
+	fuck(17231171,17231181);
+}

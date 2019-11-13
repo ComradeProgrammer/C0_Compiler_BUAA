@@ -77,20 +77,23 @@
     <ClCompile Include="Block.cpp">
       <Filter>源文件\BackEnd</Filter>
     </ClCompile>
-    <ClCompile Include="FlowChart.cpp">
-      <Filter>源文件\BackEnd</Filter>
-    </ClCompile>
     <ClCompile Include="SymbolTable.cpp">
       <Filter>源文件\Midcode&amp;Symbol</Filter>
     </ClCompile>
     <ClCompile Include="SubSymbolTable.cpp">
       <Filter>源文件\Midcode&amp;Symbol</Filter>
     </ClCompile>
-    <ClCompile Include="MipsGenerator.cpp">
-      <Filter>源文件\BackEnd</Filter>
-    </ClCompile>
     <ClCompile Include="MidCode.cpp">
       <Filter>源文件\Midcode&amp;Symbol</Filter>
+    </ClCompile>
+    <ClCompile Include="MidCodeFrameWork.cpp">
+      <Filter>源文件\Midcode&amp;Symbol</Filter>
+    </ClCompile>
+    <ClCompile Include="FlowGraph.cpp">
+      <Filter>源文件\BackEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="MipsTranslator.cpp">
+      <Filter>源文件\BackEnd</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -115,16 +118,19 @@
     <ClInclude Include="Block.h">
       <Filter>头文件\BackEnd</Filter>
     </ClInclude>
-    <ClInclude Include="FlowChart.h">
-      <Filter>头文件\BackEnd</Filter>
-    </ClInclude>
     <ClInclude Include="SymbolTable.h">
       <Filter>头文件\Midcode&amp;Symbol</Filter>
     </ClInclude>
     <ClInclude Include="SubSymbolTable.h">
       <Filter>头文件\Midcode&amp;Symbol</Filter>
     </ClInclude>
-    <ClInclude Include="MipsGenerator.h">
+    <ClInclude Include="MidCodeFramework.h">
+      <Filter>头文件\Midcode&amp;Symbol</Filter>
+    </ClInclude>
+    <ClInclude Include="FlowGraph.h">
+      <Filter>头文件\BackEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="MipsTranslator.h">
       <Filter>头文件\BackEnd</Filter>
     </ClInclude>
   </ItemGroup>
