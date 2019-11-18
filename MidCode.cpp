@@ -51,7 +51,7 @@ ostream& operator<<(ostream& out, MidCode c) {
 	ops[MIDEQL] = "==";
 	ops[MIDNEQ] = "!=";
 	if (c.labelNo < -1) {
-		out << "_label" << -(c.labelNo) << ": "<<endl;
+		out << "_label" << -(c.labelNo) << ": ";
 	}
 	else if(c.labelNo>=0) {
 		out <<MidCode::getOperandName(c.labelNo,false) << ": " << endl;

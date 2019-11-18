@@ -17,18 +17,29 @@ public:
 	
 private:
 	int currentFunction;
-	vector<int>Sregister = { 16,17,18,19,20,21,22,23 };
-	vector<int>Sstatus = { 0,0,0,0,0,0,0,0 };
-	map<int,set<int>>SregisterUser;
-	vector<int>Tregister = { 8,9,10,11,12,13,14,15,24,25 };
-	vector<int>Tstatus = { 0,0,0,0,0,0,0,0,0,0,0 };
-	vector<int>Tuser = { -1,-1,-1,-1,-1,-1,-1,-1,-1,-1 };
-	map<int, int>varReg;
-	set<int>globalVariable;
+	set<int>globalVariable;//所有需要分配全局寄存器的变量
 	set<int>tmpVariable;
 	set<int>allVariable;
 	map<int, set<int>>conflictMap;
-	map<int, vector<int>> report;
+	map<int, vector<int>> report;//记录着每个函数栈大小的信息
+	//全局寄存器分配
+	vector<int>Sregister = { 16,17,18,19,20,21,22,23 };
+	vector<int>Sstatus = { 0,0,0,0,0,0,0,0 };
+	map<int,set<int>>SregisterUser;
+	//临时寄存器分配
+	vector<int>Tregister = { 8,9,10,11,12,13,14,15,24,25 };
+	vector<int>Tstatus = { 0,0,0,0,0,0,0,0,0,0,0 };
+	vector<int>Tuser = { -1,-1,-1,-1,-1,-1,-1,-1,-1,-1 };
+	// 参数寄存器分配
+	vector<int>Aregister = {4,5,6,7};
+	vector<int>Astatus = { 0,0,0,0 };
+	vector<int>Auser = { -1,-1,-1,-1 };
+	inline int getTmpRegIndex(int i);
+	//当前策略:全局变量，参数不得占用临时寄存器，必须立即写回
+
+	//变量-寄存器
+	map<int, int>varReg;
+
 	string name[32] = {
 	"$0","$at","$v0","$v1","$a0",
 	"$a1","$a2","$a3","$t0","$t1",
@@ -38,6 +49,7 @@ private:
 	"$t9","$k0","$k1","$gp","$sp",
 	"$fp","$ra" };
 	fstream out;
+
 	void translateBlock(Block* b);
 	void SregisterAlloc();
 	vector<int> TregisterAlloc(int var, int isImmediate
@@ -48,18 +60,8 @@ private:
 	void translate(MidCode c);
 	void translate(vector<MidCode>c);
 	void specialVarwriteback(int var,bool isImmediate);
-	inline int getTmpRegIndex(int i){
-		if (i == 24) {
-			return 8;
-		}
-		else if (i == 25) {
-			return 9;
-		}
-		else {
-			return i - 8;
-		}
-	}
-	//当前策略:全局变量，参数不得占用临时寄存器，必须立即写回
+	void revokeAregister(int reg);
+	
 
 
 

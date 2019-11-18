@@ -803,12 +803,15 @@ ReturnBundle GrammarAnalyzer::factor() {
 			if (entry->type == TYPECHARARRAY) {
 				res.isChar = true;
 			}
-			
-			res.id = MidCode::tmpVarAlloc();
-			res.isImmediate = false;
-			raw.midCodeInsert(MIDARRAYGET,res.id,
-				entry->id,false,index.id,index.isImmediate,MIDNOLABEL);
-			//生成中间代码
+			if (!error) {
+				res.id = MidCode::tmpVarAlloc();
+				res.isImmediate = false;
+			}
+			if (!error) {
+				raw.midCodeInsert(MIDARRAYGET, res.id,
+					entry->id, false, index.id, index.isImmediate, MIDNOLABEL);
+				//生成中间代码
+			}
 		}
 		else if (lex.sym().type == LPARENT) {
 			//有返回值函数
@@ -824,8 +827,10 @@ ReturnBundle GrammarAnalyzer::factor() {
 			if (!error&&(entry->type == TYPECHAR || entry->type == TYPECHARCONST)) {
 				res.isChar = true;
 			}
-			res.id = entry->id;
-			res.isImmediate = false;
+			if (!error) {
+				res.id = entry->id;
+				res.isImmediate = false;
+			}
 			//生成中间代码
 		}
 	}
@@ -1245,8 +1250,10 @@ void GrammarAnalyzer::scanSentence() {
 		//依据符号表信息检查变量是否合法
 		getNextSym();
 		//标识符读取完成
-		MidCodeOp op = entry->type == TYPEINT ? MIDREADINTEGER : MIDREADCHAR;
-		raw.midCodeInsert(op, entry->id, MIDUNUSED, false, MIDUNUSED, false, MIDNOLABEL);
+		if (entry != NULL){
+			MidCodeOp op = entry->type == TYPEINT ? MIDREADINTEGER : MIDREADCHAR;
+			raw.midCodeInsert(op, entry->id, MIDUNUSED, false, MIDUNUSED, false, MIDNOLABEL);
+		}
 	}
 
 	if (lex.sym().type != RPARENT) {
@@ -1595,8 +1602,10 @@ void GrammarAnalyzer::loopSentence() {
 		//读取赋值符完成
 		ReturnBundle resA= expression();
 		//读取所赋的表达式
-		raw.midCodeInsert(MIDASSIGN, entry1->id,
-			resA.id, resA.isImmediate, MIDUNUSED, false, MIDNOLABEL);
+		if (entry1 != NULL) {
+			raw.midCodeInsert(MIDASSIGN, entry1->id,
+				resA.id, resA.isImmediate, MIDUNUSED, false, MIDNOLABEL);
+		}
 		int label1 = MidCode::labelAlloc();
 		int label2 = MidCode::labelAlloc();
 		raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label1);
@@ -1694,12 +1703,13 @@ void GrammarAnalyzer::loopSentence() {
 		}
 		//读取右括号完成
 		sentence();
-
-		raw.midCodeInsert(op, entry2->id,
-			entry3->id, false, step, true, MIDNOLABEL);
-		raw.midCodeInsert(MIDGOTO, MIDUNUSED,label1, false, MIDUNUSED, false, MIDNOLABEL);
-		raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label2);
-		//生成头部第三部分
+		if (entry2 != NULL) {
+			raw.midCodeInsert(op, entry2->id,
+				entry3->id, false, step, true, MIDNOLABEL);
+			raw.midCodeInsert(MIDGOTO, MIDUNUSED, label1, false, MIDUNUSED, false, MIDNOLABEL);
+			raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label2);
+			//生成头部第三部分
+		}
 	}
 	else {
 		f.handleFault(lex.lineNumber(), "非法的循环语句");

@@ -62,9 +62,6 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="FaultHandler.cpp">
-      <Filter>源文件\FrontEnd</Filter>
-    </ClCompile>
     <ClCompile Include="LexicalAnalyzer.cpp">
       <Filter>源文件\FrontEnd</Filter>
     </ClCompile>
@@ -93,6 +90,12 @@
       <Filter>源文件\BackEnd</Filter>
     </ClCompile>
     <ClCompile Include="MipsTranslator.cpp">
+      <Filter>源文件\BackEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="FaultHandler.cpp">
+      <Filter>源文件\FrontEnd</Filter>
+    </ClCompile>
+    <ClCompile Include="DagMap.cpp">
       <Filter>源文件\BackEnd</Filter>
     </ClCompile>
   </ItemGroup>
@@ -131,6 +134,9 @@
       <Filter>头文件\BackEnd</Filter>
     </ClInclude>
     <ClInclude Include="MipsTranslator.h">
+      <Filter>头文件\BackEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="DagMap.h">
       <Filter>头文件\BackEnd</Filter>
     </ClInclude>
   </ItemGroup>

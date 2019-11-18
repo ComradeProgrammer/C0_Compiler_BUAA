@@ -2,6 +2,7 @@
 #include<vector>
 #include<set>
 #include"MidCode.h"
+#include"DagMap.h"
 using namespace std;
 
 class Block {
@@ -27,6 +28,5 @@ public:
 	friend ostream& operator<<(ostream& out, Block b);
 	static set<int> setUnion(set<int> a, set<int> b);
 	static set<int> setDifference(set<int> a, set<int> b);
-
-	
+	void DAGoptimize();
 };

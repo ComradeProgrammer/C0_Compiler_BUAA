@@ -30,22 +30,8 @@ int main() {
 	f << symbolTable;
 	f << endl << endl;
 	frame.generateMips();
-	/*
-	MipsGenerator mips;
-	mips.outputFile("mips.txt");
-	FlowChart flowchart(container, mips);
-	flowchart.optimize();
-	flowchart.summarize();
-	f << flowchart << endl << endl;
-	f << symbolTable << endl << endl;
-	flowchart.conflictEdgeAnalyze();
-	mips.printConflictMap(f);
-	f << endl << endl;
-	mips.globalRegisterAlloc();
-	mips.printRegisterAllocStatus(f);
-	mips.generateProgramHeader();
-	flowchart.go();*/
-	//system("pause");
+	
+	system("pause");
 
 	return 0;
 }

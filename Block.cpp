@@ -174,6 +174,16 @@ vector<vector<int>>Block::conflictEdgeAnalyze(){
 	return res;
 }
 
+void Block::DAGoptimize() {
+	DagMap dag;
+	dag.init(activeIn, activeOut);
+	for (MidCode c : v) {
+		dag.handleMidCode(c);
+	}
+	v = dag.result();
+}
+
+
 set<int>Block::setUnion(set<int> a, set<int> b) {
 	set<int>res;
 	for (int i : a) {
@@ -241,3 +251,4 @@ ostream& operator<<(ostream& out, Block b) {
 	out << "=============="<<endl;
 	return out;
 }
+

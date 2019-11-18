@@ -135,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="DagMap.cpp" />
     <ClCompile Include="FaultHandler.cpp" />
     <ClCompile Include="FlowGraph.cpp" />
     <ClCompile Include="GrammarAnalyzer.cpp" />
@@ -149,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Block.h" />
+    <ClInclude Include="DagMap.h" />
     <ClInclude Include="FaultHandler.h" />
     <ClInclude Include="FlowGraph.h" />
     <ClInclude Include="GrammarAnalyzer.h" />
