@@ -326,6 +326,14 @@ void MipsTranslator::translate(MidCode c) {
 		case MIDRET:
 		{
 			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
+			//收回所有A寄存器
+			for (int i = 0; i < 4; i++) {
+				if (Astatus[i] != REGFREE) {
+					varReg[Auser[i]] = -1;
+				}
+				Astatus[i] = REGFREE;
+				Auser[i] = -1;
+			}
 			if (func->name != "main") {
 				//不是main函数
 				if (c.operand1 != -1 && !c.isImmediate1) {
@@ -843,6 +851,9 @@ void MipsTranslator::translate(MidCode c) {
 void MipsTranslator::translate(vector<MidCode>c) {
 	int n = c.size();
 	for (int i = 0; i < n; i++) {
+		if (c[i].labelNo != MIDNOLABEL) {
+			out << "label$" << -c[i].labelNo <<":"<< endl;
+		}
 		int tmpreg = loadOperand(c[i].operand1,c[i].isImmediate1, {}, {});
 		out << "sw " << name[tmpreg] << "," << (-n + i) * 4 << "($sp)" << endl;
 		for (int i = 0; i < 3; i++) {

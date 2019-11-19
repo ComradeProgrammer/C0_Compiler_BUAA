@@ -175,12 +175,11 @@ vector<vector<int>>Block::conflictEdgeAnalyze(){
 }
 
 void Block::DAGoptimize() {
-	DagMap dag;
-	dag.init(activeIn, activeOut);
+	DagMap dag(activeOut,activeIn);
 	for (MidCode c : v) {
 		dag.handleMidCode(c);
 	}
-	v = dag.result();
+	v = dag.dumpMidCode();
 }
 
 

@@ -33,6 +33,9 @@ void merge(int s1, int l1, int s2, int l2) {
 
 void inner_merge_sort(int start, int length) {
     int tmp, mid;
+	printf("start",start);
+	printf("length",length);
+	printf("");
     if (length <= 1) return;
     if (length == 2) {
         if (arr[start] > arr[start + 1]) {
@@ -57,5 +60,6 @@ void main() {
         arr[i] = a;
     }
     inner_merge_sort(0, n);
+	printf("n",n);
     for (i = 0; i < n; i = i + 1) printf(arr[i]);
 }

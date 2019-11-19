@@ -22,10 +22,11 @@ public :
 	friend ostream& operator<<(ostream&out, MidCodeFramework frame);
 	void optimize();
 	void generateMips();
+	void removeNops();
 private:
 	MidCodeContainer container;
 	vector<FlowGraph>graph;
-	void removeNops();
+
 	MipsTranslator& mips;
 	map<int,vector<int>>report;
 

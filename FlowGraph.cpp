@@ -9,7 +9,8 @@ FlowGraph::FlowGraph(MidCodeContainer& c) {
 	Block* block = new Block(functionId);
 	for (int i = 0; i < c.v.size(); i++) {
 		if (c.v[i].labelNo != MIDNOLABEL||
-			(i != 0 && ( c.v[i - 1].op == MIDBNZ ||c.v[i - 1].op == MIDBZ||c.v[i-1].op==MIDCALL))) {
+			(i != 0 && ( c.v[i - 1].op == MIDBNZ ||c.v[i - 1].op == MIDBZ||c.v[i-1].op==MIDCALL
+				|| c.v[i - 1].op == MIDREADINTEGER|| c.v[i - 1].op == MIDREADCHAR))) {
 			Block* oldBlock = block;
 			block = new Block(functionId);
 			graph.push_back(oldBlock);
@@ -52,7 +53,7 @@ void FlowGraph::addLink(Block* from, Block* to) {
 
 void FlowGraph::optimize() {
 	activeVariableAnalyze();
-	//DAGoptimize();
+	DAGoptimize();
 	variableSummary();
 	conflictEdgeAnalyze();
 }

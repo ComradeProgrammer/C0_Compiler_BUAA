@@ -1,382 +1,387 @@
 .globl main
 .data:
-string$0: .asciiz "17373248"
+string$0: .asciiz "start"
+string$1: .asciiz "length"
+string$2: .asciiz ""
+string$3: .asciiz "17373248"
+string$4: .asciiz "n"
 .align 2
 arr: .space 4000
 tmp: .space 4000
 .text:
 merge:
-sw $ra,148($sp)#save the return value
-sw $s0,116($sp)
-sw $s1,120($sp)
-sw $s2,124($sp)
-sw $s3,128($sp)
-sw $s4,132($sp)
-sw $s5,136($sp)
-sw $s6,140($sp)
-sw $s7,144($sp)
+sw $ra,152($sp)#save the return value
+sw $s0,120($sp)
+sw $s1,124($sp)
+sw $s2,128($sp)
+sw $s3,132($sp)
+sw $s4,136($sp)
+sw $s5,140($sp)
+sw $s6,144($sp)
+sw $s7,148($sp)
 li $s0,0
 li $s1,0
 move $s2,$a0#k=s1
 
 label$2:
-nop
-lw $t0,100($sp)#load variable#TMP2
-slt $t0,$s0,$a1##TMP2 = i < l1
+lw $t0,104($sp)#load variable#TMP2
+slt $t0,$s0,$a1#_label2: #TMP2 = i < l1
 
-blez $t0,label$3#BZ #TMP2 _label3
+blez $t0,label$10#BZ #TMP2 _label10
 
-lw $t0,96($sp)#load variable#TMP3
+lw $t0,100($sp)#load variable#TMP3
 slt $t0,$s1,$a3##TMP3 = j < l2
 
-blez $t0,label$4#BZ #TMP3 _label4
+blez $t0,label$8#BZ #TMP3 _label8
 
-lw $t0,92($sp)#load variable#TMP4
-addu $t0,$a0,$s0##TMP4 = s1 + i
+lw $t0,88($sp)#load variable#TMP6
+addu $t0,$a2,$s1##TMP6 = s2 + j
 
-lw $t1,88($sp)#load variable#TMP5
+lw $t1,84($sp)#load variable#TMP7
 sll $t2,$t0,2
 lw $t1,arr($t2)
-##TMP5 = arr [ #TMP4 ] 
-
-lw $t3,84($sp)#load variable#TMP6
-addu $t3,$a2,$s1##TMP6 = s2 + j
-
-lw $t4,80($sp)#load variable#TMP7
-sll $t5,$t3,2
-lw $t4,arr($t5)
 ##TMP7 = arr [ #TMP6 ] 
 
-lw $t6,76($sp)#load variable#TMP8
-sgt $t6,$t1,$t4##TMP8 = #TMP5 > #TMP7
+lw $t3,96($sp)#load variable#TMP4
+addu $t3,$a0,$s0##TMP4 = s1 + i
+
+lw $t4,92($sp)#load variable#TMP5
+sll $t5,$t3,2
+lw $t4,arr($t5)
+##TMP5 = arr [ #TMP4 ] 
+
+lw $t6,80($sp)#load variable#TMP8
+sgt $t6,$t4,$t1##TMP8 = #TMP5 > #TMP7
 
 blez $t6,label$5#BZ #TMP8 _label5
 
-lw $t0,72($sp)#load variable#TMP9
-addu $t0,$a2,$s1##TMP9 = s2 + j
+lw $t0,28($sp)#load variable#TMP51
+move $t0,$s1##TMP51=j
 
-lw $t1,68($sp)#load variable#TMP10
-sll $t2,$t0,2
-lw $t1,arr($t2)
+li $t1,1# load immediate1
+addu $s1,$t0,$t1#j = #TMP51 + 1
+
+lw $t2,76($sp)#load variable#TMP9
+addu $t2,$a2,$t0##TMP9 = s2 + #TMP51
+
+lw $t3,72($sp)#load variable#TMP10
+sll $t4,$t2,2
+lw $t3,arr($t4)
 ##TMP10 = arr [ #TMP9 ] 
 
-sll $t3,$s2,2
-sw $t1,tmp($t3)
+sll $t5,$s2,2
+sw $t3,tmp($t5)
 #tmp[k] =#TMP10
-
-lw $t4,64($sp)#load variable#TMP11
-li $t5,1# load immediate1
-addu $t4,$s1,$t5##TMP11 = j + 1
-
-move $s1,$t4#j=#TMP11
 
 j label$6#GOTO _label6
 
 label$5:
-nop
-lw $t0,60($sp)#load variable#TMP12
-addu $t0,$a0,$s0##TMP12 = s1 + i
+lw $t0,24($sp)#load variable#TMP53
+move $t0,$s0#_label5: #TMP53=i
 
-lw $t1,56($sp)#load variable#TMP13
-sll $t2,$t0,2
-lw $t1,arr($t2)
+li $t1,1# load immediate1
+addu $s0,$t0,$t1#i = #TMP53 + 1
+
+lw $t2,68($sp)#load variable#TMP12
+addu $t2,$a0,$t0##TMP12 = s1 + #TMP53
+
+lw $t3,64($sp)#load variable#TMP13
+sll $t4,$t2,2
+lw $t3,arr($t4)
 ##TMP13 = arr [ #TMP12 ] 
 
-sll $t3,$s2,2
-sw $t1,tmp($t3)
+sll $t5,$s2,2
+sw $t3,tmp($t5)
 #tmp[k] =#TMP13
 
-lw $t4,52($sp)#load variable#TMP14
-li $t5,1# load immediate1
-addu $t4,$s0,$t5##TMP14 = i + 1
-
-move $s0,$t4#i=#TMP14
-
 label$6:
-nop
-lw $t0,48($sp)#load variable#TMP15
-li $t1,1# load immediate1
-addu $t0,$s2,$t1##TMP15 = k + 1
+lw $t0,20($sp)#load variable#TMP55
+move $t0,$s2#_label6: #TMP55=k
 
-move $s2,$t0#k=#TMP15
+li $t1,1# load immediate1
+addu $s2,$t0,$t1#k = #TMP55 + 1
 
 j label$7#GOTO _label7
 
-label$4:
-nop
 label$8:
-nop
-lw $t0,44($sp)#load variable#TMP16
-slt $t0,$s0,$a1##TMP16 = i < l1
+lw $t0,60($sp)#load variable#TMP16
+slt $t0,$s0,$a1#_label8: #TMP16 = i < l1
 
-blez $t0,label$9#BZ #TMP16 _label9
+blez $t0,label$7#BZ #TMP16 _label7
 
-lw $t0,40($sp)#load variable#TMP17
-addu $t0,$a0,$s0##TMP17 = s1 + i
+lw $t0,16($sp)#load variable#TMP58
+move $t0,$s0##TMP58=i
 
-lw $t1,36($sp)#load variable#TMP18
-sll $t2,$t0,2
-lw $t1,arr($t2)
+lw $t1,12($sp)#load variable#TMP59
+move $t1,$s2##TMP59=k
+
+li $t2,1# load immediate1
+addu $s0,$t0,$t2#i = #TMP58 + 1
+
+li $t3,1# load immediate1
+addu $s2,$t1,$t3#k = #TMP59 + 1
+
+lw $t4,56($sp)#load variable#TMP17
+addu $t4,$a0,$t0##TMP17 = s1 + #TMP58
+
+lw $t5,52($sp)#load variable#TMP18
+sll $t6,$t4,2
+lw $t5,arr($t6)
 ##TMP18 = arr [ #TMP17 ] 
 
-sll $t3,$s2,2
-sw $t1,tmp($t3)
-#tmp[k] =#TMP18
-
-lw $t4,32($sp)#load variable#TMP19
-li $t5,1# load immediate1
-addu $t4,$s2,$t5##TMP19 = k + 1
-
-move $s2,$t4#k=#TMP19
-
-lw $t6,28($sp)#load variable#TMP20
-li $t7,1# load immediate1
-addu $t6,$s0,$t7##TMP20 = i + 1
-
-move $s0,$t6#i=#TMP20
+sll $t7,$t1,2
+sw $t5,tmp($t7)
+#tmp[#TMP59] =#TMP18
 
 j label$8#GOTO _label8
 
-label$9:
-nop
 label$7:
-nop
-j label$2#GOTO _label2
+j label$2#_label7: GOTO _label2
 
-label$3:
-nop
 label$10:
-nop
-lw $t0,24($sp)#load variable#TMP21
-slt $t0,$s1,$a3##TMP21 = j < l2
+lw $t0,48($sp)#load variable#TMP21
+slt $t0,$s1,$a3#_label10: #TMP21 = j < l2
 
 blez $t0,label$11#BZ #TMP21 _label11
 
-lw $t0,20($sp)#load variable#TMP22
-addu $t0,$a2,$s1##TMP22 = s2 + j
+lw $t0,8($sp)#load variable#TMP63
+move $t0,$s1##TMP63=j
 
-lw $t1,16($sp)#load variable#TMP23
-sll $t2,$t0,2
-lw $t1,arr($t2)
+lw $t1,4($sp)#load variable#TMP64
+move $t1,$s2##TMP64=k
+
+li $t2,1# load immediate1
+addu $s1,$t0,$t2#j = #TMP63 + 1
+
+li $t3,1# load immediate1
+addu $s2,$t1,$t3#k = #TMP64 + 1
+
+lw $t4,44($sp)#load variable#TMP22
+addu $t4,$a2,$t0##TMP22 = s2 + #TMP63
+
+lw $t5,40($sp)#load variable#TMP23
+sll $t6,$t4,2
+lw $t5,arr($t6)
 ##TMP23 = arr [ #TMP22 ] 
 
-sll $t3,$s2,2
-sw $t1,tmp($t3)
-#tmp[k] =#TMP23
-
-lw $t4,12($sp)#load variable#TMP24
-li $t5,1# load immediate1
-addu $t4,$s2,$t5##TMP24 = k + 1
-
-move $s2,$t4#k=#TMP24
-
-lw $t6,8($sp)#load variable#TMP25
-li $t7,1# load immediate1
-addu $t6,$s1,$t7##TMP25 = j + 1
-
-move $s1,$t6#j=#TMP25
+sll $t7,$t1,2
+sw $t5,tmp($t7)
+#tmp[#TMP64] =#TMP23
 
 j label$10#GOTO _label10
 
 label$11:
-nop
-move $s0,$a0#i=s1
+move $s0,$a0#_label11: i=s1
 
 label$12:
-nop
-lw $t0,4($sp)#load variable#TMP26
-slt $t0,$s0,$s2##TMP26 = i < k
+lw $t0,36($sp)#load variable#TMP26
+slt $t0,$s0,$s2#_label12: #TMP26 = i < k
 
 blez $t0,label$13#BZ #TMP26 _label13
 
-lw $t0,0($sp)#load variable#TMP27
-sll $t1,$s0,2
-lw $t0,tmp($t1)
-##TMP27 = tmp [ i ] 
+lw $t0,0($sp)#load variable#TMP68
+move $t0,$s0##TMP68=i
 
-sll $t2,$s0,2
-sw $t0,arr($t2)
-#arr[i] =#TMP27
+li $t1,1# load immediate1
+addu $s0,$t0,$t1#i = #TMP68 + 1
 
-li $t3,1# load immediate1
-addu $s0,$s0,$t3#i = i + 1
+lw $t2,32($sp)#load variable#TMP27
+sll $t3,$t0,2
+lw $t2,tmp($t3)
+##TMP27 = tmp [ #TMP68 ] 
+
+sll $t4,$t0,2
+sw $t2,arr($t4)
+#arr[#TMP68] =#TMP27
 
 j label$12#GOTO _label12
 
 label$13:
-nop
-lw $s0,116($sp)
-lw $s1,120($sp)
-lw $s2,124($sp)
-lw $s3,128($sp)
-lw $s4,132($sp)
-lw $s5,136($sp)
-lw $s6,140($sp)
-lw $s7,144($sp)
-lw $ra,148($sp)
-addiu $sp,$sp,168
+lw $s0,120($sp)
+lw $s1,124($sp)
+lw $s2,128($sp)
+lw $s3,132($sp)
+lw $s4,136($sp)
+lw $s5,140($sp)
+lw $s6,144($sp)
+lw $s7,148($sp)
+lw $ra,152($sp)
+addiu $sp,$sp,172
 jr $ra
 inner_merge_sort:
-sw $ra,100($sp)#save the return value
-sw $s0,68($sp)
-sw $s1,72($sp)
-sw $s2,76($sp)
-sw $s3,80($sp)
-sw $s4,84($sp)
-sw $s5,88($sp)
-sw $s6,92($sp)
-sw $s7,96($sp)
-lw $t0,56($sp)#load variable#TMP28
+sw $ra,92($sp)#save the return value
+sw $s0,60($sp)
+sw $s1,64($sp)
+sw $s2,68($sp)
+sw $s3,72($sp)
+sw $s4,76($sp)
+sw $s5,80($sp)
+sw $s6,84($sp)
+sw $s7,88($sp)
+lw $t0,48($sp)#load variable#TMP28
 li $t1,1# load immediate1
 sle $t0,$a1,$t1##TMP28 = length <= 1
 
+sw $a0,96($sp)
+la $a0,string$0
+li $v0,4
+syscall #printstring
+lw $a0,96($sp)
+li $v0,1
+syscall #printint
+li $a0,10
+li $v0,11
+syscall #printchar
+la $a0,string$1
+li $v0,4
+syscall #printstring
+move $a0,$a1
+li $v0,1
+syscall #printint
+li $a0,10
+li $v0,11
+syscall #printchar
+la $a0,string$2
+li $v0,4
+syscall #printstring
+li $a0,10
+li $v0,11
+syscall #printchar
 blez $t0,label$14#BZ #TMP28 _label14
 
-lw $s0,68($sp)
-lw $s1,72($sp)
-lw $s2,76($sp)
-lw $s3,80($sp)
-lw $s4,84($sp)
-lw $s5,88($sp)
-lw $s6,92($sp)
-lw $s7,96($sp)
-lw $ra,100($sp)
-addiu $sp,$sp,112
+lw $s0,60($sp)
+lw $s1,64($sp)
+lw $s2,68($sp)
+lw $s3,72($sp)
+lw $s4,76($sp)
+lw $s5,80($sp)
+lw $s6,84($sp)
+lw $s7,88($sp)
+lw $ra,92($sp)
+addiu $sp,$sp,104
 jr $ra
 label$14:
-nop
-lw $t0,52($sp)#load variable#TMP29
-li $t1,2# load immediate2
-seq $t0,$a1,$t1##TMP29 = length == 2
+lw $t0,44($sp)#load variable#TMP29
+lw $t1,100($sp)#load variablelength
+li $t2,2# load immediate2
+seq $t0,$t1,$t2#_label14: #TMP29 = length == 2
 
 blez $t0,label$15#BZ #TMP29 _label15
 
-lw $t0,48($sp)#load variable#TMP30
-sll $t1,$a0,2
-lw $t0,arr($t1)
-##TMP30 = arr [ start ] 
+lw $t0,36($sp)#load variable#TMP31
+lw $t1,96($sp)#load variablestart
+li $t2,1# load immediate1
+addu $t0,$t1,$t2##TMP31 = start + 1
 
-lw $t2,44($sp)#load variable#TMP31
-li $t3,1# load immediate1
-addu $t2,$a0,$t3##TMP31 = start + 1
-
-lw $t4,40($sp)#load variable#TMP32
-sll $t5,$t2,2
-lw $t4,arr($t5)
+lw $t3,32($sp)#load variable#TMP32
+sll $t4,$t0,2
+lw $t3,arr($t4)
 ##TMP32 = arr [ #TMP31 ] 
 
-lw $t6,36($sp)#load variable#TMP33
-sgt $t6,$t0,$t4##TMP33 = #TMP30 > #TMP32
+lw $t5,40($sp)#load variable#TMP30
+sll $t6,$t1,2
+lw $t5,arr($t6)
+##TMP30 = arr [ start ] 
 
-blez $t6,label$16#BZ #TMP33 _label16
+lw $t7,28($sp)#load variable#TMP33
+sgt $t7,$t5,$t3##TMP33 = #TMP30 > #TMP32
 
-lw $t0,32($sp)#load variable#TMP34
-sll $t1,$a0,2
-lw $t0,arr($t1)
+blez $t7,label$16#BZ #TMP33 _label16
+
+lw $t0,24($sp)#load variable#TMP34
+lw $t1,96($sp)#load variablestart
+sll $t2,$t1,2
+lw $t0,arr($t2)
 ##TMP34 = arr [ start ] 
 
-lw $t2,64($sp)#load variabletmp
-move $t2,$t0#tmp=#TMP34
-
-lw $t3,28($sp)#load variable#TMP35
+lw $t3,16($sp)#load variable#TMP37
 li $t4,1# load immediate1
-addu $t3,$a0,$t4##TMP35 = start + 1
+addu $t3,$t1,$t4##TMP37 = start + 1
 
-lw $t5,24($sp)#load variable#TMP36
+lw $t5,20($sp)#load variable#TMP36
 sll $t6,$t3,2
 lw $t5,arr($t6)
-##TMP36 = arr [ #TMP35 ] 
+##TMP36 = arr [ #TMP37 ] 
 
-sll $t7,$a0,2
+sll $t7,$t1,2
 sw $t5,arr($t7)
 #arr[start] =#TMP36
 
-lw $t8,20($sp)#load variable#TMP37
-li $t9,1# load immediate1
-addu $t8,$a0,$t9##TMP37 = start + 1
-
-sw $t0,32($sp)#write back temporary variable #TMP34
-sll $t0,$t8,2
-sw $t2,arr($t0)
-#arr[#TMP37] =tmp
+sll $t8,$t3,2
+sw $t0,arr($t8)
+#arr[#TMP37] =#TMP34
 
 label$16:
-nop
-lw $s0,68($sp)
-lw $s1,72($sp)
-lw $s2,76($sp)
-lw $s3,80($sp)
-lw $s4,84($sp)
-lw $s5,88($sp)
-lw $s6,92($sp)
-lw $s7,96($sp)
-lw $ra,100($sp)
-addiu $sp,$sp,112
+lw $s0,60($sp)
+lw $s1,64($sp)
+lw $s2,68($sp)
+lw $s3,72($sp)
+lw $s4,76($sp)
+lw $s5,80($sp)
+lw $s6,84($sp)
+lw $s7,88($sp)
+lw $ra,92($sp)
+addiu $sp,$sp,104
 jr $ra
 label$15:
-nop
-lw $t0,16($sp)#load variable#TMP38
+lw $t0,100($sp)#load variablelength
 li $t1,2# load immediate2
-div $a1,$t1
-mflo $t0##TMP38 = length / 2
+div $t0,$t1
+mflo $s0#_label15: mid = length / 2
 
-move $s0,$t0#mid=#TMP38
-
-sw $a0,-8($sp)
-sw $a0,104($sp)
-sw $a1,108($sp)
-sw $a2,160($sp)
-move $a0,$a0
-sw $s0,-4($sp)
-move $a1,$s0
-addiu $sp,$sp,-112
-jal inner_merge_sort
-lw $t0,8($sp)#load variable#TMP40
-lw $t1,108($sp)#load variablelength
-subu $t0,$t1,$s0##TMP40 = length - mid
-
-lw $t2,12($sp)#load variable#TMP39
-lw $t3,104($sp)#load variablestart
-addu $t2,$t3,$s0##TMP39 = start + mid
-
+lw $t2,96($sp)#load variablestart
 sw $t2,-8($sp)
 move $a0,$t2
-sw $t0,-4($sp)
-move $a1,$t0
-addiu $sp,$sp,-112
+sw $s0,-4($sp)
+move $a1,$s0
+addiu $sp,$sp,-104
 jal inner_merge_sort
-lw $t0,0($sp)#load variable#TMP42
-lw $t1,108($sp)#load variablelength
-subu $t0,$t1,$s0##TMP42 = length - mid
+lw $t0,12($sp)#load variable#TMP39
+lw $t1,96($sp)#load variablestart
+addu $t0,$t1,$s0##TMP39 = start + mid
 
-lw $t2,4($sp)#load variable#TMP41
-lw $t3,104($sp)#load variablestart
-addu $t2,$t3,$s0##TMP41 = start + mid
+lw $t2,8($sp)#load variable#TMP40
+lw $t3,100($sp)#load variablelength
+subu $t2,$t3,$s0##TMP40 = length - mid
 
-sw $t3,-16($sp)
-move $a0,$t3
+sw $t0,-8($sp)
+move $a0,$t0
+sw $t2,-4($sp)
+move $a1,$t2
+addiu $sp,$sp,-104
+jal inner_merge_sort
+lw $t0,4($sp)#load variable#TMP41
+lw $t1,96($sp)#load variablestart
+addu $t0,$t1,$s0##TMP41 = start + mid
+
+lw $t2,0($sp)#load variable#TMP42
+lw $t3,100($sp)#load variablelength
+subu $t2,$t3,$s0##TMP42 = length - mid
+
+sw $t1,-16($sp)
+move $a0,$t1
 sw $s0,-12($sp)
 move $a1,$s0
-sw $t2,-8($sp)
-move $a2,$t2
-sw $t0,-4($sp)
-move $a3,$t0
-addiu $sp,$sp,-168
+sw $t0,-8($sp)
+move $a2,$t0
+sw $t2,-4($sp)
+move $a3,$t2
+addiu $sp,$sp,-172
 jal merge
-lw $s0,68($sp)
-lw $s1,72($sp)
-lw $s2,76($sp)
-lw $s3,80($sp)
-lw $s4,84($sp)
-lw $s5,88($sp)
-lw $s6,92($sp)
-lw $s7,96($sp)
-lw $ra,100($sp)
-addiu $sp,$sp,112
+lw $s0,60($sp)
+lw $s1,64($sp)
+lw $s2,68($sp)
+lw $s3,72($sp)
+lw $s4,76($sp)
+lw $s5,80($sp)
+lw $s6,84($sp)
+lw $s7,88($sp)
+lw $ra,92($sp)
+addiu $sp,$sp,104
 jr $ra
 main:
-addiu $sp,$sp,-24
-la $a0,string$0
+addiu $sp,$sp,-32
+la $a0,string$3
 li $v0,4
 syscall #printstring
 li $a0,10
@@ -387,56 +392,67 @@ syscall
 move $s0,$v0
 li $s1,0
 label$17:
-nop
-lw $t0,8($sp)#load variable#TMP43
-slt $t0,$s1,$s0##TMP43 = i < n
+lw $t0,16($sp)#load variable#TMP43
+slt $t0,$s1,$s0#_label17: #TMP43 = i < n
 
 blez $t0,label$18#BZ #TMP43 _label18
 
-lw $t0,12($sp)#load variablea
 li $v0,5
 syscall
-move $t0,$v0
-sll $t1,$s1,2
-sw $t0,arr($t1)
-#arr[i] =a
+move $s2,$v0
+lw $t0,4($sp)#load variable#TMP95
+move $t0,$s1##TMP95=i
 
-li $t2,1# load immediate1
-addu $s1,$s1,$t2#i = i + 1
+li $t1,1# load immediate1
+addu $s1,$t0,$t1#i = #TMP95 + 1
+
+sll $t2,$t0,2
+sw $s2,arr($t2)
+#arr[#TMP95] =a
 
 j label$17#GOTO _label17
 
 label$18:
-nop
 li $t0,0# load immediate0
 sw $t0,-8($sp)
 move $a0,$t0
 sw $s0,-4($sp)
 move $a1,$s0
-addiu $sp,$sp,-112
+addiu $sp,$sp,-104
 jal inner_merge_sort
-li $s1,0
-label$19:
-nop
-lw $t0,4($sp)#load variable#TMP44
-slt $t0,$s1,$s0##TMP44 = i < n
-
-blez $t0,label$20#BZ #TMP44 _label20
-
-lw $t0,0($sp)#load variable#TMP45
-sll $t1,$s1,2
-lw $t0,arr($t1)
-##TMP45 = arr [ i ] 
-
-move $a0,$t0
+la $a0,string$4
+li $v0,4
+syscall #printstring
+move $a0,$s0
 li $v0,1
 syscall #printint
 li $a0,10
 li $v0,11
 syscall #printchar
-li $t2,1# load immediate1
-addu $s1,$s1,$t2#i = i + 1
+li $s1,0
+label$19:
+lw $t0,12($sp)#load variable#TMP44
+slt $t0,$s1,$s0#_label19: #TMP44 = i < n
 
+blez $t0,label$20#BZ #TMP44 _label20
+
+lw $t0,0($sp)#load variable#TMP103
+move $t0,$s1##TMP103=i
+
+li $t1,1# load immediate1
+addu $s1,$t0,$t1#i = #TMP103 + 1
+
+lw $t2,8($sp)#load variable#TMP45
+sll $t3,$t0,2
+lw $t2,arr($t3)
+##TMP45 = arr [ #TMP103 ] 
+
+move $a0,$t2
+li $v0,1
+syscall #printint
+li $a0,10
+li $v0,11
+syscall #printchar
 j label$19#GOTO _label19
 
 label$20:

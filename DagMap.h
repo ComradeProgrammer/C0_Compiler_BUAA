@@ -1,42 +1,54 @@
-#pragma once
+﻿#pragma once
+#include<queue>
 #include"MidCode.h"
 struct DagNode {
-	bool isLeaf = false;
-	bool isImmediate = false;//only works when isLeaf is true
-	int varId;//only works when isLeaf is true
-	set<int>nameVarIdPool;
-	int nameVarId;
+	bool isLeaf=false;//是否是叶子节点
+	//若为叶子节点
+	bool isImmediate=false;//若为叶子节点是否是立即数
+	int leafOperand;//若为叶子节点，存储立即数或变量编号
+	bool shouldReAssign=false;//是否是被先使用后赋值的节点
+	int formerName;//如果上一个答案是true，那么他本来代表的变量是
+	//若不为叶子节点
 	MidCodeOp op;
-	DagNode* left = NULL;
-	DagNode* right = NULL;
-	set<DagNode*> fathers;
-	bool dumped = false;//�Ƿ��Ѿ�������
-	DagNode(bool isLeaf, int varid, bool isImmediate);
-	DagNode(MidCodeOp op, DagNode* left, DagNode* right);
+	DagNode* left=nullptr;
+	DagNode* right=nullptr;
+	set<DagNode*> father;
+	set<DagNode*>son;//供继承儿子使用
+	//导出时使用的命名问题
+	set<int>possibleNames;
+	int name;
+	DagNode(int leafInformation, bool isImmediate);//叶子节点构造函数
+	DagNode(MidCodeOp op, DagNode* left, DagNode* right);//非叶子节点的构造函数
+	//导出记录
+	bool dumped = false;
+	/*读语句算一个控制流转移吧不然太要命了
+	数组这里需要一套。。。继承父亲机制*/
 };
 
 class DagMap {
+public:
+	DagMap(set<int>_mustOut,set<int>_shouldAssign);
+	~DagMap();
+	DagNode* getNodeByVar(int id,bool isImmediate);
+	DagNode* getNodeBySon(MidCodeOp op,DagNode* left,DagNode* right);
+	void handleMidCode(MidCode c);
+	vector<MidCode>dumpMidCode();
 private:
-	int output;
 	int label;
+	int fakeOutputStream;
+	vector<DagNode*>nodes;
+
+	map<int, DagNode*>immToNode;
+	map<int, DagNode*>varToNode;
+
 	set<int>mustOut;
 	set<int>shouldAssign;
-	vector<DagNode*>currentNodes;
-	vector<DagNode*>dagTree;
-	map<int, DagNode*>nodeVarTable;
-	map<int, DagNode*>nodeImmTable;
-	map<int, DagNode*>initialValueMap;
-	vector<MidCode> beginning;
-	vector<MidCode>middle;
+	set<int>assigned;
+		
+	vector<MidCode>beginning;
 	vector<MidCode>ending;
+	vector<MidCode>middle;
 
-	DagNode* getNodeByVar(int varid, bool isImmediate);
-	DagNode* getNodeBySon(MidCodeOp op, DagNode* left, DagNode* right);
-	void dumpCurrentCode();
-	MidCode parseToMidCode(DagNode* node);
-public:
-	void init(set<int>activeIn, set<int>activeOut);
-	void handleMidCode(MidCode c);
-	vector<MidCode> result();
-
+	
+	MidCode nodeToMidCode(DagNode* node);
 };

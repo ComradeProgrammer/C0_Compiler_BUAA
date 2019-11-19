@@ -800,7 +800,7 @@ ReturnBundle GrammarAnalyzer::factor() {
 				getNextSym();
 			}
 			//完成读取右括号
-			if (entry->type == TYPECHARARRAY) {
+			if (!error&&entry->type == TYPECHARARRAY) {
 				res.isChar = true;
 			}
 			if (!error) {

@@ -55,6 +55,7 @@ ostream& operator<<(ostream& out, MidCodeFramework frame) {
 }
 
 void MidCodeFramework::optimize() {
+	removeNops();
 	for (MidCodeContainer& c : functionContainer) {
 		graph.push_back(FlowGraph(c));
 	}

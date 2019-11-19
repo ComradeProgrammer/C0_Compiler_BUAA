@@ -1,63 +1,357 @@
-#include"DagMap.h"
-DagNode::DagNode(bool _isLeaf, int _varid, bool _isImmediate) {
-	isLeaf = _isLeaf;
+Ôªø#include"DagMap.h"
+
+//Âè∂Â≠êËäÇÁÇπÊûÑÈÄ†ÂáΩÊï∞
+DagNode::DagNode(int _leafInformation, bool _isImmediate) {
+	isLeaf = true;
+	leafOperand = _leafInformation;
 	isImmediate = _isImmediate;
-	varId = _varid;
-	left = NULL;
-	right = NULL;
-	if (!_isImmediate) {
-		nameVarIdPool.insert(_varid);
+	if (!isImmediate) {
+		possibleNames.insert(leafOperand);
 	}
 }
 
+//ÈùûÂè∂Â≠êËäÇÁÇπÊûÑÈÄ†ÂáΩÊï∞
 DagNode::DagNode(MidCodeOp _op, DagNode* _left, DagNode* _right) {
 	isLeaf = false;
 	op = _op;
 	left = _left;
 	right = _right;
-	if (left != NULL) {
-		left->fathers.insert(this);
+	if (nullptr != left) {
+		left->father.insert(this);
+		son.insert(left);
 	}
-	if (right != NULL) {
-		right->fathers.insert(this);
-	}
-}
-
-DagNode* DagMap::getNodeByVar(int varid, bool isImmediate) {
-	if (isImmediate) {
-		map<int, DagNode*>::iterator itr = nodeImmTable.find(varid);
-		if (itr == nodeImmTable.end()) {
-			return NULL;
-		}
-		else {
-			return itr->second;
-		}
-	}
-	else {
-		map<int, DagNode*>::iterator itr = nodeVarTable.find(varid);
-		if (itr == nodeVarTable.end()) {
-			return NULL;
-		}
-		else {
-			return itr->second;
-		}
+	if (nullptr != right) {
+		right->father.insert(this);
+		son.insert(right);
 	}
 }
 
-DagNode* DagMap::getNodeBySon(MidCodeOp op, DagNode* left, DagNode* right) {
-	for (DagNode* i : dagTree) {
-		if (i->op == op && i->left == left && i->right == right) {
-			return  i;
+DagMap::DagMap(set<int> _mustOut,set<int>_shouldAssign){
+	label=MIDNOLABEL;
+	mustOut=_mustOut;
+	shouldAssign=_shouldAssign;
+	fakeOutputStream=MidCode::tmpVarAlloc();
+}
+
+DagMap::~DagMap(){
+	for(DagNode* i:nodes){
+		delete i;
+	}
+}
+
+DagNode* DagMap::getNodeByVar(int id,bool isImmediate){
+	if(isImmediate){
+		if(immToNode.find(id)!=immToNode.end()){
+			return immToNode[id];
 		}
-		else if ((op == MIDADD || op == MIDMULT || op == MIDEQL || op == MIDNEQ) 
-			&& i->op == op && i->right == left && i->left == right) {
+		else {
+			DagNode* tmp=new DagNode(id,isImmediate);
+			immToNode[id]=tmp;
+			nodes.push_back(tmp);
+			return tmp;
+		}
+	}
+	else{
+		if(varToNode.find(id)!=varToNode.end()){
+			return varToNode[id];
+		}
+		else {
+			DagNode* tmp=new DagNode(id,isImmediate);
+			varToNode[id]=tmp;
+			nodes.push_back(tmp);
+			return tmp;
+		}
+	}
+}
+
+DagNode* DagMap::getNodeBySon(MidCodeOp op,DagNode* left,DagNode* right){
+	for(DagNode* i:nodes){
+		if(i->op==op&&i->left==left&&i->right==right){
+			return i;
+		}
+		else if((op == MIDADD || op == MIDMULT || op == MIDEQL || op == MIDNEQ)
+			&&i->op==op&&i->left==right&&i->right==left){
 			return i;
 		}
 	}
-	return NULL;
+	DagNode *tmp=new DagNode(op,left,right);
+	nodes.push_back(tmp);
+	return tmp;
 }
 
-MidCode DagMap::parseToMidCode(DagNode* node) {
+void DagMap::handleMidCode(MidCode c){
+	if(c.labelNo!=MIDNOLABEL){
+		label=c.labelNo;//Ê†áÁ≠æÂè™ËÉΩÂá∫Áé∞Âú®‰∏Ä‰∏™Âü∫Êú¨ÂùóÁöÑÁ¨¨‰∏Ä‰∏™ËØ≠Âè•‰∏äÔºõ
+	}
+		switch (c.op) {
+		case MIDFUNC:
+		case MIDPARA:
+		case MIDNOP:
+			//Âè™ËÉΩÂá∫Áé∞Âú®ÊúÄÂâçÈÉ®Ôºå‰∏ç‰ºöÂΩ±ÂìçDAG
+			beginning.push_back(c);
+			break;
+			//Âè™ËÉΩÂá∫Áé∞Âú®ÊúÄÂêéÔºå‰∏ç‰ºöÂΩ±ÂìçDAG
+		case MIDGOTO:
+		case MIDCALL:
+		case MIDREADCHAR:
+		case MIDREADINTEGER:
+			ending.push_back(c);
+			break;
+		case MIDPUSH:
+		case MIDRET:
+		case MIDBNZ:
+		case MIDBZ:
+			mustOut.insert(c.operand1);
+			ending.push_back(c);
+			break;
+		case MIDADD:
+		case MIDSUB:
+		case MIDMULT:
+		case MIDDIV:
+		case MIDLSS:
+		case MIDLEQ:
+		case MIDGRE:
+		case MIDGEQ:
+		case MIDEQL:
+		case MIDNEQ:
+		case MIDARRAYGET:
+		{
+			DagNode* node1 = getNodeByVar(c.operand1, c.isImmediate1);
+			DagNode* node2 = getNodeByVar(c.operand2, c.isImmediate2);
+			DagNode* node = getNodeBySon(c.op, node1, node2);
+			if (varToNode.find(c.target) != varToNode.end() && varToNode[c.target] != node) {
+				//Âá∫Áé∞‰∫ÜÂÖàÂºïÁî®ÂÜçËµãÂÄºÁöÑÊÉÖÂÜµ
+				varToNode[c.target]->possibleNames.erase(c.target);//‰ΩøÊóßÂèòÈáèÊó†Ê≥ïÂÜçË¢´ÂëΩÂêç‰∏∫c.targetÔºõ
+				if (assigned.find(c.target)==assigned.end()) {
+					//ÂØπ‰∫éÁ¨¨‰∏ÄÊ¨°ÈáçÊñ∞ËµãÂÄºÁöÑÂèòÈáèÔºåËÆ∞ÂΩï‰ªñÁöÑÊóßÂêçÂ≠ó„ÄÇ
+					//ËøôÈáåË¶ÅÈò≤ËåÉ‰∏Ä‰∏™ÈóÆÈ¢òÂ∞±ÊòØ‰∏Ä‰∏™ÂèòÈáè‰∏äÊù•Â∞±Áõ¥Êé•Ë¢´ËµãÂÄº‰∫ÜÔºåÁî®Âè¶‰∏Ä‰∏™ÂèòÈáèÊàñËÄÖÁ´ãÂç≥Êï∞
+					//ÂØªÊâæÁöÑÊ†áÂáÜÊòØÔºåÊú™Ë¢´ËµãÂÄº‰ΩÜÊòØ‰ΩøÁî®ËøáÁöÑÂèòÈáèÔºåÊòØÂê¶Ë¢´‰ΩøÁî®ËøáÁî±varToNodeÂà§Êñ≠ÔºåÊòØÂê¶Ë¢´ËµãÂÄºËøáÁî±assignedÂà§Êñ≠
+					varToNode[c.target]->shouldReAssign = true;
+					varToNode[c.target]->formerName = c.target;
+				}
+				
+			}
+			varToNode[c.target] = node;
+			node->possibleNames.insert(c.target);
+			assigned.insert(c.target);
+			break;
+		}
+		case MIDNEGATE:
+		{
+			DagNode* node1 = getNodeByVar(c.operand1, c.isImmediate1);
+			DagNode* node = getNodeBySon(c.op, node1, nullptr);
+			if (varToNode.find(c.target) != varToNode.end() && varToNode[c.target] != node) {
+				//Âá∫Áé∞‰∫ÜÂÖàÂºïÁî®ÂÜçËµãÂÄºÁöÑÊÉÖÂÜµ
+				varToNode[c.target]->possibleNames.erase(c.target);//‰ΩøÊóßÂèòÈáèÊó†Ê≥ïÂÜçË¢´ÂëΩÂêç‰∏∫c.targetÔºõ
+				if (assigned.find(c.target) == assigned.end()) {
+					//ÂØπ‰∫éÁ¨¨‰∏ÄÊ¨°ÈáçÊñ∞ËµãÂÄºÁöÑÂèòÈáèÔºåËÆ∞ÂΩï‰ªñÁöÑÊóßÂêçÂ≠ó„ÄÇ
+					varToNode[c.target]->shouldReAssign = true;
+					varToNode[c.target]->formerName = c.target;
+				}
+			}
+			varToNode[c.target] = node;
+			node->possibleNames.insert(c.target);
+			assigned.insert(c.target);
+			break;
+		}
+		case MIDASSIGN:
+		{
+			//ËøôÈáåÊúâ‰∏Ä‰∏™-1:RETÁöÑÈóÆÈ¢òÔºöÊãøËøîÂõûÂÄºËµãÂÄºÂè™ËÉΩÊòØÁ¨¨‰∏ÄÂè•ÔºåÊàë‰ª¨ÂøÖÈ°ª‰øùËØÅËøôÊòØÁ¨¨‰∏ÄÂè•
+			if (c.operand1 == -1) {
+				beginning.push_back(c);
+				shouldAssign.insert(c.operand1);
+				break;
+			}
+			DagNode* node1 = getNodeByVar(c.operand1, c.isImmediate1);
+			if (varToNode.find(c.target) != varToNode.end() && varToNode[c.target] != node1) {
+				//Âá∫Áé∞‰∫ÜÂÖàÂºïÁî®ÂÜçËµãÂÄºÁöÑÊÉÖÂÜµ
+				varToNode[c.target]->possibleNames.erase(c.target);//‰ΩøÊóßÂèòÈáèÊó†Ê≥ïÂÜçË¢´ÂëΩÂêç‰∏∫c.targetÔºõ
+				if (assigned.find(c.target) == assigned.end()) {
+					//ÂØπ‰∫éÁ¨¨‰∏ÄÊ¨°ÈáçÊñ∞ËµãÂÄºÁöÑÂèòÈáèÔºåËÆ∞ÂΩï‰ªñÁöÑÊóßÂêçÂ≠ó„ÄÇ
+					varToNode[c.target]->shouldReAssign = true;
+					varToNode[c.target]->formerName = c.target;
+				}
+			
+			}
+			varToNode[c.target] = node1;
+			node1->possibleNames.insert(c.target);
+			assigned.insert(c.target);
+			break;
+		}
+		case MIDPRINTCHAR:
+		case MIDPRINTINT:
+		{
+			DagNode* node1 = getNodeByVar(c.operand1, c.isImmediate1);
+			DagNode* node2 = getNodeByVar(fakeOutputStream, false);
+			//ÂøÖÈ°ªÁõ¥Êé•Êñ∞Âª∫ÔºåËæìÂá∫‰∏ÄÊ†∑ÁöÑ‰∏úË•ø‰∏§Ê¨°‰∏çËÉΩÂΩì‰∏ÄÊ¨°
+			DagNode* node = new DagNode(c.op, node1, node2);
+			nodes.push_back(node);
+			//ËÇØÂÆöÈáçÊñ∞ËµãÂÄº,
+			if (varToNode.find(fakeOutputStream) != varToNode.end()) {
+				varToNode[fakeOutputStream]->possibleNames.erase(fakeOutputStream);
+			}
+			node->possibleNames.insert(fakeOutputStream);
+			varToNode[fakeOutputStream] = node;
+			break;
+		}
+		case MIDPRINTSTRING: 
+		{
+			//ÊääÂ≠óÁ¨¶‰∏≤ÁºñÂè∑ÂÅ∑ÂÅ∑ËóèÂú®leafOperandÈáåÈù¢
+			DagNode* node2 = getNodeByVar(fakeOutputStream, false);
+			DagNode* node = new DagNode(c.op, nullptr, node2);
+			node->leafOperand = c.operand1;//Â≠óÁ¨¶‰∏≤ÁºñÂè∑
+			nodes.push_back(node);
+			
+			//Ëã•ÊúâÔºåËÇØÂÆöÈáçÊñ∞ËµãÂÄº
+			if (varToNode.find(fakeOutputStream) != varToNode.end()) {
+				varToNode[fakeOutputStream]->possibleNames.erase(fakeOutputStream);
+			}
+			node->possibleNames.insert(fakeOutputStream);
+			varToNode[fakeOutputStream] = node;
+			break;
+		}
+		case MIDARRAYWRITE:
+		{
+			DagNode* node1 = getNodeByVar(c.operand1, c.isImmediate1);
+			DagNode* node2 = getNodeByVar(c.operand2, c.isImmediate2);
+			DagNode* node = new DagNode(c.op, node1, node2);
+			nodes.push_back(node);
+			//bfs
+			if (varToNode.find(c.target) != varToNode.end()) {
+				deque<DagNode*>queue;
+				queue.push_back(varToNode[c.target]);
+				//Ê≤°ÊúâÁéØÔºå‰∏çÁî®Ê£ÄÊü•ÈáçÂ§ç
+				while (queue.size() > 0) {
+					DagNode* mark = queue.front();
+					for (DagNode* i : mark->father) {
+						if (i != node) {
+							queue.push_back(i);
+						}
+					}
+					queue.pop_front();
+					mark->father.insert(node);
+					node->son.insert(mark);
+				}	
+			}
+			node->possibleNames.insert(c.target);
+			node->leafOperand = c.target;
+			varToNode[c.target] = node;
+			break;
+		}
+		default:
+			cout << "miss";
+
+	}
+}
+
+vector<MidCode> DagMap::dumpMidCode() {
+	//ÂàÜÈÖçÂêçÂ≠ó
+	for (DagNode* i : nodes) {
+		if (i->isLeaf&&i->isImmediate) {
+			//Á´ãÂç≥Êï∞
+			i->name = i->leafOperand;
+		}
+		else if (i->isLeaf && !i->isImmediate && i->possibleNames.find(i->leafOperand) != i->possibleNames.end()) {
+			//Âè∂Â≠êËäÇÁÇπË¶ÅÊúâÂàùÂÄºÔºåÂ¶ÇÊûú‰∏çÂèëÁîüÂÖà‰ΩøÁî®ÂÜçËµãÂÄºÁöÑ‰∫ãÔºåÂøÖÈ°ªËÄÉËôëÁî®ÂàùÂßãËäÇÁÇπ
+			i->name = i->leafOperand;
+			mustOut.erase(i->name);
+		}
+		else {
+			
+			//Èù†possibleNamesÁöÑ
+			if (i->possibleNames.size() == 0) {
+				i->name = MidCode::tmpVarAlloc();
+			}
+			else {
+				bool given = false;
+				for (int j : i->possibleNames) {
+					if (mustOut.find(j) != mustOut.end()) {
+						i->name = j;
+						given = true;
+						mustOut.erase(j);
+						break;
+					}
+				}
+				if (!given) {
+					i->name = *(i->possibleNames.begin());
+				}
+			}
+			if (i->shouldReAssign && shouldAssign.find(i->formerName) != shouldAssign.end()) {
+				//ËØ•ÂèòÈáèshouldassignË¢´Ê†áËÆ∞‰∏∫true‰∏îÂú®ÂºÄÂ§¥Â§ÑÊ¥ªË∑É,ÁîüÊàêËµãÂÄºËØ≠Âè•
+				MidCode code;
+				code.op = MIDASSIGN; code.target = i->name;
+				code.operand1 = i->formerName; code.isImmediate1 = false;
+				code.operand2 = MIDUNUSED; code.isImmediate2 = false, code.labelNo = MIDNOLABEL;
+				middle.push_back(code);
+			}
+		}
+	}
+	//ÂºÄÂßãÁ°ÆÂÆöÂØºÂá∫È°∫Â∫è
+	vector<DagNode*>q;
+	int i = 0;
+	while (i < nodes.size()) {
+		DagNode* tmp=nullptr;
+		for (int j = 0; j < nodes.size(); j++) {
+			if (nodes[j]->dumped) { continue; }
+			else if (nodes[j]->isLeaf) {
+				i++;
+				nodes[j]->dumped = true;
+			}
+			else if (nodes[j]->father.size() == 0) {
+				tmp = nodes[j];
+				break;
+			}
+		}
+		while (tmp != nullptr && !tmp->dumped) {
+			i++;
+			tmp->dumped = true;
+			q.push_back(tmp);
+			for (DagNode* son : tmp->son) {
+				son->father.erase(tmp);
+			}
+			if (tmp->left != NULL&&tmp->left->father.size()==0) {
+				tmp = tmp->left;
+				continue;
+			}
+			if (tmp->right != NULL && tmp->right->father.size() == 0) {
+				tmp = tmp->right;
+				continue;
+			}
+		}
+	}
+	//ÂºÄÂßãÊåâÈ°∫Â∫èÁîüÊàê‰∏≠Èó¥‰ª£Á†Å
+	for (int i = q.size() - 1; i >= 0; i--) {
+		MidCode code = nodeToMidCode(q[i]);
+		middle.push_back(code);
+	}
+	//ÂºÄÂßãÊ†πÊçÆmustoutÁîüÊàêËµãÂÄºËØ≠Âè•
+	for (int i : mustOut) {
+		if (varToNode.find(i) != varToNode.end()) {
+			DagNode* node = varToNode[i];
+			MidCode code;
+			code.op = MIDASSIGN; code.target = i;
+			code.operand1 = node->name; code.isImmediate1 = node->isImmediate;
+			code.operand2 = MIDUNUSED; code.isImmediate2 = false, code.labelNo = MIDNOLABEL;
+			middle.push_back(code);
+		}
+	}
+	//ÂºÄÂßãÂêàÂπ∂
+	beginning.insert(beginning.end(), middle.begin(), middle.end());
+	beginning.insert(beginning.end(), ending.begin(), ending.end());
+	if (label != MIDNOLABEL) {
+		if (beginning.size() == 0) {
+			MidCode code;
+			code.op = MIDNOP; code.target = i;
+			code.operand1 = -1; code.isImmediate1 =false;
+			code.operand2 = -1; code.isImmediate2 = false, code.labelNo = MIDNOLABEL;
+			beginning.push_back(code);
+		}
+		beginning[0].labelNo = label;
+	}
+	return beginning;
+}
+
+MidCode DagMap::nodeToMidCode(DagNode* node) {
 	switch (node->op) {
 		case MIDADD:
 		case MIDSUB:
@@ -74,26 +368,22 @@ MidCode DagMap::parseToMidCode(DagNode* node) {
 		{
 			MidCode res;
 			res.op = node->op;
-			res.target = node->nameVarId;
-
-			res.operand1 = node->left->nameVarId;
+			res.target = node->name;
+			res.operand1 = node->left->name;
 			res.isImmediate1 = node->left->isImmediate;
-
-			res.operand2 = node->right->nameVarId;
+			res.operand2 = node->right->name;
 			res.isImmediate2 = node->right->isImmediate;
-			res.labelNo = -1;
+			res.labelNo = MIDNOLABEL;
 			return res;
 		}
 		case MIDNEGATE:
 		{
 			MidCode res;
 			res.op = node->op;
-			res.target = node->nameVarId;
-			res.operand1 = node->left->nameVarId;
+			res.target = node->name;
+			res.operand1 = node->left->name;
 			res.isImmediate1 = node->left->isImmediate;
-			res.operand2 = MIDUNUSED;
-			res.isImmediate2 = false;
-			res.labelNo = -1;
+			res.operand2 = -1; res.isImmediate2 = false; res.labelNo = MIDNOLABEL;
 			return res;
 		}
 		case MIDPRINTCHAR:
@@ -101,394 +391,22 @@ MidCode DagMap::parseToMidCode(DagNode* node) {
 		{
 			MidCode res;
 			res.op = node->op;
-			res.target = MIDUNUSED;
-			res.operand1 = node->left->nameVarId;
+			res.target = -1;
+			res.operand1 = node->left->name;
 			res.isImmediate1 = node->left->isImmediate;
-			res.operand2 = MIDUNUSED;
-			res.isImmediate2 = false;
-			res.labelNo = -1;
+			res.operand2 = -1; res.isImmediate2 = false; res.labelNo = MIDNOLABEL;
 			return res;
 		}
 		case MIDPRINTSTRING:
 		{
 			MidCode res;
 			res.op = node->op;
-			res.target = MIDUNUSED;
-			res.operand1 = node->varId;
+			res.target = -1;
+			res.operand1 = node->leafOperand;
 			res.isImmediate1 = false;
-			res.operand2 = MIDUNUSED;
-			res.isImmediate2 = false;
-			res.labelNo = -1;
+			res.operand2 = -1; res.isImmediate2 = false; res.labelNo = MIDNOLABEL;
 			return res;
 		}
-		case MIDREADCHAR:
-		case MIDREADINTEGER:
-		{
-			MidCode res;
-			res.op = node->op;
-			res.target = node->nameVarId;
-			res.operand1 = MIDUNUSED;
-			res.isImmediate1 = false;
-			res.labelNo = -1;
-			res.operand2 = MIDUNUSED;
-			res.isImmediate2 = false;
-			res.labelNo = -1;
-			return res;
-		}
-	}
-}
 
-void DagMap::dumpCurrentCode() {
-	for (DagNode* i : currentNodes) {
-		//∏≥Ω⁄µ„√˚◊÷
-		if (i->isLeaf&&initialValueMap.find(i->varId)!=initialValueMap.end()
-			&& initialValueMap[i->varId]==i) {
-			i->nameVarId = i->varId;
-			continue;
-		}
-		else {
-			if (i->nameVarIdPool.size() == 0) {
-				i->nameVarId = MidCode::tmpVarAlloc();
-				continue;
-			}
-			bool given = false;
-			for (int j : i->nameVarIdPool) {
-				if (mustOut.find(j) != mustOut.end()) {
-					i->nameVarId = j;
-					given = true;
-					break;
-				}
-			}
-			if (!given) {
-				i->nameVarId = *(i->nameVarIdPool.begin());
-			}
-		}
-		mustOut.erase(i->nameVarId);
 	}
-	vector<DagNode*>queue;
-	int i = 0;
-	while (i < currentNodes.size()) {
-		DagNode* j = NULL;
-		for (DagNode* j2 : currentNodes) {
-			if (j2->dumped) {
-				continue;
-			}
-			j = j2;
-			if (j2->fathers.size() == 0) {
-				break;
-			}
-		}
-		while (!j->dumped ) {
-			j->dumped = true;
-			queue.push_back(j);
-			i++;
-			if (j->left != NULL) {
-				j->left->fathers.erase(j);
-			}
-			if (j->right != NULL) {
-				j->right->fathers.erase(j);
-			}
-			if (j->left != NULL && j->left->fathers.size() == 0&&!j->left->dumped) {
-				j = j->left;
-			}
-			else if (j->right != NULL && j->right->fathers.size() == 0&&!j->right->dumped) {
-				j = j->right;
-			}
-		}
-	}
-	for (int i = queue.size() - 1; i >= 0;i--) {
-		if (queue[i]->isLeaf) { continue; }
-		MidCode code = parseToMidCode(queue[i]);
-		middle.push_back(code);
-	}
-	currentNodes.clear();
-}
-
-void DagMap::handleMidCode(MidCode c) {
-	if (c.labelNo != MIDNOLABEL) { label = c.labelNo; }
-	switch (c.op) {
-		case MIDFUNC:
-		case MIDPARA:
-			beginning.push_back(c);
-			break;
-		case MIDPUSH:
-		case MIDRET:
-		case MIDBNZ:
-		case MIDBZ:
-			mustOut.insert(c.operand1);
-			ending.push_back(c);
-			break;
-		case MIDGOTO:
-		case MIDCALL:
-			ending.push_back(c);
-			break;
-		case MIDADD:
-		case MIDSUB:
-		case MIDMULT:
-		case MIDDIV:
-		case MIDLSS:
-		case MIDLEQ:
-		case MIDGRE:
-		case MIDGEQ:
-		case MIDEQL:
-		case MIDNEQ:
-		case MIDARRAYGET:
-		{
-			//’‚∂º «»˝∏ˆ≤Ÿ◊˜ ˝»´ π”√…œµƒ
-			DagNode* node1 = getNodeByVar( c.operand1, c.isImmediate1);
-			if (node1 == NULL) {
-				node1 = new DagNode(true, c.operand1, c.isImmediate1);
-				dagTree.push_back(node1);
-				currentNodes.push_back(node1);
-				if (c.isImmediate1) { nodeImmTable[c.operand1] = node1; }
-				else { nodeVarTable[c.operand1] = node1; }
-			}
-			DagNode* node2 = getNodeByVar( c.operand2, c.isImmediate2);
-			if (node2 == NULL) {
-				node2 = new DagNode(true, c.operand2, c.isImmediate2);
-				dagTree.push_back(node2);
-				currentNodes.push_back(node2);
-				if (c.isImmediate2) { nodeImmTable[c.operand2] = node2; }
-				else { nodeVarTable[c.operand2] = node2; }
-			}
-			DagNode* node = getNodeBySon( c.op, node1, node2);
-			if (node == NULL) {
-				node = new DagNode(c.op, node1, node2);
-				dagTree.push_back(node);
-				currentNodes.push_back(node);
-			}
-			if (nodeVarTable.find(c.target) != nodeVarTable.end() && nodeVarTable[c.target] != node) {
-				nodeVarTable[c.target]->nameVarIdPool.erase(c.target);//÷ÿ–¬∏≥÷µ¡À
-				if (shouldAssign.find(c.target) != shouldAssign.end() &&//’‚∏ˆ±‰¡ø «ªÓ‘æµƒ£¨”– π”√√ª∏≥÷µƒ«÷÷
-					initialValueMap.find(c.target) == initialValueMap.end()//Õ∑“ª¥Œ÷ÿ–¬∏≥÷µƒ«÷÷
-					) {
-					initialValueMap[c.target] = nodeVarTable[c.target];
-				}
-			}
-			nodeVarTable[c.target] = node;
-			node->nameVarIdPool.insert(c.target);
-			break;
-		}
-		case MIDARRAYWRITE:
-		{
-			DagNode* node1 = getNodeByVar( c.operand1, c.isImmediate1);
-			if (node1 == NULL) {
-				node1 = new DagNode(true, c.operand1, c.isImmediate1);
-				dagTree.push_back(node1);
-				currentNodes.push_back(node1);
-				if (c.isImmediate1) { nodeImmTable[c.operand1] = node1; }
-				else { nodeVarTable[c.operand1] = node1; }
-			}
-			DagNode* node2 = getNodeByVar( c.operand2, c.isImmediate2);
-			if (node2 == NULL) {
-				node2 = new DagNode(true, c.operand2, c.isImmediate2);
-				dagTree.push_back(node2);
-				currentNodes.push_back(node2);
-				if (c.isImmediate2) { nodeImmTable[c.operand2] = node2; }
-				else { nodeVarTable[c.operand2] = node2; }
-			}
-			DagNode* node = getNodeBySon( c.op, node1, node2);
-			bool inject = false;
-			if (node == NULL) {
-				node = new DagNode(c.op, node1, node2);
-				inject = true;
-				
-			}
-			if (nodeVarTable.find(c.target) != nodeVarTable.end() && nodeVarTable[c.target] != node) {
-				//÷ÿ–¬∏≥÷µ¡À£¨’‚¥Œ≤ª…æ√˚◊÷£¨÷±Ω”µº≥ˆ÷Æ«∞µƒ÷–º‰¥˙¬Î÷ÿ–¬ø™ º
-				dumpCurrentCode();
-			}
-			if (inject) {
-				dagTree.push_back(node);
-				currentNodes.push_back(node);
-			}
-			nodeVarTable[c.target] = node;
-			node->nameVarIdPool.insert(c.target);
-			break;
-		}
-		case MIDNEGATE:
-			//case MIDASSIGN:√ª”–assignµƒ ¬£¨assign”¶∏√÷±Ω”Ã◊±Í«©£¨–¥‘⁄∫Û√Ê¡À
-		{
-			//’‚ «∏ˆ÷ª”–target∫Õ≤Ÿ◊˜ ˝1µƒ
-			DagNode* node1 = getNodeByVar( c.operand1, c.isImmediate1);
-			if (node1 == NULL) {
-				node1 = new DagNode(true, c.operand1, c.isImmediate1);
-				dagTree.push_back(node1);
-				currentNodes.push_back(node1);
-				if (c.isImmediate1) { nodeImmTable[c.operand1] = node1; }
-				else { nodeVarTable[c.operand1] = node1; }
-			}
-			DagNode* node = getNodeBySon( c.op, node1, NULL);
-			if (node == NULL) {
-				node = new DagNode(c.op, node1, NULL);
-				dagTree.push_back(node);
-				currentNodes.push_back(node);
-			}
-			if (nodeVarTable.find(c.target) != nodeVarTable.end() && nodeVarTable[c.target] != node) {
-				nodeVarTable[c.target]->nameVarIdPool.erase(c.target);//÷ÿ–¬∏≥÷µ¡À
-				if (shouldAssign.find(c.target) != shouldAssign.end() &&//’‚∏ˆ±‰¡ø «ªÓ‘æµƒ£¨”– π”√√ª∏≥÷µƒ«÷÷
-					initialValueMap.find(c.target) == initialValueMap.end()//Õ∑“ª¥Œ÷ÿ–¬∏≥÷µƒ«÷÷
-					) {
-					initialValueMap[c.target] = nodeVarTable[c.target];
-					
-				}
-			}
-			nodeVarTable[c.target] = node;
-			node->nameVarIdPool.insert(c.target);
-			break;
-		}
-		case MIDASSIGN:
-		{
-			DagNode* node1 =getNodeByVar( c.operand1, c.isImmediate1);
-			if (node1 == NULL) {
-				node1 = new DagNode(true, c.operand1, c.isImmediate1);
-				dagTree.push_back(node1);
-				currentNodes.push_back(node1);
-				if (c.isImmediate1) { nodeImmTable[c.operand1] = node1; }
-				else { nodeVarTable[c.operand1] = node1; }
-			}
-			DagNode* node = node1;
-			if (nodeVarTable.find(c.target) != nodeVarTable.end() && nodeVarTable[c.target] != node) {
-				nodeVarTable[c.target]->nameVarIdPool.erase(c.target);//÷ÿ–¬∏≥÷µ¡À
-				if (shouldAssign.find(c.target) != shouldAssign.end() &&//’‚∏ˆ±‰¡ø «ªÓ‘æµƒ£¨”– π”√√ª∏≥÷µƒ«÷÷
-					initialValueMap.find(c.target) == initialValueMap.end()//Õ∑“ª¥Œ÷ÿ–¬∏≥÷µƒ«÷÷
-					) {
-					initialValueMap[c.target] = nodeVarTable[c.target];
-					
-				}
-			}
-			nodeVarTable[c.target] = node;
-			node->nameVarIdPool.insert(c.target);
-			break;
-
-		}
-		case MIDPRINTCHAR:
-		case MIDPRINTINT:
-		{
-			DagNode* node1 = getNodeByVar( c.operand1, c.isImmediate1);
-			if (node1 == NULL) {
-				node1 = new DagNode(true, c.operand1, c.isImmediate1);
-				dagTree.push_back(node1);
-				currentNodes.push_back(node1);
-				if (c.isImmediate1) { nodeImmTable[c.operand1] = node1; }
-				else { nodeVarTable[c.operand1] = node1; }
-			}
-			DagNode* node2 =getNodeByVar( output, false);
-			if (node2 == NULL) {
-				node2 = new DagNode(true, output, false);
-				dagTree.push_back(node2);
-				currentNodes.push_back(node2);
-				if (c.isImmediate2) { nodeImmTable[c.operand2] = node2; }
-				else { nodeVarTable[c.operand2] = node2; }
-			}
-			DagNode* node = getNodeBySon( c.op, node1, node2);
-			if (node == NULL) {
-				node = new DagNode(c.op, node1, node2);
-				dagTree.push_back(node);
-				currentNodes.push_back(node);
-			}
-			if (nodeVarTable.find(output) != nodeVarTable.end() && nodeVarTable[output] != node) {
-				nodeVarTable[output]->nameVarIdPool.erase(output);//÷ÿ–¬∏≥÷µ¡À, ‰≥ˆ¡˜øœ∂®≤ª–Ë“™ø™Õ∑assign
-			}
-			nodeVarTable[output] = node;
-			node->nameVarIdPool.insert(output);
-			break;
-		}
-		case MIDPRINTSTRING:
-		{
-			DagNode* node2 = getNodeByVar(output, false);
-			if (node2 == NULL) {
-				node2 = new DagNode(true, output, false);
-				dagTree.push_back(node2);
-				currentNodes.push_back(node2);
-				if (c.isImmediate2) { nodeImmTable[c.operand2] = node2; }
-				else { nodeVarTable[c.operand2] = node2; }
-			}
-			DagNode* node = getNodeBySon( c.op, NULL, node2);
-			if (node == NULL) {
-				node = new DagNode(c.op, (DagNode*)NULL, node2);
-				dagTree.push_back(node);
-				currentNodes.push_back(node);
-			}
-			if (nodeVarTable.find(output) != nodeVarTable.end() && nodeVarTable[output] != node) {
-				nodeVarTable[output]->nameVarIdPool.erase(output);//÷ÿ–¬∏≥÷µ¡À
-			}
-			nodeVarTable[output] = node;
-			node->nameVarIdPool.insert(output);
-			node->varId = c.operand1;
-			break;
-		}
-		case MIDREADCHAR:
-		case MIDREADINTEGER:
-		{
-			DagNode* node =new DagNode(c.op, (DagNode*)NULL, NULL);
-			dagTree.push_back(node);
-			currentNodes.push_back(node);
-			//’‚∏ˆΩ⁄µ„≤ªƒ‹±ª∏¥”√
-			if (nodeVarTable.find(c.target) != nodeVarTable.end() && nodeVarTable[c.target] != node) {
-				nodeVarTable[c.target]->nameVarIdPool.erase(c.target);//÷ÿ–¬∏≥÷µ¡À,∏≥µƒøœ∂®≤ª « ˝◊È
-				if (shouldAssign.find(c.target) != shouldAssign.end() &&//’‚∏ˆ±‰¡ø «ªÓ‘æµƒ£¨”– π”√√ª∏≥÷µƒ«÷÷
-					initialValueMap.find(c.target) == initialValueMap.end()//Õ∑“ª¥Œ÷ÿ–¬∏≥÷µƒ«÷÷
-					) {
-					initialValueMap[c.target] = nodeVarTable[c.target];
-					
-				}
-			}
-			nodeVarTable[c.target] = node;
-			node->nameVarIdPool.insert(c.target);
-			break;
-		}
-		case MIDNOP:
-			break;
-		default:
-			cout << "bug at dag" << endl;
-	}
-}
-
-void DagMap::init(set<int>activeIn, set<int>activeOut) {
-	mustOut = activeOut;
-	shouldAssign = activeIn;
-	label = -1;
-	output = MidCode::tmpVarAlloc();
-	currentNodes.clear();
-	dagTree.clear();
-	nodeVarTable.clear();
-	nodeImmTable.clear();
-	initialValueMap.clear();
-	beginning.clear();
-	middle.clear();
-	ending.clear();
-}
-
-vector<MidCode> DagMap::result() {
-	dumpCurrentCode();
-	for (auto& i : initialValueMap) {
-		MidCode c;
-		c.op = MIDASSIGN;
-		c.target = i.second->nameVarId;
-		c.operand1 = i.first;
-		c.isImmediate1 = false;
-		c.operand2 = -1;
-		c.isImmediate2 = false;
-		c.labelNo = -1;
-		beginning.push_back(c);
-	}
-	beginning.insert(beginning.end(), middle.begin(), middle.end());
-	if (beginning.size() != 0 && label != -1) {
-		beginning[0].labelNo = label;
-	}
-	for (int i : mustOut) {
-		if (nodeVarTable.find(i) == nodeVarTable.end()) { continue; }
-		MidCode c;
-		c.op = MIDASSIGN;
-		c.target = i;
-		c.operand1 = nodeVarTable[i]->nameVarId;
-		c.isImmediate1 = nodeVarTable[i]->isImmediate;
-		c.operand2 = -1;
-		c.isImmediate2 = false;
-		c.labelNo = -1;
-		beginning.push_back(c);
-	}
-	beginning.insert(beginning.end(), ending.begin(), ending.end());
-	return beginning;
 }
