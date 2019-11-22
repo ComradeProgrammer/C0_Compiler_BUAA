@@ -306,13 +306,13 @@ void MipsTranslator::translate(MidCode c) {
 				out << "addiu $sp,$sp," << -report[s->id][0] - report[s->id][1] << endl;
 			}
 			SubSymbolTable* tmp = MidCode::table->getSubSymbolTableByName(s->name);
-			for (auto& i : tmp->symbolMap) {
+			/*for (auto& i : tmp->symbolMap) {
 				if (i.second->type == TYPEINTCONST || i.second->type == TYPECHARCONST) {
 					//需要为常量进行赋值
 					out << "li $v1," << i.second->initValue << endl;
 					out << "sw $v1," << i.second->addr << "($sp)" << endl;
 				}
-			}
+			}*/
 			
 			break;
 		}

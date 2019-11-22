@@ -828,8 +828,14 @@ ReturnBundle GrammarAnalyzer::factor() {
 				res.isChar = true;
 			}
 			if (!error) {
-				res.id = entry->id;
-				res.isImmediate = false;
+				if (entry->type == TYPECHARCONST || entry->type == TYPEINTCONST) {
+					res.id = entry->initValue;
+					res.isImmediate = true;
+				}
+				else {
+					res.id = entry->id;
+					res.isImmediate = false;
+				}
 			}
 			//生成中间代码
 		}
@@ -1703,9 +1709,15 @@ void GrammarAnalyzer::loopSentence() {
 		}
 		//读取右括号完成
 		sentence();
-		if (entry2 != NULL) {
-			raw.midCodeInsert(op, entry2->id,
-				entry3->id, false, step, true, MIDNOLABEL);
+		if (entry2 != NULL&&entry3!=NULL) {
+			if (entry3->type == TYPECHARCONST || entry3->type == TYPEINTCONST) {
+				raw.midCodeInsert(op, entry2->id,
+					entry3->initValue, true, step, true, MIDNOLABEL);
+			}
+			else {
+				raw.midCodeInsert(op, entry2->id,
+					entry3->id, false, step, true, MIDNOLABEL);
+			}
 			raw.midCodeInsert(MIDGOTO, MIDUNUSED, label1, false, MIDUNUSED, false, MIDNOLABEL);
 			raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label2);
 			//生成头部第三部分

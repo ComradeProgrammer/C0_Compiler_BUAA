@@ -1,12 +1,7 @@
+const int a=5,b=6;
 void main(){
-	int a,b,c,d,i,j;
+	
 	if(a>0){
-		b=i+j;
-		c=i+j;
-		d=i*j;
+		printf(b+a);
 	}
-	else{
-		return;
-	}
-	printf(d);
 }

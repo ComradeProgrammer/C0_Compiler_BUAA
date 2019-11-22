@@ -1,91 +1,64 @@
-int a
-int b
-int c
-int d
-int i
-int j
+const int a
+const int b
 void main()
-#TMP2 = a > 0
+#TMP2 = 5 > 0
 BZ #TMP2 _label2
-#TMP3 = i + j
-b=#TMP3
-#TMP4 = i + j
-c=#TMP4
-#TMP5 = i * j
-d=#TMP5
-GOTO _label3
-_label2: ret 
-_label3: syscall-1 d
+#TMP3 = 6 + 5
+syscall-1 #TMP3
 syscall-11 10
+_label2: nop
 
 ====Block0====
 void main()
-#TMP2 = a > 0
+#TMP2 = 5 > 0
 BZ #TMP2 _label2
 	prev:[]
 	next:[1,2,]
-	use:[a,]
+	use:[]
 	def:[#TMP2,]
-	activeIn:[a,d,i,j,]
-	activeOut:[d,i,j,]
+	activeIn:[]
+	activeOut:[]
 ==============
 ====Block1====
-d = i * j
-GOTO _label3
+#TMP3 = 6 + 5
+syscall-1 #TMP3
+syscall-11 10
 	prev:[0,]
-	next:[2,3,]
-	use:[i,j,]
-	def:[#TMP5,#TMP4,#TMP3,b,c,d,]
-	activeIn:[i,j,]
-	activeOut:[d,]
+	next:[2,]
+	use:[]
+	def:[#TMP3,]
+	activeIn:[]
+	activeOut:[]
 ==============
 ====Block2====
-_label2: ret 
+_label2: nop
 	prev:[1,0,]
-	next:[3,]
+	next:[]
 	use:[]
 	def:[]
-	activeIn:[d,]
-	activeOut:[d,]
-==============
-====Block3====
-_label3: syscall-1 d
-syscall-11 10
-	prev:[2,1,]
-	next:[]
-	use:[d,]
-	def:[]
-	activeIn:[d,]
+	activeIn:[]
 	activeOut:[]
 ==============
 
 
-int a
-int b
-int c
-int d
-int i
-int j
+const int a
+const int b
 void main()
-#TMP2 = a > 0
+#TMP2 = 5 > 0
 BZ #TMP2 _label2
-d = i * j
-GOTO _label3
-_label2: ret 
-_label3: syscall-1 d
+#TMP3 = 6 + 5
+syscall-1 #TMP3
 syscall-11 10
+_label2: nop
 
 
 global:
-name:main	id:0	type:function	scope:	addr:-1	dimension:0
+name:a	id:0	type:const int	scope:	addr:0	dimension:0link:NULL
+name:b	id:1	type:const int	scope:	addr:4	dimension:0link:NULL
+name:main	id:2	type:function	scope:	addr:-1	dimension:0
 link:		returnType:void	paraNum:0	paras:[]
 main:
-name:a	id:1	type:int	scope:main	addr:4	dimension:0link:NULL
-name:b	id:2	type:int	scope:main	addr:8	dimension:0link:NULL
-name:c	id:3	type:int	scope:main	addr:12	dimension:0link:NULL
-name:d	id:4	type:int	scope:main	addr:16	dimension:0link:NULL
-name:i	id:5	type:int	scope:main	addr:20	dimension:0link:NULL
-name:j	id:6	type:int	scope:main	addr:24	dimension:0link:NULL
-tmp2 addr:0
+tmp3 addr:0
+tmp2 addr:4
 
 

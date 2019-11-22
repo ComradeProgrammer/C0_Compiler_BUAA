@@ -1,24 +1,28 @@
 .globl main
 .data:
 .align 2
+a: .word 5
+b: .word 6
 .text:
 main:
-addiu $sp,$sp,-28
-lw $t0,0($sp)#load variable#TMP2
-li $t1,0# load immediate0
-sgt $t0,$s0,$t1##TMP2 = a > 0
+addiu $sp,$sp,-8
+lw $t0,4($sp)#load variable#TMP2
+li $t1,5# load immediate5
+li $t2,0# load immediate0
+sgt $t0,$t1,$t2##TMP2 = 5 > 0
 
 blez $t0,label$2#BZ #TMP2 _label2
 
-mul $s1,$s2,$s3#d = i * j
+lw $t0,0($sp)#load variable#TMP3
+li $t1,6# load immediate6
+li $t2,5# load immediate5
+addu $t0,$t1,$t2##TMP3 = 6 + 5
 
-j label$3#GOTO _label3
-
-label$2:
-label$3:
-move $a0,$s1
+move $a0,$t0
 li $v0,1
 syscall #printint
 li $a0,10
 li $v0,11
 syscall #printchar
+label$2:
+nop
