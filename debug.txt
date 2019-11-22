@@ -1,642 +1,91 @@
-int arr[1000]
-int tmp[1000]
+int a
+int b
+int c
+int d
 int i
 int j
-int k
-void merge()
-para int s1
-para int l1
-para int s2
-para int l2
-i=0
-j=0
-k=s1
-_label2: #TMP2 = i < l1
-BZ #TMP2 _label10
-#TMP3 = j < l2
-BZ #TMP3 _label8
-#TMP4 = s1 + i
-#TMP5 = arr [ #TMP4 ] 
-#TMP6 = s2 + j
-#TMP7 = arr [ #TMP6 ] 
-#TMP8 = #TMP5 > #TMP7
-BZ #TMP8 _label5
-#TMP9 = s2 + j
-#TMP10 = arr [ #TMP9 ] 
-tmp[k] =#TMP10
-#TMP11 = j + 1
-j=#TMP11
-GOTO _label6
-_label5: #TMP12 = s1 + i
-#TMP13 = arr [ #TMP12 ] 
-tmp[k] =#TMP13
-#TMP14 = i + 1
-i=#TMP14
-_label6: #TMP15 = k + 1
-k=#TMP15
-GOTO _label7
-_label8: #TMP16 = i < l1
-BZ #TMP16 _label7
-#TMP17 = s1 + i
-#TMP18 = arr [ #TMP17 ] 
-tmp[k] =#TMP18
-#TMP19 = k + 1
-k=#TMP19
-#TMP20 = i + 1
-i=#TMP20
-GOTO _label8
-_label7: GOTO _label2
-_label10: #TMP21 = j < l2
-BZ #TMP21 _label11
-#TMP22 = s2 + j
-#TMP23 = arr [ #TMP22 ] 
-tmp[k] =#TMP23
-#TMP24 = k + 1
-k=#TMP24
-#TMP25 = j + 1
-j=#TMP25
-GOTO _label10
-_label11: i=s1
-_label12: #TMP26 = i < k
-BZ #TMP26 _label13
-#TMP27 = tmp [ i ] 
-arr[i] =#TMP27
-i = i + 1
-GOTO _label12
-_label13: ret 
-int mid
-int tmp
-void inner_merge_sort()
-para int start
-para int length
-syscall-4 start
-syscall-1 start
-syscall-11 10
-syscall-4 length
-syscall-1 length
-syscall-11 10
-syscall-4 
-syscall-11 10
-#TMP28 = length <= 1
-BZ #TMP28 _label14
-ret 
-_label14: #TMP29 = length == 2
-BZ #TMP29 _label15
-#TMP30 = arr [ start ] 
-#TMP31 = start + 1
-#TMP32 = arr [ #TMP31 ] 
-#TMP33 = #TMP30 > #TMP32
-BZ #TMP33 _label16
-#TMP34 = arr [ start ] 
-tmp=#TMP34
-#TMP35 = start + 1
-#TMP36 = arr [ #TMP35 ] 
-arr[start] =#TMP36
-#TMP37 = start + 1
-arr[#TMP37] =tmp
-_label16: ret 
-_label15: #TMP38 = length / 2
-mid=#TMP38
-push start
-push mid
-call inner_merge_sort
-#TMP40 = length - mid
-#TMP39 = start + mid
-push #TMP39
-push #TMP40
-call inner_merge_sort
-#TMP42 = length - mid
-#TMP41 = start + mid
-push start
-push mid
-push #TMP41
-push #TMP42
-call merge
-ret 
-int a
-int i
-int n
 void main()
-syscall-4 17373248
+#TMP2 = a > 0
+BZ #TMP2 _label2
+#TMP3 = i + j
+b=#TMP3
+#TMP4 = i + j
+c=#TMP4
+#TMP5 = i * j
+d=#TMP5
+GOTO _label3
+_label2: ret 
+_label3: syscall-1 d
 syscall-11 10
-n = syscall-5 
-i=0
-_label17: #TMP43 = i < n
-BZ #TMP43 _label18
-a = syscall-5 
-arr[i] =a
-i = i + 1
-GOTO _label17
-_label18: push 0
-push n
-call inner_merge_sort
-syscall-4 n
-syscall-1 n
-syscall-11 10
-i=0
-_label19: #TMP44 = i < n
-BZ #TMP44 _label20
-#TMP45 = arr [ i ] 
-syscall-1 #TMP45
-syscall-11 10
-i = i + 1
-GOTO _label19
-_label20: nop
 
 ====Block0====
-void merge()
-para int s1
-para int l1
-para int s2
-para int l2
-i=0
-j=0
-k=s1
+void main()
+#TMP2 = a > 0
+BZ #TMP2 _label2
 	prev:[]
-	next:[1,]
-	use:[s1,]
-	def:[i,j,k,]
-	activeIn:[arr,tmp,s1,l1,s2,l2,]
-	activeOut:[arr,tmp,s1,l1,s2,l2,i,j,k,]
+	next:[1,2,]
+	use:[a,]
+	def:[#TMP2,]
+	activeIn:[a,d,i,j,]
+	activeOut:[d,i,j,]
 ==============
 ====Block1====
-_label2: #TMP2 = i < l1
-BZ #TMP2 _label10
-	prev:[0,9,]
-	next:[2,10,]
-	use:[l1,i,]
-	def:[#TMP2,]
-	activeIn:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-	activeOut:[arr,tmp,s1,l1,s2,l2,i,j,k,]
+d = i * j
+GOTO _label3
+	prev:[0,]
+	next:[2,3,]
+	use:[i,j,]
+	def:[#TMP5,#TMP4,#TMP3,b,c,d,]
+	activeIn:[i,j,]
+	activeOut:[d,]
 ==============
 ====Block2====
-#TMP3 = j < l2
-BZ #TMP3 _label8
-	prev:[1,]
-	next:[3,7,]
-	use:[l2,j,]
-	def:[#TMP3,]
-	activeIn:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-	activeOut:[arr,tmp,s1,l1,s2,l2,i,j,k,]
+_label2: ret 
+	prev:[1,0,]
+	next:[3,]
+	use:[]
+	def:[]
+	activeIn:[d,]
+	activeOut:[d,]
 ==============
 ====Block3====
-#TMP6 = s2 + j
-#TMP7 = arr [ #TMP6 ] 
-#TMP4 = s1 + i
-#TMP5 = arr [ #TMP4 ] 
-#TMP8 = #TMP5 > #TMP7
-BZ #TMP8 _label5
-	prev:[2,]
-	next:[4,5,]
-	use:[arr,s1,s2,i,j,]
-	def:[#TMP8,#TMP7,#TMP6,#TMP5,#TMP4,]
-	activeIn:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-	activeOut:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-==============
-====Block4====
-#TMP51=j
-j = #TMP51 + 1
-#TMP9 = s2 + #TMP51
-#TMP10 = arr [ #TMP9 ] 
-tmp[k] =#TMP10
-GOTO _label6
-	prev:[3,]
-	next:[5,6,]
-	use:[arr,s2,j,k,]
-	def:[#TMP11,#TMP10,#TMP9,]
-	activeIn:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-	activeOut:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-==============
-====Block5====
-_label5: #TMP53=i
-i = #TMP53 + 1
-#TMP12 = s1 + #TMP53
-#TMP13 = arr [ #TMP12 ] 
-tmp[k] =#TMP13
-	prev:[4,3,]
-	next:[6,]
-	use:[arr,s1,i,k,]
-	def:[#TMP14,#TMP13,#TMP12,]
-	activeIn:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-	activeOut:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-==============
-====Block6====
-_label6: #TMP55=k
-k = #TMP55 + 1
-GOTO _label7
-	prev:[5,4,]
-	next:[7,9,]
-	use:[k,]
-	def:[#TMP15,]
-	activeIn:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-	activeOut:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-==============
-====Block7====
-_label8: #TMP16 = i < l1
-BZ #TMP16 _label7
-	prev:[6,2,8,]
-	next:[8,9,]
-	use:[l1,i,]
-	def:[#TMP16,]
-	activeIn:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-	activeOut:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-==============
-====Block8====
-#TMP58=i
-#TMP59=k
-i = #TMP58 + 1
-k = #TMP59 + 1
-#TMP17 = s1 + #TMP58
-#TMP18 = arr [ #TMP17 ] 
-tmp[#TMP59] =#TMP18
-GOTO _label8
-	prev:[7,]
-	next:[9,7,]
-	use:[arr,s1,i,k,]
-	def:[#TMP20,#TMP19,#TMP18,#TMP17,]
-	activeIn:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-	activeOut:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-==============
-====Block9====
-_label7: GOTO _label2
-	prev:[8,6,7,]
-	next:[10,1,]
-	use:[]
-	def:[]
-	activeIn:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-	activeOut:[arr,tmp,s1,l1,s2,l2,i,j,k,]
-==============
-====Block10====
-_label10: #TMP21 = j < l2
-BZ #TMP21 _label11
-	prev:[9,1,11,]
-	next:[11,12,]
-	use:[l2,j,]
-	def:[#TMP21,]
-	activeIn:[arr,tmp,s1,s2,l2,j,k,]
-	activeOut:[arr,tmp,s1,s2,l2,j,k,]
-==============
-====Block11====
-#TMP63=j
-#TMP64=k
-j = #TMP63 + 1
-k = #TMP64 + 1
-#TMP22 = s2 + #TMP63
-#TMP23 = arr [ #TMP22 ] 
-tmp[#TMP64] =#TMP23
-GOTO _label10
-	prev:[10,]
-	next:[12,10,]
-	use:[arr,s2,j,k,]
-	def:[#TMP25,#TMP24,#TMP23,#TMP22,]
-	activeIn:[arr,tmp,s1,s2,l2,j,k,]
-	activeOut:[arr,tmp,s1,s2,l2,j,k,]
-==============
-====Block12====
-_label11: i=s1
-	prev:[11,10,]
-	next:[13,]
-	use:[s1,]
-	def:[i,]
-	activeIn:[tmp,s1,k,]
-	activeOut:[tmp,i,k,]
-==============
-====Block13====
-_label12: #TMP26 = i < k
-BZ #TMP26 _label13
-	prev:[12,14,]
-	next:[14,15,]
-	use:[i,k,]
-	def:[#TMP26,]
-	activeIn:[tmp,i,k,]
-	activeOut:[tmp,i,k,]
-==============
-====Block14====
-#TMP68=i
-i = #TMP68 + 1
-#TMP27 = tmp [ #TMP68 ] 
-arr[#TMP68] =#TMP27
-GOTO _label12
-	prev:[13,]
-	next:[15,13,]
-	use:[tmp,i,]
-	def:[#TMP27,]
-	activeIn:[tmp,i,k,]
-	activeOut:[tmp,i,k,]
-==============
-====Block15====
-_label13: ret 
-	prev:[14,13,]
+_label3: syscall-1 d
+syscall-11 10
+	prev:[2,1,]
 	next:[]
-	use:[]
+	use:[d,]
 	def:[]
-	activeIn:[]
+	activeIn:[d,]
 	activeOut:[]
 ==============
-====Block16====
-void inner_merge_sort()
-para int start
-para int length
-#TMP28 = length <= 1
-syscall-4 start
-syscall-1 start
-syscall-11 10
-syscall-4 length
-syscall-1 length
-syscall-11 10
-syscall-4 
-syscall-11 10
-BZ #TMP28 _label14
-	prev:[]
-	next:[17,18,]
-	use:[start,length,]
-	def:[#TMP28,]
-	activeIn:[arr,start,length,]
-	activeOut:[arr,start,length,]
-==============
-====Block17====
-ret 
-	prev:[16,]
-	next:[18,]
-	use:[]
-	def:[]
-	activeIn:[arr,start,length,]
-	activeOut:[arr,start,length,]
-==============
-====Block18====
-_label14: #TMP29 = length == 2
-BZ #TMP29 _label15
-	prev:[17,16,]
-	next:[19,22,]
-	use:[length,]
-	def:[#TMP29,]
-	activeIn:[arr,start,length,]
-	activeOut:[arr,start,length,]
-==============
-====Block19====
-#TMP31 = start + 1
-#TMP32 = arr [ #TMP31 ] 
-#TMP30 = arr [ start ] 
-#TMP33 = #TMP30 > #TMP32
-BZ #TMP33 _label16
-	prev:[18,]
-	next:[20,21,]
-	use:[arr,start,]
-	def:[#TMP33,#TMP32,#TMP31,#TMP30,]
-	activeIn:[arr,start,length,]
-	activeOut:[arr,start,length,]
-==============
-====Block20====
-#TMP34 = arr [ start ] 
-#TMP37 = start + 1
-#TMP36 = arr [ #TMP37 ] 
-arr[start] =#TMP36
-arr[#TMP37] =#TMP34
-	prev:[19,]
-	next:[21,]
-	use:[arr,start,]
-	def:[#TMP37,#TMP36,#TMP35,#TMP34,tmp,]
-	activeIn:[arr,start,length,]
-	activeOut:[start,length,]
-==============
-====Block21====
-_label16: ret 
-	prev:[20,19,]
-	next:[22,]
-	use:[]
-	def:[]
-	activeIn:[start,length,]
-	activeOut:[start,length,]
-==============
-====Block22====
-_label15: mid = length / 2
-push start
-push mid
-call inner_merge_sort
-	prev:[21,18,]
-	next:[23,]
-	use:[start,length,]
-	def:[#TMP38,mid,]
-	activeIn:[start,length,]
-	activeOut:[start,length,mid,]
-==============
-====Block23====
-#TMP39 = start + mid
-#TMP40 = length - mid
-push #TMP39
-push #TMP40
-call inner_merge_sort
-	prev:[22,]
-	next:[24,]
-	use:[start,length,mid,]
-	def:[#TMP40,#TMP39,]
-	activeIn:[start,length,mid,]
-	activeOut:[start,length,mid,]
-==============
-====Block24====
-#TMP41 = start + mid
-#TMP42 = length - mid
-push start
-push mid
-push #TMP41
-push #TMP42
-call merge
-	prev:[23,]
-	next:[25,]
-	use:[start,length,mid,]
-	def:[#TMP42,#TMP41,]
-	activeIn:[start,length,mid,]
-	activeOut:[]
-==============
-====Block25====
-ret 
-	prev:[24,]
-	next:[]
-	use:[]
-	def:[]
-	activeIn:[]
-	activeOut:[]
-==============
-====Block26====
+
+
+int a
+int b
+int c
+int d
+int i
+int j
 void main()
-syscall-4 17373248
+#TMP2 = a > 0
+BZ #TMP2 _label2
+d = i * j
+GOTO _label3
+_label2: ret 
+_label3: syscall-1 d
 syscall-11 10
-n = syscall-5 
-	prev:[]
-	next:[27,]
-	use:[]
-	def:[n,]
-	activeIn:[arr,]
-	activeOut:[arr,n,]
-==============
-====Block27====
-i=0
-	prev:[26,]
-	next:[28,]
-	use:[]
-	def:[i,]
-	activeIn:[arr,n,]
-	activeOut:[arr,n,i,]
-==============
-====Block28====
-_label17: #TMP43 = i < n
-BZ #TMP43 _label18
-	prev:[27,30,]
-	next:[29,31,]
-	use:[n,i,]
-	def:[#TMP43,]
-	activeIn:[arr,n,i,]
-	activeOut:[arr,n,i,]
-==============
-====Block29====
-a = syscall-5 
-	prev:[28,]
-	next:[30,]
-	use:[]
-	def:[a,]
-	activeIn:[arr,n,i,]
-	activeOut:[arr,n,i,a,]
-==============
-====Block30====
-#TMP95=i
-i = #TMP95 + 1
-arr[#TMP95] =a
-GOTO _label17
-	prev:[29,]
-	next:[31,28,]
-	use:[i,a,]
-	def:[]
-	activeIn:[arr,n,i,a,]
-	activeOut:[arr,n,i,]
-==============
-====Block31====
-_label18: push 0
-push n
-call inner_merge_sort
-	prev:[30,28,]
-	next:[32,]
-	use:[n,]
-	def:[]
-	activeIn:[arr,n,]
-	activeOut:[arr,n,]
-==============
-====Block32====
-syscall-4 n
-syscall-1 n
-syscall-11 10
-i=0
-	prev:[31,]
-	next:[33,]
-	use:[n,]
-	def:[i,]
-	activeIn:[arr,n,]
-	activeOut:[arr,n,i,]
-==============
-====Block33====
-_label19: #TMP44 = i < n
-BZ #TMP44 _label20
-	prev:[32,34,]
-	next:[34,35,]
-	use:[n,i,]
-	def:[#TMP44,]
-	activeIn:[arr,n,i,]
-	activeOut:[arr,n,i,]
-==============
-====Block34====
-#TMP103=i
-i = #TMP103 + 1
-#TMP45 = arr [ #TMP103 ] 
-syscall-1 #TMP45
-syscall-11 10
-GOTO _label19
-	prev:[33,]
-	next:[35,33,]
-	use:[arr,i,]
-	def:[#TMP45,]
-	activeIn:[arr,n,i,]
-	activeOut:[arr,n,i,]
-==============
-====Block35====
-_label20: nop
-	prev:[34,33,]
-	next:[]
-	use:[]
-	def:[]
-	activeIn:[]
-	activeOut:[]
-==============
 
 
 global:
-name:arr	id:0	type:int[]	scope:	addr:0	dimension:1000link:NULL
-name:inner_merge_sort	id:10	type:function	scope:	addr:-1	dimension:0
-link:		returnType:void	paraNum:2	paras:[11 12 ]
-name:main	id:15	type:function	scope:	addr:-1	dimension:0
+name:main	id:0	type:function	scope:	addr:-1	dimension:0
 link:		returnType:void	paraNum:0	paras:[]
-name:merge	id:2	type:function	scope:	addr:-1	dimension:0
-link:		returnType:void	paraNum:4	paras:[3 4 5 6 ]
-name:tmp	id:1	type:int[]	scope:	addr:4000	dimension:1000link:NULL
-inner_merge_sort:
-name:length	id:12	type:int	scope:inner_merge_sort	addr:100	dimension:0link:NULL
-name:mid	id:14	type:int	scope:inner_merge_sort	addr:52	dimension:0link:NULL
-name:start	id:11	type:int	scope:inner_merge_sort	addr:96	dimension:0link:NULL
-name:tmp	id:13	type:int	scope:inner_merge_sort	addr:56	dimension:0link:NULL
-tmp42 addr:0
-tmp41 addr:4
-tmp40 addr:8
-tmp39 addr:12
-tmp37 addr:16
-tmp36 addr:20
-tmp34 addr:24
-tmp33 addr:28
-tmp32 addr:32
-tmp31 addr:36
-tmp30 addr:40
-tmp29 addr:44
-tmp28 addr:48
 main:
-name:a	id:18	type:int	scope:main	addr:20	dimension:0link:NULL
-name:i	id:17	type:int	scope:main	addr:24	dimension:0link:NULL
-name:n	id:16	type:int	scope:main	addr:28	dimension:0link:NULL
-tmp103 addr:0
-tmp95 addr:4
-tmp45 addr:8
-tmp44 addr:12
-tmp43 addr:16
-merge:
-name:i	id:7	type:int	scope:merge	addr:108	dimension:0link:NULL
-name:j	id:8	type:int	scope:merge	addr:112	dimension:0link:NULL
-name:k	id:9	type:int	scope:merge	addr:116	dimension:0link:NULL
-name:l1	id:4	type:int	scope:merge	addr:160	dimension:0link:NULL
-name:l2	id:6	type:int	scope:merge	addr:168	dimension:0link:NULL
-name:s1	id:3	type:int	scope:merge	addr:156	dimension:0link:NULL
-name:s2	id:5	type:int	scope:merge	addr:164	dimension:0link:NULL
-tmp68 addr:0
-tmp64 addr:4
-tmp63 addr:8
-tmp59 addr:12
-tmp58 addr:16
-tmp55 addr:20
-tmp53 addr:24
-tmp51 addr:28
-tmp27 addr:32
-tmp26 addr:36
-tmp23 addr:40
-tmp22 addr:44
-tmp21 addr:48
-tmp18 addr:52
-tmp17 addr:56
-tmp16 addr:60
-tmp13 addr:64
-tmp12 addr:68
-tmp10 addr:72
-tmp9 addr:76
-tmp8 addr:80
-tmp7 addr:84
-tmp6 addr:88
-tmp5 addr:92
-tmp4 addr:96
-tmp3 addr:100
-tmp2 addr:104
+name:a	id:1	type:int	scope:main	addr:4	dimension:0link:NULL
+name:b	id:2	type:int	scope:main	addr:8	dimension:0link:NULL
+name:c	id:3	type:int	scope:main	addr:12	dimension:0link:NULL
+name:d	id:4	type:int	scope:main	addr:16	dimension:0link:NULL
+name:i	id:5	type:int	scope:main	addr:20	dimension:0link:NULL
+name:j	id:6	type:int	scope:main	addr:24	dimension:0link:NULL
+tmp2 addr:0
 
 

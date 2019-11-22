@@ -23,6 +23,7 @@ public :
 	void optimize();
 	void generateMips();
 	void removeNops();
+	void dumpNewMidCode(ostream& out);
 private:
 	MidCodeContainer container;
 	vector<FlowGraph>graph;

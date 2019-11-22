@@ -3,6 +3,7 @@
 #include<set>
 #include"MidCode.h"
 #include"DagMap.h"
+#include"DeadCodeEliminator.h"
 using namespace std;
 
 class Block {
@@ -29,4 +30,5 @@ public:
 	static set<int> setUnion(set<int> a, set<int> b);
 	static set<int> setDifference(set<int> a, set<int> b);
 	void DAGoptimize();
+	void eliminateDeadCode();
 };

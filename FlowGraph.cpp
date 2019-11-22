@@ -54,6 +54,9 @@ void FlowGraph::addLink(Block* from, Block* to) {
 void FlowGraph::optimize() {
 	activeVariableAnalyze();
 	DAGoptimize();
+	activeVariableAnalyze();
+	eliminateDeadCode();
+	activeVariableAnalyze();
 	variableSummary();
 	conflictEdgeAnalyze();
 }
@@ -230,6 +233,12 @@ void FlowGraph::conflictEdgeAnalyze() {
 void FlowGraph::DAGoptimize() {
 	for (Block* i : graph) {
 		i->DAGoptimize();
+	}
+}
+
+void FlowGraph::eliminateDeadCode() {
+	for (Block* i : graph) {
+		i->eliminateDeadCode();
 	}
 }
 

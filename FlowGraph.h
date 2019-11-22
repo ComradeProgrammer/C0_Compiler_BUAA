@@ -22,4 +22,5 @@ public:
 	void conflictEdgeAnalyze();
 	void variableSummary();
 	void DAGoptimize();
+	void eliminateDeadCode();
 };

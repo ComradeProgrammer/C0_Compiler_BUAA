@@ -98,6 +98,9 @@
     <ClCompile Include="DagMap.cpp">
       <Filter>源文件\BackEnd</Filter>
     </ClCompile>
+    <ClCompile Include="DeadCodeEliminator.cpp">
+      <Filter>源文件\BackEnd</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LexicalAnalyzer.h">
@@ -137,6 +140,9 @@
       <Filter>头文件\BackEnd</Filter>
     </ClInclude>
     <ClInclude Include="DagMap.h">
+      <Filter>头文件\BackEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="DeadCodeEliminator.h">
       <Filter>头文件\BackEnd</Filter>
     </ClInclude>
   </ItemGroup>

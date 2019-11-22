@@ -182,6 +182,10 @@ void Block::DAGoptimize() {
 	v = dag.dumpMidCode();
 }
 
+void Block::eliminateDeadCode() {
+	DeadCodeEliminator eliminator(activeOut);
+	v=eliminator.eliminateDeadCode(v);
+}
 
 set<int>Block::setUnion(set<int> a, set<int> b) {
 	set<int>res;

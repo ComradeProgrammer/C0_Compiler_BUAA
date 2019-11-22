@@ -13,7 +13,6 @@ int main() {
 	lexicalAnalyzer.getNextSym();
 
 	SymbolTable symbolTable;
-	//	symbolTable.debugOn();
 	MidCode::table = &symbolTable;
 	SubSymbolTable::table = &symbolTable;
 
@@ -27,6 +26,8 @@ int main() {
 
 	frame.optimize();
 	f << frame;
+	f << endl << endl;
+	frame.dumpNewMidCode(f);
 	f << endl << endl;
 	f << symbolTable;
 	f << endl << endl;
