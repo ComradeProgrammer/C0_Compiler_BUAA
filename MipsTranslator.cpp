@@ -6,10 +6,11 @@ MipsTranslator::MipsTranslator(string name) {
 }
 
 void MipsTranslator::generateProgramHeader() {
-	out << ".globl main" << endl;
+	//out << ".globl main" << endl;
 	out << ".data:" << endl;
 	MidCode::table->dumpMipsCodeHeader(out);
 	out << ".text:" << endl;
+	out << "jal main"<<endl;
 }
 
 void MipsTranslator::translateFunction(FlowGraph& g) {
@@ -39,6 +40,7 @@ void MipsTranslator::translateFunction(FlowGraph& g) {
 }
 
 void MipsTranslator::translateBlock(Block* b) {
+	currentBlock = b;
 	for (int i = 0; i < TMPREG; i++) {
 		Tstatus[i] = REGFREE;
 		Tuser[i] = -1;
@@ -60,7 +62,10 @@ void MipsTranslator::translateBlock(Block* b) {
 	}
 	for (int i = 0; i < TMPREG; i++) {
 		if (Tstatus[i] == REGVAR && Tuser[i] != -1) {
+			writeback(Tuser[i], Tregister[i]);
 			varReg[Tuser[i]] = -1;
+			Tstatus[i] = REGFREE;
+			Tuser[i] = -1;
 		}
 	}
 }
@@ -295,45 +300,36 @@ void MipsTranslator::translate(MidCode c) {
 				for (int i = 0; i < GLOBALREG; i++) {
 					out << "sw " << name[i + 16] << "," << report[s->id][0] - report[s->id][1] + i * 4 << "($sp)" << endl;
 				}
-				for (int i = 0; i < s->link->paraIds.size()&&i<=3; i++) {
-					varReg[s->link->paraIds[i]] = Aregister[i];
-					Astatus[i] = REGVAR;
-					Auser[i] = s->link->paraIds[i];
-				}
+				//不安排a寄存器
 			}
 			else {
-				//若是main韩式则应下移sp来为局部变量开辟空间
+				//若是main函数则应下移sp来为局部变量开辟空间
 				out << "addiu $sp,$sp," << -report[s->id][0] - report[s->id][1] << endl;
 			}
 			SubSymbolTable* tmp = MidCode::table->getSubSymbolTableByName(s->name);
-			/*for (auto& i : tmp->symbolMap) {
+			for (auto& i : tmp->symbolMap) {
 				if (i.second->type == TYPEINTCONST || i.second->type == TYPECHARCONST) {
 					//需要为常量进行赋值
 					out << "li $v1," << i.second->initValue << endl;
 					out << "sw $v1," << i.second->addr << "($sp)" << endl;
 				}
-			}*/
+			}
 			
 			break;
 		}
 		case MIDCALL:
 		{
 			SymbolEntry* s = MidCode::table->getSymbolById(c.operand1);
+			writeBackAfterBlock();
 			out << "addiu $sp,$sp," << -(report[s->id][0] + 36) << endl;
 			out << "jal " << s->name<<endl;
 			break;
 		}
 		case MIDRET:
 		{
+
 			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
-			//收回所有A寄存器
-			for (int i = 0; i < 4; i++) {
-				if (Astatus[i] != REGFREE) {
-					varReg[Auser[i]] = -1;
-				}
-				Astatus[i] = REGFREE;
-				Auser[i] = -1;
-			}
+			writeBackAfterBlock();
 			if (func->name != "main") {
 				//不是main函数
 				if (c.operand1 != -1 && !c.isImmediate1) {
@@ -730,12 +726,14 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDGOTO:
 		{
+			writeBackAfterBlock();
 			out << "j label$" << -c.operand1;
 			out << "#" << c << endl;
 			break;
 		}
 		case MIDBNZ:
 		{
+			writeBackAfterBlock();
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, {}, {});
 			out << "bgtz " << name[operand1] << ",label$" << -c.operand2;
 			out << "#" << c << endl;
@@ -743,6 +741,7 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDBZ:
 		{
+			writeBackAfterBlock();
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, {}, {});
 			out << "blez " << name[operand1] << ",label$" << -c.operand2;
 			out << "#" << c << endl;
@@ -824,6 +823,14 @@ void MipsTranslator::translate(MidCode c) {
 			out << "syscall" << endl;
 			out << "move " << name[target] <<",$v0"<< endl;
 			specialVarwriteback(c.target, false);
+			for (int i = 0; i < TMPREG; i++) {
+				if (Tstatus[i] == REGVAR && Tuser[i] != -1) {
+					writeback(Tuser[i], Tregister[i]);
+					varReg[Tuser[i]] = -1;
+					Tstatus[i] = REGFREE;
+					Tuser[i] = -1;
+				}
+			}
 			break;
 		}
 		case MIDREADINTEGER:
@@ -833,6 +840,14 @@ void MipsTranslator::translate(MidCode c) {
 			out << "syscall" << endl;
 			out << "move " << name[target] << ",$v0" << endl;
 			specialVarwriteback(c.target, false);
+			for (int i = 0; i < TMPREG; i++) {
+				if (Tstatus[i] == REGVAR && Tuser[i] != -1) {
+					writeback(Tuser[i], Tregister[i]);
+					varReg[Tuser[i]] = -1;
+					Tstatus[i] = REGFREE;
+					Tuser[i] = -1;
+				}
+			}
 			break;
 		}
 		case MIDNOP:
@@ -851,9 +866,6 @@ void MipsTranslator::translate(MidCode c) {
 void MipsTranslator::translate(vector<MidCode>c) {
 	int n = c.size();
 	for (int i = 0; i < n; i++) {
-		if (c[i].labelNo != MIDNOLABEL) {
-			out << "label$" << -c[i].labelNo <<":"<< endl;
-		}
 		int tmpreg = loadOperand(c[i].operand1,c[i].isImmediate1, {}, {});
 		out << "sw " << name[tmpreg] << "," << (-n + i) * 4 << "($sp)" << endl;
 		for (int i = 0; i < 3; i++) {
@@ -872,7 +884,7 @@ void MipsTranslator::specialVarwriteback(int var, bool isImmediate) {
 	SymbolEntry* e = MidCode::table->getSymbolById(var);
 	int reg = varReg[var];
 	if ((e->scope == "" || 
-		(e->isParameter&&(reg>=8&&reg<=15||reg==24||reg==25)))) {
+		(e->isParameter&&((reg>=8&&reg<=15)||reg==24||reg==25)))) {
 		writeback(var,varReg[var]);
 		Tuser[getTmpRegIndex(varReg[var])] = -1;
 		Tstatus[getTmpRegIndex(varReg[var])] =REGFREE;
@@ -901,5 +913,17 @@ inline int MipsTranslator::getTmpRegIndex(int i) {
 	}
 	else {
 		return i - 8;
+	}
+}
+
+void MipsTranslator::writeBackAfterBlock() {
+	for (int i = 0; i < TMPREG; i++) {
+		if (Tstatus[i] == REGVAR && Tuser[i] != -1&&
+			currentBlock->activeOut.find(Tuser[i])!=currentBlock->activeOut.end()) {
+			writeback(Tuser[i], Tregister[i]);
+			varReg[Tuser[i]] = -1;
+			Tstatus[i] = REGFREE;
+			Tuser[i] = -1;
+		}
 	}
 }

@@ -90,7 +90,7 @@ void DagMap::handleMidCode(MidCode c){
 			//只能出现在最前部，不会影响DAG
 			beginning.push_back(c);
 			break;
-			//只能出现在最后，不会影响DAG
+		//只能出现在最后，不会影响DAG
 		case MIDGOTO:
 		case MIDCALL:
 		case MIDREADCHAR:

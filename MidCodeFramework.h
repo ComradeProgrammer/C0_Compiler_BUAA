@@ -7,6 +7,7 @@ class MidCodeFramework {
 public :
 	MidCodeFramework(MipsTranslator& _mips);
 	vector<MidCodeContainer>functionContainer;
+	MidCodeContainer container;
 	void functionStart(string name);
 	void functionEnd();
 
@@ -19,13 +20,13 @@ public :
 	vector<MidCode>::iterator getIterator(int index);//返回指定位置的迭代器
 	void erase(int start, int end);//擦除从start-end的指令
 
-	friend ostream& operator<<(ostream&out, MidCodeFramework frame);
+	friend ostream& operator<<(ostream&out, MidCodeFramework& frame);
 	void optimize();
 	void generateMips();
 	void removeNops();
 	void dumpNewMidCode(ostream& out);
 private:
-	MidCodeContainer container;
+	
 	vector<FlowGraph>graph;
 
 	MipsTranslator& mips;

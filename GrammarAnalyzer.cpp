@@ -1059,8 +1059,14 @@ void GrammarAnalyzer::assignSentence(string varname) {
 			indexBundle.id, indexBundle.isImmediate, res.id, res.isImmediate, MIDNOLABEL);
 	}
 	else {
-		raw.midCodeInsert(MIDASSIGN, target,
-			res.id, res.isImmediate, MIDUNUSED, false, MIDNOLABEL);
+		if (!res.isImmediate&& res.id < 0) {
+			raw.container.v[raw.container.v.size() - 1].target = target;
+		}
+		else {
+			raw.midCodeInsert(MIDASSIGN, target,
+				res.id, res.isImmediate, MIDUNUSED, false, MIDNOLABEL);
+		}
+		
 	}
 	//生成中间代码
 	if (course) { out << "<赋值语句>"<<endl; }

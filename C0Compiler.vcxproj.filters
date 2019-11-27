@@ -101,6 +101,9 @@
     <ClCompile Include="DeadCodeEliminator.cpp">
       <Filter>源文件\BackEnd</Filter>
     </ClCompile>
+    <ClCompile Include="BlockOptimization.cpp">
+      <Filter>源文件\BackEnd</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LexicalAnalyzer.h">
@@ -143,6 +146,9 @@
       <Filter>头文件\BackEnd</Filter>
     </ClInclude>
     <ClInclude Include="DeadCodeEliminator.h">
+      <Filter>头文件\BackEnd</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockOptimization.h">
       <Filter>头文件\BackEnd</Filter>
     </ClInclude>
   </ItemGroup>

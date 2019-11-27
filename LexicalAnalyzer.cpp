@@ -123,6 +123,9 @@ string LexicalAnalyzer::getString() {
 	string res = "";
 	while (ptr < text.size() && text[ptr] >= 32 && text[ptr] <= 126 && text[ptr] != 34) {
 		res += text[ptr];
+		if (text[ptr] == '\\') {
+			res += text[ptr];
+		}
 		ptr++;
 		column++;
 	}

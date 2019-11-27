@@ -52,16 +52,24 @@ void FlowGraph::addLink(Block* from, Block* to) {
 }
 
 void FlowGraph::optimize() {
-	activeVariableAnalyze();
+	/*activeVariableAnalyze();
 	DAGoptimize();
 	activeVariableAnalyze();
-	eliminateDeadCode();
+	blockOptimize();
+	activeVariableAnalyze();
+	eliminateDeadCode();*/
 	activeVariableAnalyze();
 	variableSummary();
 	conflictEdgeAnalyze();
 }
 
 void FlowGraph::activeVariableAnalyze() {
+	for (Block* i : graph) {
+		i->def.clear();
+		i->use.clear();
+		i->activeIn.clear();
+		i->activeOut.clear();
+	}
 	for (Block* i : graph) {
 		i->useDefScan();
 	}
@@ -239,6 +247,12 @@ void FlowGraph::DAGoptimize() {
 void FlowGraph::eliminateDeadCode() {
 	for (Block* i : graph) {
 		i->eliminateDeadCode();
+	}
+}
+
+void FlowGraph::blockOptimize() {
+	for (Block* i : graph) {
+		i->blockOptimize();
 	}
 }
 

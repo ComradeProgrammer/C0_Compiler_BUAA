@@ -23,4 +23,5 @@ public:
 	void variableSummary();
 	void DAGoptimize();
 	void eliminateDeadCode();
+	void blockOptimize();
 };

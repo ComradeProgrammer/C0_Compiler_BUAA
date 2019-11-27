@@ -42,7 +42,7 @@ void MidCodeFramework::removeNops() {
 	}
 }
 
-ostream& operator<<(ostream& out, MidCodeFramework frame) {
+ostream& operator<<(ostream& out, MidCodeFramework& frame) {
 	MidCode::table->getSubSymbolTableByName("")->dumpMidCode(out);
 	for (MidCodeContainer& c : frame.functionContainer) {
 		out << c;

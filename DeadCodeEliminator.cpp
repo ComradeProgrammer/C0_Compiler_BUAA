@@ -9,6 +9,9 @@ vector<MidCode> DeadCodeEliminator::eliminateDeadCode(vector<MidCode>& v) {
 	set<int>localActive=activeOut;
 	for (int line = v.size() - 1; line >= 0; line--) {
 		MidCode i = v[line];
+		if (i.labelNo != -1) {
+			label = i.labelNo;
+		}
 		//»˝µÿ÷∑‘ÀÀ„
 		if (i.op == MIDADD || i.op == MIDSUB || i.op == MIDMULT
 			|| i.op == MIDDIV || i.op == MIDLSS || i.op == MIDLEQ
@@ -68,6 +71,19 @@ vector<MidCode> DeadCodeEliminator::eliminateDeadCode(vector<MidCode>& v) {
 		}
 		else {
 			res.push_back(v[i]);
+		}
+	}
+	if (label != -1) {
+		if (res.size() != 0) {
+			res[0].labelNo = label;
+		}
+		else {
+			MidCode tmp;
+			tmp.op = MIDNOP;
+			tmp.target = tmp.operand1 = tmp.operand2 = -1;
+			tmp.isImmediate1 = tmp.isImmediate2 = false;
+			tmp.labelNo = label;
+			res.push_back(tmp);
 		}
 	}
 	return res;

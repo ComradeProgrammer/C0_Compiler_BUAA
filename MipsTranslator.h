@@ -17,6 +17,7 @@ public:
 	
 private:
 	int currentFunction;
+	Block* currentBlock = nullptr;
 	set<int>globalVariable;//所有需要分配全局寄存器的变量
 	set<int>tmpVariable;
 	set<int>allVariable;
@@ -61,7 +62,7 @@ private:
 	void translate(vector<MidCode>c);
 	void specialVarwriteback(int var,bool isImmediate);
 	void revokeAregister(int reg);
-	
+	void writeBackAfterBlock();
 
 
 

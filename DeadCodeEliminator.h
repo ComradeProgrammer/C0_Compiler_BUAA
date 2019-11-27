@@ -1,6 +1,6 @@
 #pragma once
 #include<set>
-#include"Midcode.h"
+#include"MidCode.h"
 using namespace std;
 class DeadCodeEliminator {
 public:
@@ -9,4 +9,5 @@ public:
 private:
 	set<int>activeOut;
 	vector<int>del;
+	int label=-1;
 };

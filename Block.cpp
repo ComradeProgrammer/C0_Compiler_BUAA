@@ -255,3 +255,7 @@ ostream& operator<<(ostream& out, Block b) {
 	return out;
 }
 
+void Block::blockOptimize() {
+	BlockOptimization bop(activeOut);
+	v = bop.propagationInBlock(v);
+}
