@@ -6,7 +6,6 @@ MipsTranslator::MipsTranslator(string name) {
 }
 
 void MipsTranslator::generateProgramHeader() {
-	//out << ".globl main" << endl;
 	out << ".data:" << endl;
 	MidCode::table->dumpMipsCodeHeader(out);
 	out << ".text:" << endl;
@@ -14,43 +13,49 @@ void MipsTranslator::generateProgramHeader() {
 }
 
 void MipsTranslator::translateFunction(FlowGraph& g) {
+	//所有s寄存器清空
 	for (int i = 0; i < GLOBALREG; i++) {
 		Sstatus[i] = REGFREE;
 	}
-	currentFunction = g.functionId;
 	SregisterUser.clear();
-	globalVariable = g.globalVariable;
-	tmpVariable = g.tmpVariable;
-	allVariable = g.allVariable;
-	conflictMap.clear();
-	varReg.clear();
+	//设置当前状态参数
+	currentFunction = g.functionId;//函数编号
+	globalVariable = g.globalVariable;//所有跨基本块
+	tmpVariable = g.tmpVariable;//所有的临时变量
+	allVariable = g.allVariable;//所有变量
+	conflictMap.clear();//冲突图
+	varReg.clear();//重新把寄存器分配全部置-1避免发生分配0号寄存器的事情
 	for (int i : allVariable) {
 		varReg[i] = -1;
 	}
+	//添加冲突边
 	for (int i = 0; i < g.conflictEdges.size(); i++) {
 		if (g.conflictEdges[i][0] != g.conflictEdges[i][1]) {
 			conflictMap[g.conflictEdges[i][0]].insert(g.conflictEdges[i][1]);
 			conflictMap[g.conflictEdges[i][1]].insert(g.conflictEdges[i][0]);
 		}
 	}
+	//根据冲突边分配s寄存器
 	SregisterAlloc();
 	for (Block* b : g.graph) {
-		translateBlock(b);
+		translateBlock(b);//逐块翻译
 	}
 }
 
 void MipsTranslator::translateBlock(Block* b) {
-	currentBlock = b;
+	currentBlock = b;//设置当前块
+	//基本块中所有临时寄存器全部释放
 	for (int i = 0; i < TMPREG; i++) {
 		Tstatus[i] = REGFREE;
 		Tuser[i] = -1;
 	}
-	//todo implement
 	for (int i = 0; i < b->v.size(); i++) {
+		
 		if (b->v[i].op != MIDPUSH) {
 			translate(b->v[i]);
 		}
 		else {
+			//所有的push语句集中处理
 			vector<MidCode>res;
 			while (b->v[i].op == MIDPUSH) {
 				res.push_back(b->v[i]);
@@ -60,22 +65,22 @@ void MipsTranslator::translateBlock(Block* b) {
 			translate(res);
 		}
 	}
+	//这里：暂时是把所有临时变量全部写回了，但是其实没这个必要，稍后可以加以改进
 	for (int i = 0; i < TMPREG; i++) {
-		if (Tstatus[i] == REGVAR && Tuser[i] != -1) {
-			writeback(Tuser[i], Tregister[i]);
-			varReg[Tuser[i]] = -1;
-			Tstatus[i] = REGFREE;
-			Tuser[i] = -1;
-		}
+		varReg[Tuser[i]] = -1;
+		Tstatus[i] = REGFREE;
+		Tuser[i] = -1;
 	}
 }
 
 
 void MipsTranslator::SregisterAlloc() {
 	if (globalVariable.size() == 0) {
+		//若没有跨基本块变量
 		return;
 	}
 	else if (globalVariable.size() == 1) {
+		//若是只有一个，直接分配16号寄存器
 		varReg[*(globalVariable.begin())] = 16;
 		Sstatus[0] = REGVAR;
 		SregisterUser[16].insert(  *(globalVariable.begin())  );
@@ -101,9 +106,10 @@ void MipsTranslator::SregisterAlloc() {
 				var.erase(remove);
 			}
 			else {
-				//若没有找到满足条件的
+				//若没有找到满足条件的，暂时是从头找一个
 				//此处如何选择可进行优化
 				int chosen = *(var.begin());
+				cout << "remove var No." << chosen << endl;
 				for (int j : m[chosen]) {
 					m[j].erase(chosen);
 				}
@@ -115,11 +121,14 @@ void MipsTranslator::SregisterAlloc() {
 		SregisterUser[16].insert(*(globalVariable.begin()));
 		//剩余的那个直接分 16寄存器
 		for (int i : q) {
+			//对q中的每一个节点
 			for (int j = 0; j < GLOBALREG; j++) {
+				//检查每一个s寄存器
 				bool ok = true;
 				for (int k : SregisterUser[j + 16]) {
 					if (conflictMap[i].find(k) != conflictMap[i].end()) {
-						ok = false;
+						//检查使用该寄存器的变量中有没有和自己冲突的变量
+						ok = false;//找到了就肯定不行
 						break;
 					}
 				}
@@ -127,29 +136,34 @@ void MipsTranslator::SregisterAlloc() {
 					varReg[i] = Sregister[j];
 					Sstatus[j] = REGVAR;
 					SregisterUser[j + 16].insert(i);
+					cout << "assign reg $s" << j << "to var No." << i << endl;
 					break;
 				}
 			}
 		}
 	}
-	/*
-	for (int i : globalVariable) {
-		cout << i << ":" << varReg[i] << endl;
-	}*/
 }
-
+	/*
+	@param
+	var:待分配寄存器的变量编号/立即数值，若为-1则意味着分配一个临时寄存器
+	isImmediate：是否是立即数
+	conflictVar：与之有冲突的变量：不能把同一指令里使用的其他寄存器分出去
+	conflictReg:与之有冲突的寄存器编号：也不能把在同一指令里使用的立即数寄存器分出去
+	@return
+	返回值：第一个数是返回的寄存器编号，第二个数是需要写回的变量，如果没有就是-1
+	在返回时寄存器将已被进行所有注册，只有写回操作需要完成（？？为啥这么干来着我忘了）
+	*/
 vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 	, vector<int>conflictVar, vector<int> conflictReg) {
-	//返回第一个数是返回的寄存器编号，第二个数是需要写回的变量，如果没有就是-1
-	//返回时寄存器已被注册，var是-1代表临时存数使用，不登记只分出
-	//如果已经分配了寄存器
+	//如果是变量（不是立即数）且已经分配了寄存器，直接返回
 	if (!isImmediate&&var!=-1&&varReg[var] >0) {
 		return { varReg[var],-1 };
 	}
 	else{
-		//寻找寄存器
+		//寻找寄存器，这里寻找寄存器的策略可以优化？
 		for (int i = 0; i < TMPREG; i++) {
 			if (Tstatus[i] == REGFREE) {
+				//如果找到了free状态的直接使用即可
 				if (isImmediate||var==-1) {
 					Tstatus[i] = REGOCCUPY;//改状态
 					Tuser[i] = -1;//改使用者
@@ -162,7 +176,7 @@ vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 				return { Tregister[i],-1 };
 			}
 		}
-		//此处可选择进行优化
+		//此处分配策略可选择进行优化
 		for (int i = 0; i < TMPREG; i++) {
 			if (Tstatus[i]==REGVAR&&
 				find(conflictVar.begin(), conflictVar.end(), Tuser[i]) != conflictVar.end()) {
@@ -173,13 +187,16 @@ vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 				continue;//不分配相关变量占用的寄存器
 			}
 			else {
-
+				//找到了一个T寄存器
 				if (Tstatus[i] == REGOCCUPY) {
+					//若是occupy状态无需写回
 					if (isImmediate || var == -1) {
+						//若是立即数/临时寄存器
 						Tstatus[i] = REGOCCUPY;//改状态
 						Tuser[i] = -1;//改使用者
 					}
 					else {
+						//若是变量
 						Tstatus[i] = REGVAR;
 						Tuser[i] = var;
 						varReg[var] = Tregister[i];//登记
@@ -187,6 +204,7 @@ vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 					return { Tregister[i],-1 };
 				}
 				else {
+					//需要写回
 					int old = Tuser[i];
 					if (isImmediate || var == -1) {
 						Tstatus[i] = REGOCCUPY;//改状态
@@ -223,24 +241,55 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 		vector<int>res = TregisterAlloc(var, isImmediate, conflictVar, conflictReg);
 		if (res[1] != -1) { writeback(res[1], res[0]); }//写回
 		out << "li " << name[res[0]] << "," << var;
-		out << "# load immediate" << var;
+		out << "	# load immediate " << var;
 		out << endl;
 		return res[0];
 	}
 	else {
-		vector<int>res = TregisterAlloc(var, isImmediate, conflictVar, conflictReg);
-		if (res[1] != -1) { writeback( res[1],res[0] ); }
-		if (var == -1) { return res[0]; }
+		if (var == -1) { 
+			vector<int>res = TregisterAlloc(var, isImmediate, conflictVar, conflictReg);
+			if (res[1] != -1) { writeback(res[1], res[0]); }
+			return res[0]; 
+		}
 		SymbolEntry* entry = MidCode::table->getSymbolById(var);
+		vector<int>res;
+		if (entry->isParameter) {
+			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
+			int order = -1;
+			for (int i = 0; i < 4 && i < func->link->paraNum; i++) {
+				if (var == func->link->paraIds[i]) {
+					order = i;
+					Astatus[i] = REGVAR;
+					Auser[i] = var;
+					break;
+				}
+			}
+			if (order != -1) {
+				int bias = entry->addr;
+				out << "lw " << name[order+4] << "," << bias << "($sp)";
+				out << "	#load variable" << MidCode::getOperandName(var, false);
+				out << endl;
+				return order+4;
+			}
+		}
+		res = TregisterAlloc(var, isImmediate, conflictVar, conflictReg);
+		if (res[1] != -1) { writeback( res[1],res[0] ); }
+		
+		
 		if (entry->scope != "") {
 			//是局部变量
 			if (entry->type == TYPEINT || entry->type == TYPECHAR || entry->type == TYPETMP
 				||entry->type==TYPEINTCONST||entry->type==TYPECHARCONST) {
-				int bias = entry->addr;
-				out << "lw " << name[res[0]] << "," << bias << "($sp)";
-				out<<"#load variable" <<MidCode::getOperandName(var, false);
-				out << endl;
+				//此处可以建立机制防止未初始化的内存被加载进入寄存器，可以节省访存
+				if (!(var < 0 && globalVariable.find(var) == globalVariable.end())) {
+					int bias = entry->addr;
+					out << "lw " << name[res[0]] << "," << bias << "($sp)";
+					out << "	#load variable" << MidCode::getOperandName(var, false);
+					out << endl;
+					loaded.insert(var);
+				}
 			}
+			//在传入变量是数组时返回数组地址，不过这段代码现在应该永远不会被执行
 			else if (entry->type == TYPEINTARRAY || entry->type == TYPECHARARRAY) {
 				int bias = entry->addr;
 				out << "addiu " << name[res[0]] << ",$sp," << bias;
@@ -253,12 +302,13 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 			if(entry->type == TYPEINT || entry->type == TYPECHAR
 				|| entry->type == TYPEINTCONST || entry->type == TYPECHARCONST) {
 				out << "lw " << name[res[0]] << "," << entry->name;
-				out << "#load global variable " << entry->name;
+				out << "	#load global variable " << entry->name;
 				out << endl;
 			}
+			//在传入变量是数组时返回数组地址，不过这段代码现在应该永远不会被执行
 			else if (entry->type == TYPEINTARRAY || entry->type == TYPECHARARRAY) {
 				out << "la " << name[res[0]] << "," << entry->name;
-				out << "# load address of " << entry->name;
+				out << "	#load address of " << entry->name;
 				out << endl;
 			}
 		}
@@ -268,7 +318,8 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 
 void MipsTranslator::writeback(int var,int reg) {
 	SymbolEntry* entry = MidCode::table->getSymbolById(var);
-	if ((entry->type == TYPEINT || entry->type == TYPECHAR||entry->type==TYPETMP) && entry->scope != "") {
+	if ((entry->type == TYPEINT || entry->type == TYPECHAR||entry->type==TYPETMP) 
+		&& entry->scope != "") {
 		//int char类型的局部变量
 		int bias = entry->addr;
 		out << "sw " << name[reg] << "," << bias << "($sp)";
@@ -281,7 +332,7 @@ void MipsTranslator::writeback(int var,int reg) {
 		out << "#write back global variable " << entry->name;
 		out << endl;
 	}
-	//数组类型不需要写回
+	//其他类型不需要写回
 }
 
 void MipsTranslator::translate(MidCode c) {
@@ -292,21 +343,26 @@ void MipsTranslator::translate(MidCode c) {
 		case MIDFUNC:
 		{
 			SymbolEntry* s = MidCode::table->getSymbolById(c.operand1);
-			out << s->name << ":" << endl;
+			out << s->name << ":" << endl;//函数标签
 			if (s->name != "main") {
 				//若不是main函数，保存s寄存器，返回地址，不需要下移sp因为call时候会移动的
 				out << "sw $ra," << report[s->id][0] - report[s->id][1] + 32 << "($sp)";
 				out << "#save the return value" << endl;
-				for (int i = 0; i < GLOBALREG; i++) {
+				/*for (int i = 0; i < GLOBALREG; i++) {
 					out << "sw " << name[i + 16] << "," << report[s->id][0] - report[s->id][1] + i * 4 << "($sp)" << endl;
+				}*/
+				for (int i = 0; i < 4 && i < s->link->paraNum; i++) {
+					varReg[s->link->paraIds[i]] = Aregister[i];
+					Astatus[i] = REGVAR;
+					Auser[i] = s->link->paraIds[i];
 				}
-				//不安排a寄存器
 			}
 			else {
 				//若是main函数则应下移sp来为局部变量开辟空间
 				out << "addiu $sp,$sp," << -report[s->id][0] - report[s->id][1] << endl;
 			}
 			SubSymbolTable* tmp = MidCode::table->getSubSymbolTableByName(s->name);
+			//此处在语法分析实现了常量替换的情况下应该可以删掉
 			for (auto& i : tmp->symbolMap) {
 				if (i.second->type == TYPEINTCONST || i.second->type == TYPECHARCONST) {
 					//需要为常量进行赋值
@@ -320,9 +376,34 @@ void MipsTranslator::translate(MidCode c) {
 		case MIDCALL:
 		{
 			SymbolEntry* s = MidCode::table->getSymbolById(c.operand1);
-			writeBackAfterBlock();
+			writeBackAfterBlock();//每一个基本块的结束都要进行写回操作
+			for (int i =s->link->paraNum ; i < 4; i++) {
+				if (Astatus[i] == REGVAR) {
+					SymbolEntry* tmp = MidCode::table->getSymbolById(Auser[i]);
+					out << "sw " << name[Aregister[i]] << "," << tmp->addr << "($sp)" << endl;
+				}
+			}
+
+			
+			for (int i = 0; i < GLOBALREG; i++) {
+				if (Sstatus[i] != REGFREE) {
+					out << "sw " << name[i + 16] << "," << -report[s->id][1] - 32 + i * 4 << "($sp)" << endl;
+				}
+			}
+
 			out << "addiu $sp,$sp," << -(report[s->id][0] + 36) << endl;
 			out << "jal " << s->name<<endl;
+			for (int i = 0; i < GLOBALREG; i++) {
+				if (Sstatus[i] != REGFREE) {
+					out << "lw " << name[i + 16] << "," << -report[s->id][1] - 32 + i * 4 << "($sp)" << endl;
+				}
+			}
+			for (int i = 0; i < 4; i++) {
+				if (Astatus[i] == REGVAR) {
+					SymbolEntry* tmp = MidCode::table->getSymbolById(Auser[i]);
+					out << "lw " << name[Aregister[i]] << "," << tmp->addr << "($sp)" << endl;
+				}
+			}
 			break;
 		}
 		case MIDRET:
@@ -331,15 +412,15 @@ void MipsTranslator::translate(MidCode c) {
 			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
 			writeBackAfterBlock();
 			if (func->name != "main") {
-				//不是main函数
+				//不是main函数，如果是main函数就没啥需要干的了,向v0寄存器写入返回值
 				if (c.operand1 != -1 && !c.isImmediate1) {
 					//返回值不是空且不是立即数
 					if (varReg[c.operand1] > 0) {
-						out << "move $v0," << name[varReg[c.operand1]]<<endl;
 						//已经保存在寄存器中
+						out << "move $v0," << name[varReg[c.operand1]]<<endl;
 					}
 					else {
-						//返回的肯定不能是数组名；
+						//返回的肯定不能是数组名
 						SymbolEntry* s = MidCode::table->getSymbolById(c.operand1);
 						if (s->scope == "") {
 							out << "lw $v0," << s->name << endl;
@@ -352,10 +433,10 @@ void MipsTranslator::translate(MidCode c) {
 				else if (c.isImmediate1) {
 					out << "li $v0," << c.operand1 << endl;
 				}
-				for (int i = 0; i < GLOBALREG; i++) {
+				/*for (int i = 0; i < GLOBALREG; i++) {
 					out << "lw " << name[i + 16] << "," << report[currentFunction][0] -
 						report[currentFunction][1] + i * 4 << "($sp)" << endl;
-				}
+				}*/
 				out << "lw $ra," << report[currentFunction][0]
 					- report[currentFunction][1] + 32 << "($sp)" << endl;
 				out << "addiu $sp,$sp," << report[currentFunction][0] + 36 << endl;
@@ -365,6 +446,23 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDADD:
 		{
+			if (c.isImmediate2) {
+				vector<int>conflictVar;
+				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
+				int target = loadOperand(c.target, false, conflictVar, {});
+
+				conflictVar.clear();
+				conflictVar.push_back(c.target);
+				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
+					{ target });
+
+				out << "addiu " << name[target] << "," << name[operand1] << "," << c.operand2;
+				out << "#" << c << endl;
+				specialVarwriteback(c.target, false);
+				break;
+				
+			}
+
 			vector<int>conflictVar;
 			if (!c.isImmediate1) {conflictVar.push_back(c.operand1);}
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
@@ -389,6 +487,21 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDSUB:
 		{
+			if (c.isImmediate2) {
+				vector<int>conflictVar;
+				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
+				int target = loadOperand(c.target, false, conflictVar, {});
+
+				conflictVar.clear();
+				conflictVar.push_back(c.target);
+				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
+					{ target });
+
+				out << "subiu " << name[target] << "," << name[operand1] << "," << c.operand2;
+				out << "#" << c << endl;
+				specialVarwriteback(c.target, false);
+				break;
+			}
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
@@ -462,6 +575,22 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDLSS:
 		{
+
+			if (c.isImmediate2&&c.operand2>=0&&c.operand2<=32767) {
+				vector<int>conflictVar;
+				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
+				int target = loadOperand(c.target, false, conflictVar, {});
+
+				conflictVar.clear();
+				conflictVar.push_back(c.target);
+				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
+					{ target });
+
+				out << "slti " << name[target] << "," << name[operand1] << "," << c.operand2;
+				out << "#" << c << endl;
+				specialVarwriteback(c.target, false);
+				break;
+			}
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
@@ -486,6 +615,21 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDLEQ:
 		{
+			if (c.isImmediate2) {
+				vector<int>conflictVar;
+				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
+				int target = loadOperand(c.target, false, conflictVar, {});
+
+				conflictVar.clear();
+				conflictVar.push_back(c.target);
+				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
+					{ target });
+
+				out << "sle " << name[target] << "," << name[operand1] << "," << c.operand2;
+				out << "#" << c << endl;
+				specialVarwriteback(c.target, false);
+				break;
+			}
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
@@ -510,6 +654,21 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDGRE:
 		{
+			if (c.isImmediate2) {
+				vector<int>conflictVar;
+				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
+				int target = loadOperand(c.target, false, conflictVar, {});
+
+				conflictVar.clear();
+				conflictVar.push_back(c.target);
+				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
+					{ target });
+
+				out << "sgt " << name[target] << "," << name[operand1] << "," << c.operand2;
+				out << "#" << c << endl;
+				specialVarwriteback(c.target, false);
+				break;
+			}
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
@@ -534,6 +693,21 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDGEQ:
 		{
+			if (c.isImmediate2) {
+				vector<int>conflictVar;
+				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
+				int target = loadOperand(c.target, false, conflictVar, {});
+
+				conflictVar.clear();
+				conflictVar.push_back(c.target);
+				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
+					{ target });
+
+				out << "sge " << name[target] << "," << name[operand1] << "," << c.operand2;
+				out << "#" << c << endl;
+				specialVarwriteback(c.target, false);
+				break;
+			}
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
@@ -558,6 +732,21 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDEQL:
 		{
+			if (c.isImmediate2) {
+				vector<int>conflictVar;
+				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
+				int target = loadOperand(c.target, false, conflictVar, {});
+
+				conflictVar.clear();
+				conflictVar.push_back(c.target);
+				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
+					{ target });
+
+				out << "seq " << name[target] << "," << name[operand1] << "," << c.operand2;
+				out << "#" << c << endl;
+				specialVarwriteback(c.target, false);
+				break;
+			}
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
@@ -582,6 +771,21 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDNEQ:
 		{
+			if (c.isImmediate2) {
+				vector<int>conflictVar;
+				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
+				int target = loadOperand(c.target, false, conflictVar, {});
+
+				conflictVar.clear();
+				conflictVar.push_back(c.target);
+				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
+					{ target });
+
+				out << "sne " << name[target] << "," << name[operand1] << "," << c.operand2;
+				out << "#" << c << endl;
+				specialVarwriteback(c.target, false);
+				break;
+			}
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
@@ -776,6 +980,11 @@ void MipsTranslator::translate(MidCode c) {
 			}
 			out << "li $v0,1" << endl;
 			out << "syscall #printint" << endl;
+			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
+			if (func->link->paraNum > 0) {
+				//restore a0
+				loadOperand(func->link->paraIds[0], false, {}, {});
+			}
 			break;
 		}
 		case MIDPRINTCHAR:
@@ -806,6 +1015,11 @@ void MipsTranslator::translate(MidCode c) {
 			}
 			out << "li $v0,11" << endl;
 			out << "syscall #printchar" << endl;
+			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
+			if (func->link->paraNum > 0) {
+				//restore a0
+				loadOperand(func->link->paraIds[0], false, {}, {});
+			}
 			break;
 		}
 		case MIDPRINTSTRING:
@@ -814,6 +1028,11 @@ void MipsTranslator::translate(MidCode c) {
 			out << "la $a0,string$" << c.operand1 << endl;
 			out << "li $v0,4" << endl;
 			out << "syscall #printstring" << endl;
+			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
+			if (func->link->paraNum > 0) {
+				//restore a0
+				loadOperand(func->link->paraIds[0], false, {}, {});
+			}
 			break;
 		}
 		case MIDREADCHAR:
@@ -823,14 +1042,7 @@ void MipsTranslator::translate(MidCode c) {
 			out << "syscall" << endl;
 			out << "move " << name[target] <<",$v0"<< endl;
 			specialVarwriteback(c.target, false);
-			for (int i = 0; i < TMPREG; i++) {
-				if (Tstatus[i] == REGVAR && Tuser[i] != -1) {
-					writeback(Tuser[i], Tregister[i]);
-					varReg[Tuser[i]] = -1;
-					Tstatus[i] = REGFREE;
-					Tuser[i] = -1;
-				}
-			}
+			writeBackAfterBlock();
 			break;
 		}
 		case MIDREADINTEGER:
@@ -840,14 +1052,7 @@ void MipsTranslator::translate(MidCode c) {
 			out << "syscall" << endl;
 			out << "move " << name[target] << ",$v0" << endl;
 			specialVarwriteback(c.target, false);
-			for (int i = 0; i < TMPREG; i++) {
-				if (Tstatus[i] == REGVAR && Tuser[i] != -1) {
-					writeback(Tuser[i], Tregister[i]);
-					varReg[Tuser[i]] = -1;
-					Tstatus[i] = REGFREE;
-					Tuser[i] = -1;
-				}
-			}
+			writeBackAfterBlock();
 			break;
 		}
 		case MIDNOP:
@@ -866,14 +1071,19 @@ void MipsTranslator::translate(MidCode c) {
 void MipsTranslator::translate(vector<MidCode>c) {
 	int n = c.size();
 	for (int i = 0; i < n; i++) {
-		int tmpreg = loadOperand(c[i].operand1,c[i].isImmediate1, {}, {});
-		out << "sw " << name[tmpreg] << "," << (-n + i) * 4 << "($sp)" << endl;
-		for (int i = 0; i < 3; i++) {
-			revokeAregister(i + 4);
+		if (c[i].labelNo != MIDNOLABEL) {
+			out << "label$" << -c[i].labelNo << ":" << endl;
 		}
+		int tmpreg = loadOperand(c[i].operand1,c[i].isImmediate1, {}, {});
+		
 		if (i >= 0 && i <= 3) {
+			if (Astatus[i] == REGVAR) {
+				SymbolEntry* tmp = MidCode::table->getSymbolById(Auser[i]);
+				out << "sw " << name[Aregister[i]] << "," << tmp->addr << "($sp)" << endl;
+			}
 			out << "move $a" << i << "," << name[tmpreg] << endl;
 		}
+		out << "sw " << name[tmpreg] << "," << (-n + i) * 4 << "($sp)" << endl;
 	}
 }
 
@@ -883,8 +1093,7 @@ void MipsTranslator::specialVarwriteback(int var, bool isImmediate) {
 	}
 	SymbolEntry* e = MidCode::table->getSymbolById(var);
 	int reg = varReg[var];
-	if ((e->scope == "" || 
-		(e->isParameter&&((reg>=8&&reg<=15)||reg==24||reg==25)))) {
+	if ((e->scope == "" )) {
 		writeback(var,varReg[var]);
 		Tuser[getTmpRegIndex(varReg[var])] = -1;
 		Tstatus[getTmpRegIndex(varReg[var])] =REGFREE;
@@ -918,6 +1127,17 @@ inline int MipsTranslator::getTmpRegIndex(int i) {
 
 void MipsTranslator::writeBackAfterBlock() {
 	for (int i = 0; i < TMPREG; i++) {
+		/*if (Tstatus[i] == REGVAR && Tuser[i] != -1) {
+			SymbolEntry* e = MidCode::table->getSymbolById(Tuser[i]);
+			if (e->scope == "" || e->isParameter) {
+				writeback(Tuser[i], Tregister[i]);
+				varReg[Tuser[i]] = -1;
+				Tstatus[i] = REGFREE;
+				Tuser[i] = -1;
+				continue;
+			}
+		}
+		*/
 		if (Tstatus[i] == REGVAR && Tuser[i] != -1&&
 			currentBlock->activeOut.find(Tuser[i])!=currentBlock->activeOut.end()) {
 			writeback(Tuser[i], Tregister[i]);

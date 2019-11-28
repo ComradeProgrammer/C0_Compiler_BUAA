@@ -1059,7 +1059,7 @@ void GrammarAnalyzer::assignSentence(string varname) {
 			indexBundle.id, indexBundle.isImmediate, res.id, res.isImmediate, MIDNOLABEL);
 	}
 	else {
-		if (!res.isImmediate&& res.id < 0) {
+		if (!res.isImmediate&& res.id < -1) {
 			raw.container.v[raw.container.v.size() - 1].target = target;
 		}
 		else {

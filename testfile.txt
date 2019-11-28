@@ -1,10 +1,4 @@
 const int MAX_NUM = 128 ;
-int g_val;
-
-int add_g_val(int i){
-    g_val = g_val+i ;
-    return (g_val) ;
-}
 
 int factorial(int n){
    if(n<=1) return (1);
@@ -126,12 +120,10 @@ void main()
 {
    int n ;
 
-   g_val = 0;
    n = factorial(5) ;
    printf("5 != ", n) ;
 
-   g_val = 5 ;
-   swap(g_val, add_g_val(g_val) ) ;
+   swap(5, 10 ) ;
 
    complete_flower_num() ;
 }

@@ -5,6 +5,7 @@
 #define GLOBALREG 8
 #define TMPREG 10
 #define REGOCCUPY 2
+//占用状态指里面存储着常数或是直接就是被临时分配的寄存器
 #define REGVAR 1
 #define REGFREE 0
 using namespace std;
@@ -26,7 +27,7 @@ private:
 	//全局寄存器分配
 	vector<int>Sregister = { 16,17,18,19,20,21,22,23 };
 	vector<int>Sstatus = { 0,0,0,0,0,0,0,0 };
-	map<int,set<int>>SregisterUser;
+	map<int,set<int>>SregisterUser;//一个s寄存器可以分给多个变量，所以要如此使用
 	//临时寄存器分配
 	vector<int>Tregister = { 8,9,10,11,12,13,14,15,24,25 };
 	vector<int>Tstatus = { 0,0,0,0,0,0,0,0,0,0,0 };
@@ -40,7 +41,7 @@ private:
 
 	//变量-寄存器
 	map<int, int>varReg;
-
+	set<int>loaded;//用来记录数组中每个临时变量是不是已经被初始化了
 	string name[32] = {
 	"$0","$at","$v0","$v1","$a0",
 	"$a1","$a2","$a3","$t0","$t1",

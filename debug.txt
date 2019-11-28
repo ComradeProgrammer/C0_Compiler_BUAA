@@ -1,26 +1,21 @@
 const int MAX_NUM
-int g_val
-char add_g_val()
-para int i
-g_val = g_val + i
-ret g_val
 char factorial()
 para int n
-#TMP3 = n <= 1
-BZ #TMP3 _label2
+#TMP2 = n <= 1
+BZ #TMP2 _label2
 ret 1
-_label2: #TMP4 = n - 1
-push #TMP4
+_label2: #TMP3 = n - 1
+push #TMP3
 call factorial
-#TMP5=RET
-#TMP6 = n * #TMP5
-ret #TMP6
+#TMP4=RET
+#TMP5 = n * #TMP4
+ret #TMP5
 char mod()
 para int x
 para int y
-#TMP7 = x / y
-#TMP8 = #TMP7 * y
-x = x - #TMP8
+#TMP6 = x / y
+#TMP7 = #TMP6 * y
+x = x - #TMP7
 ret x
 int temp
 void swap()
@@ -46,24 +41,24 @@ char full_num()
 para int n
 para int j
 para int a
-#TMP10 = n * 100
-#TMP11 = j * 10
-#TMP12 = #TMP10 + #TMP11
-#TMP13 = #TMP12 + a
-ret #TMP13
+#TMP9 = n * 100
+#TMP10 = j * 10
+#TMP11 = #TMP9 + #TMP10
+#TMP12 = #TMP11 + a
+ret #TMP12
 char flower_num()
 para int n
 para int j
 para int a
-#TMP14 = n * n
-#TMP15 = #TMP14 * n
-#TMP16 = j * j
-#TMP17 = #TMP16 * j
-#TMP18 = #TMP15 + #TMP17
-#TMP19 = a * a
-#TMP20 = #TMP19 * a
-#TMP21 = #TMP18 + #TMP20
-ret #TMP21
+#TMP13 = n * n
+#TMP14 = #TMP13 * n
+#TMP15 = j * j
+#TMP16 = #TMP15 * j
+#TMP17 = #TMP14 + #TMP16
+#TMP18 = a * a
+#TMP19 = #TMP18 * a
+#TMP20 = #TMP17 + #TMP19
+ret #TMP20
 int a
 int b
 int c
@@ -81,42 +76,42 @@ int x2
 int y
 void complete_flower_num()
 j=2
-_label3: #TMP22 = j < 128
-BZ #TMP22 _label4
+_label3: #TMP21 = j < 128
+BZ #TMP21 _label4
 n=-1
 s=j
 i=1
-_label5: #TMP23 = i < j
-BZ #TMP23 _label6
-#TMP24 = j / i
-x1 = #TMP24 * i
+_label5: #TMP22 = i < j
+BZ #TMP22 _label6
+#TMP23 = j / i
+x1 = #TMP23 * i
 push j
 push i
 call mod
-#TMP26=RET
-#TMP27 = #TMP26 == 0
-BZ #TMP27 _label7
+#TMP25=RET
+#TMP26 = #TMP25 == 0
+BZ #TMP26 _label7
 n = n + 1
 s = s - i
-#TMP30 = n >= 128
-BZ #TMP30 _label8
+#TMP29 = n >= 128
+BZ #TMP29 _label8
 syscall-4 OVERFLOW!
 syscall-11 10
 GOTO _label7
 _label8: k[n] =i
 _label7: i = i + 1
 GOTO _label5
-_label6: #TMP31 = s == 0
-BZ #TMP31 _label10
+_label6: #TMP30 = s == 0
+BZ #TMP30 _label10
 syscall-4 complete number: 
 syscall-1 j
 syscall-11 10
 i=0
-_label11: #TMP32 = i <= n
-BZ #TMP32 _label12
+_label11: #TMP31 = i <= n
+BZ #TMP31 _label12
 syscall-4   
-#TMP33 = k [ i ] 
-syscall-1 #TMP33
+#TMP32 = k [ i ] 
+syscall-1 #TMP32
 syscall-11 10
 i = i + 1
 GOTO _label11
@@ -130,12 +125,12 @@ syscall-4 'water flower'number is:
 syscall-11 10
 y=0
 i=100
-_label13: #TMP34 = 100 + 128
-#TMP35 = i < #TMP34
-BZ #TMP35 _label14
+_label13: #TMP33 = 100 + 128
+#TMP34 = i < #TMP33
+BZ #TMP34 _label14
 n = i / 100
-#TMP37 = i / 10
-push #TMP37
+#TMP36 = i / 10
+push #TMP36
 push 10
 call mod
 j=RET
@@ -147,24 +142,24 @@ push n
 push j
 push a
 call full_num
-#TMP40=RET
+#TMP39=RET
 push n
 push j
 push a
 call flower_num
-#TMP41=RET
-#TMP42 = #TMP40 == #TMP41
-BZ #TMP42 _label15
+#TMP40=RET
+#TMP41 = #TMP39 == #TMP40
+BZ #TMP41 _label15
 k[y] =i
 y = y + 1
 _label15: i = i + 1
 GOTO _label13
 _label14: i=0
-_label16: #TMP44 = i < y
-BZ #TMP44 _label17
+_label16: #TMP43 = i < y
+BZ #TMP43 _label17
 syscall-4   
-#TMP45 = k [ i ] 
-syscall-1 #TMP45
+#TMP44 = k [ i ] 
+syscall-1 #TMP44
 syscall-11 10
 i = i + 1
 GOTO _label16
@@ -175,33 +170,33 @@ syscall-11 10
 h=0
 leap=1
 m=2
-_label18: #TMP46 = m <= 128
-BZ #TMP46 _label19
+_label18: #TMP45 = m <= 128
+BZ #TMP45 _label19
 k2 = m / 2
 i=2
-_label20: #TMP48 = i <= k2
-BZ #TMP48 _label21
-#TMP49 = m / i
-x2 = #TMP49 * i
+_label20: #TMP47 = i <= k2
+BZ #TMP47 _label21
+#TMP48 = m / i
+x2 = #TMP48 * i
 push m
 push i
 call mod
-#TMP51=RET
-#TMP52 = #TMP51 == 0
-BZ #TMP52 _label22
+#TMP50=RET
+#TMP51 = #TMP50 == 0
+BZ #TMP51 _label22
 leap=0
 _label22: i = i + 1
 GOTO _label20
-_label21: #TMP53 = leap == 1
-BZ #TMP53 _label23
+_label21: #TMP52 = leap == 1
+BZ #TMP52 _label23
 syscall-4  
 syscall-1 m
 syscall-11 10
 h = h + 1
-#TMP55 = h / 10
-x2 = #TMP55 * 10
-#TMP57 = x2 == h
-BZ #TMP57 _label23
+#TMP54 = h / 10
+x2 = #TMP54 * 10
+#TMP56 = x2 == h
+BZ #TMP56 _label23
 syscall-4  
 syscall-11 10
 _label23: leap=1
@@ -213,93 +208,76 @@ syscall-11 10
 ret 
 int n
 void main()
-g_val=0
 push 5
 call factorial
 n=RET
 syscall-4 5 != 
 syscall-1 n
 syscall-11 10
-g_val=5
-push g_val
-call add_g_val
-#TMP59=RET
-push g_val
-push #TMP59
+push 5
+push 10
 call swap
 call complete_flower_num
 
 ====Block0====
-char add_g_val()
-para int i
-g_val = g_val + i
-ret g_val
-	prev:[]
-	next:[]
-	use:[g_val,i,]
-	def:[]
-	activeIn:[g_val,i,]
-	activeOut:[]
-==============
-====Block1====
 char factorial()
 para int n
-#TMP3 = n <= 1
-BZ #TMP3 _label2
+#TMP2 = n <= 1
+BZ #TMP2 _label2
 	prev:[]
-	next:[2,3,]
+	next:[1,2,]
 	use:[n,]
-	def:[#TMP3,]
+	def:[#TMP2,]
 	activeIn:[n,]
 	activeOut:[n,]
 ==============
-====Block2====
+====Block1====
 ret 1
-	prev:[1,]
-	next:[3,]
+	prev:[0,]
+	next:[2,]
 	use:[]
 	def:[]
 	activeIn:[n,]
 	activeOut:[n,]
 ==============
-====Block3====
-_label2: #TMP4 = n - 1
-push #TMP4
+====Block2====
+_label2: #TMP3 = n - 1
+push #TMP3
 call factorial
-	prev:[2,1,]
-	next:[4,]
+	prev:[1,0,]
+	next:[3,]
 	use:[n,]
-	def:[#TMP4,]
+	def:[#TMP3,]
 	activeIn:[n,]
 	activeOut:[n,]
 ==============
-====Block4====
-#TMP5=RET
-#TMP6 = n * #TMP5
-ret #TMP6
-	prev:[3,]
+====Block3====
+#TMP4=RET
+#TMP5 = n * #TMP4
+ret #TMP5
+	prev:[2,]
 	next:[]
 	use:[n,]
-	def:[#TMP6,#TMP5,]
+	def:[#TMP5,#TMP4,]
 	activeIn:[n,]
 	activeOut:[]
 ==============
-====Block5====
+====Block4====
 char mod()
 para int x
 para int y
-#TMP7 = x / y
-#TMP8 = #TMP7 * y
-x = x - #TMP8
+#TMP6 = x / y
+#TMP7 = #TMP6 * y
+x = x - #TMP7
 ret x
 	prev:[]
 	next:[]
 	use:[x,y,]
-	def:[#TMP8,#TMP7,]
+	def:[#TMP7,#TMP6,]
 	activeIn:[x,y,]
 	activeOut:[]
 ==============
-====Block6====
+====Block5====
 void swap()
 para int x
 para int y
@@ -326,358 +304,358 @@ ret
 	activeIn:[x,y,]
 	activeOut:[]
 ==============
-====Block7====
+====Block6====
 char full_num()
 para int n
 para int j
 para int a
-#TMP10 = n * 100
-#TMP11 = j * 10
-#TMP12 = #TMP10 + #TMP11
-#TMP13 = #TMP12 + a
-ret #TMP13
+#TMP9 = n * 100
+#TMP10 = j * 10
+#TMP11 = #TMP9 + #TMP10
+#TMP12 = #TMP11 + a
+ret #TMP12
 	prev:[]
 	next:[]
 	use:[n,j,a,]
-	def:[#TMP13,#TMP12,#TMP11,#TMP10,]
+	def:[#TMP12,#TMP11,#TMP10,#TMP9,]
 	activeIn:[n,j,a,]
 	activeOut:[]
 ==============
-====Block8====
+====Block7====
 char flower_num()
 para int n
 para int j
 para int a
-#TMP14 = n * n
-#TMP15 = #TMP14 * n
-#TMP16 = j * j
-#TMP17 = #TMP16 * j
-#TMP18 = #TMP15 + #TMP17
-#TMP19 = a * a
-#TMP20 = #TMP19 * a
-#TMP21 = #TMP18 + #TMP20
-ret #TMP21
+#TMP13 = n * n
+#TMP14 = #TMP13 * n
+#TMP15 = j * j
+#TMP16 = #TMP15 * j
+#TMP17 = #TMP14 + #TMP16
+#TMP18 = a * a
+#TMP19 = #TMP18 * a
+#TMP20 = #TMP17 + #TMP19
+ret #TMP20
 	prev:[]
 	next:[]
 	use:[n,j,a,]
-	def:[#TMP21,#TMP20,#TMP19,#TMP18,#TMP17,#TMP16,#TMP15,#TMP14,]
+	def:[#TMP20,#TMP19,#TMP18,#TMP17,#TMP16,#TMP15,#TMP14,#TMP13,]
 	activeIn:[n,j,a,]
 	activeOut:[]
 ==============
-====Block9====
+====Block8====
 void complete_flower_num()
 j=2
 	prev:[]
-	next:[10,]
+	next:[9,]
 	use:[]
 	def:[j,]
 	activeIn:[k,]
 	activeOut:[k,j,]
 ==============
-====Block10====
-_label3: #TMP22 = j < 128
-BZ #TMP22 _label4
-	prev:[9,24,]
-	next:[11,25,]
+====Block9====
+_label3: #TMP21 = j < 128
+BZ #TMP21 _label4
+	prev:[8,23,]
+	next:[10,24,]
 	use:[j,]
-	def:[#TMP22,]
+	def:[#TMP21,]
 	activeIn:[k,j,]
 	activeOut:[k,j,]
 ==============
-====Block11====
+====Block10====
 n=-1
 s=j
 i=1
-	prev:[10,]
-	next:[12,]
+	prev:[9,]
+	next:[11,]
 	use:[j,]
 	def:[i,n,s,]
 	activeIn:[k,j,]
 	activeOut:[k,i,j,n,s,]
 ==============
-====Block12====
-_label5: #TMP23 = i < j
-BZ #TMP23 _label6
-	prev:[11,18,]
-	next:[13,19,]
+====Block11====
+_label5: #TMP22 = i < j
+BZ #TMP22 _label6
+	prev:[10,17,]
+	next:[12,18,]
 	use:[i,j,]
-	def:[#TMP23,]
+	def:[#TMP22,]
+	activeIn:[k,i,j,n,s,]
+	activeOut:[k,i,j,n,s,]
+==============
+====Block12====
+#TMP23 = j / i
+x1 = #TMP23 * i
+push j
+push i
+call mod
+	prev:[11,]
+	next:[13,]
+	use:[i,j,]
+	def:[#TMP23,x1,]
 	activeIn:[k,i,j,n,s,]
 	activeOut:[k,i,j,n,s,]
 ==============
 ====Block13====
-#TMP24 = j / i
-x1 = #TMP24 * i
-push j
-push i
-call mod
+#TMP25=RET
+#TMP26 = #TMP25 == 0
+BZ #TMP26 _label7
 	prev:[12,]
-	next:[14,]
-	use:[i,j,]
-	def:[#TMP24,x1,]
+	next:[14,17,]
+	use:[]
+	def:[#TMP26,#TMP25,]
 	activeIn:[k,i,j,n,s,]
 	activeOut:[k,i,j,n,s,]
 ==============
 ====Block14====
-#TMP26=RET
-#TMP27 = #TMP26 == 0
-BZ #TMP27 _label7
+n = n + 1
+s = s - i
+#TMP29 = n >= 128
+BZ #TMP29 _label8
 	prev:[13,]
-	next:[15,18,]
-	use:[]
-	def:[#TMP27,#TMP26,]
+	next:[15,16,]
+	use:[i,n,s,]
+	def:[#TMP29,]
 	activeIn:[k,i,j,n,s,]
 	activeOut:[k,i,j,n,s,]
 ==============
 ====Block15====
-n = n + 1
-s = s - i
-#TMP30 = n >= 128
-BZ #TMP30 _label8
+syscall-4 OVERFLOW!
+syscall-11 10
+GOTO _label7
 	prev:[14,]
 	next:[16,17,]
-	use:[i,n,s,]
-	def:[#TMP30,]
+	use:[]
+	def:[]
 	activeIn:[k,i,j,n,s,]
 	activeOut:[k,i,j,n,s,]
 ==============
 ====Block16====
-syscall-4 OVERFLOW!
-syscall-11 10
-GOTO _label7
-	prev:[15,]
-	next:[17,18,]
-	use:[]
+_label8: k[n] =i
+	prev:[15,14,]
+	next:[17,]
+	use:[i,n,]
 	def:[]
 	activeIn:[k,i,j,n,s,]
 	activeOut:[k,i,j,n,s,]
 ==============
 ====Block17====
-_label8: k[n] =i
-	prev:[16,15,]
-	next:[18,]
-	use:[i,n,]
-	def:[]
-	activeIn:[k,i,j,n,s,]
-	activeOut:[k,i,j,n,s,]
-==============
-====Block18====
 _label7: i = i + 1
 GOTO _label5
-	prev:[17,14,16,]
-	next:[19,12,]
+	prev:[16,13,15,]
+	next:[18,11,]
 	use:[i,]
 	def:[]
 	activeIn:[k,i,j,n,s,]
 	activeOut:[k,i,j,n,s,]
 ==============
-====Block19====
-_label6: #TMP31 = s == 0
-BZ #TMP31 _label10
-	prev:[18,12,]
-	next:[20,24,]
+====Block18====
+_label6: #TMP30 = s == 0
+BZ #TMP30 _label10
+	prev:[17,11,]
+	next:[19,23,]
 	use:[s,]
-	def:[#TMP31,]
+	def:[#TMP30,]
 	activeIn:[k,j,n,s,]
 	activeOut:[k,j,n,]
 ==============
-====Block20====
+====Block19====
 syscall-4 complete number: 
 syscall-1 j
 syscall-11 10
 i=0
-	prev:[19,]
-	next:[21,]
+	prev:[18,]
+	next:[20,]
 	use:[j,]
 	def:[i,]
 	activeIn:[k,j,n,]
 	activeOut:[k,i,j,n,]
 ==============
-====Block21====
-_label11: #TMP32 = i <= n
-BZ #TMP32 _label12
-	prev:[20,22,]
-	next:[22,23,]
+====Block20====
+_label11: #TMP31 = i <= n
+BZ #TMP31 _label12
+	prev:[19,21,]
+	next:[21,22,]
 	use:[i,n,]
+	def:[#TMP31,]
+	activeIn:[k,i,j,n,]
+	activeOut:[k,i,j,n,]
+==============
+====Block21====
+syscall-4   
+#TMP32 = k [ i ] 
+syscall-1 #TMP32
+syscall-11 10
+i = i + 1
+GOTO _label11
+	prev:[20,]
+	next:[22,20,]
+	use:[k,i,]
 	def:[#TMP32,]
 	activeIn:[k,i,j,n,]
 	activeOut:[k,i,j,n,]
 ==============
 ====Block22====
-syscall-4   
-#TMP33 = k [ i ] 
-syscall-1 #TMP33
-syscall-11 10
-i = i + 1
-GOTO _label11
-	prev:[21,]
-	next:[23,21,]
-	use:[k,i,]
-	def:[#TMP33,]
-	activeIn:[k,i,j,n,]
-	activeOut:[k,i,j,n,]
-==============
-====Block23====
 _label12: syscall-4  
 syscall-11 10
-	prev:[22,21,]
-	next:[24,]
+	prev:[21,20,]
+	next:[23,]
 	use:[]
 	def:[]
 	activeIn:[k,j,]
 	activeOut:[k,j,]
 ==============
-====Block24====
+====Block23====
 _label10: j = j + 1
 GOTO _label3
-	prev:[23,19,]
-	next:[25,10,]
+	prev:[22,18,]
+	next:[24,9,]
 	use:[j,]
 	def:[]
 	activeIn:[k,j,]
 	activeOut:[k,j,]
 ==============
-====Block25====
+====Block24====
 _label4: syscall-4 ---------------------------------------------------------------
 syscall-11 10
 syscall-4 'water flower'number is:
 syscall-11 10
 y=0
 i=100
-	prev:[24,10,]
-	next:[26,]
+	prev:[23,9,]
+	next:[25,]
 	use:[]
 	def:[i,y,]
 	activeIn:[k,]
 	activeOut:[k,i,y,]
 ==============
-====Block26====
-_label13: #TMP34 = 100 + 128
-#TMP35 = i < #TMP34
-BZ #TMP35 _label14
-	prev:[25,33,]
-	next:[27,34,]
+====Block25====
+_label13: #TMP33 = 100 + 128
+#TMP34 = i < #TMP33
+BZ #TMP34 _label14
+	prev:[24,32,]
+	next:[26,33,]
 	use:[i,]
-	def:[#TMP35,#TMP34,]
+	def:[#TMP34,#TMP33,]
 	activeIn:[k,i,y,]
 	activeOut:[k,i,y,]
 ==============
-====Block27====
+====Block26====
 n = i / 100
-#TMP37 = i / 10
-push #TMP37
+#TMP36 = i / 10
+push #TMP36
+push 10
+call mod
+	prev:[25,]
+	next:[27,]
+	use:[i,]
+	def:[#TMP36,n,]
+	activeIn:[k,i,y,]
+	activeOut:[k,i,n,y,]
+==============
+====Block27====
+j=RET
+push i
 push 10
 call mod
 	prev:[26,]
 	next:[28,]
 	use:[i,]
-	def:[#TMP37,n,]
-	activeIn:[k,i,y,]
-	activeOut:[k,i,n,y,]
-==============
-====Block28====
-j=RET
-push i
-push 10
-call mod
-	prev:[27,]
-	next:[29,]
-	use:[i,]
 	def:[j,]
 	activeIn:[k,i,n,y,]
 	activeOut:[k,i,j,n,y,]
 ==============
-====Block29====
+====Block28====
 a=RET
 push n
 push j
 push a
 call full_num
-	prev:[28,]
-	next:[30,]
+	prev:[27,]
+	next:[29,]
 	use:[j,n,]
 	def:[a,]
 	activeIn:[k,i,j,n,y,]
 	activeOut:[k,i,j,n,y,a,]
 ==============
-====Block30====
-#TMP40=RET
+====Block29====
+#TMP39=RET
 push n
 push j
 push a
 call flower_num
-	prev:[29,]
-	next:[31,]
+	prev:[28,]
+	next:[30,]
 	use:[j,n,a,]
-	def:[#TMP40,]
+	def:[#TMP39,]
 	activeIn:[k,i,j,n,y,a,]
-	activeOut:[#TMP40,k,i,y,]
+	activeOut:[#TMP39,k,i,y,]
 ==============
-====Block31====
-#TMP41=RET
-#TMP42 = #TMP40 == #TMP41
-BZ #TMP42 _label15
-	prev:[30,]
-	next:[32,33,]
-	use:[#TMP40,]
-	def:[#TMP42,#TMP41,]
-	activeIn:[#TMP40,k,i,y,]
+====Block30====
+#TMP40=RET
+#TMP41 = #TMP39 == #TMP40
+BZ #TMP41 _label15
+	prev:[29,]
+	next:[31,32,]
+	use:[#TMP39,]
+	def:[#TMP41,#TMP40,]
+	activeIn:[#TMP39,k,i,y,]
 	activeOut:[k,i,y,]
 ==============
-====Block32====
+====Block31====
 k[y] =i
 y = y + 1
-	prev:[31,]
-	next:[33,]
+	prev:[30,]
+	next:[32,]
 	use:[i,y,]
 	def:[]
 	activeIn:[k,i,y,]
 	activeOut:[k,i,y,]
 ==============
-====Block33====
+====Block32====
 _label15: i = i + 1
 GOTO _label13
-	prev:[32,31,]
-	next:[34,26,]
+	prev:[31,30,]
+	next:[33,25,]
 	use:[i,]
 	def:[]
 	activeIn:[k,i,y,]
 	activeOut:[k,i,y,]
 ==============
-====Block34====
+====Block33====
 _label14: i=0
-	prev:[33,26,]
-	next:[35,]
+	prev:[32,25,]
+	next:[34,]
 	use:[]
 	def:[i,]
 	activeIn:[k,y,]
 	activeOut:[k,i,y,]
 ==============
-====Block35====
-_label16: #TMP44 = i < y
-BZ #TMP44 _label17
-	prev:[34,36,]
-	next:[36,37,]
+====Block34====
+_label16: #TMP43 = i < y
+BZ #TMP43 _label17
+	prev:[33,35,]
+	next:[35,36,]
 	use:[i,y,]
+	def:[#TMP43,]
+	activeIn:[k,i,y,]
+	activeOut:[k,i,y,]
+==============
+====Block35====
+syscall-4   
+#TMP44 = k [ i ] 
+syscall-1 #TMP44
+syscall-11 10
+i = i + 1
+GOTO _label16
+	prev:[34,]
+	next:[36,34,]
+	use:[k,i,]
 	def:[#TMP44,]
 	activeIn:[k,i,y,]
 	activeOut:[k,i,y,]
 ==============
 ====Block36====
-syscall-4   
-#TMP45 = k [ i ] 
-syscall-1 #TMP45
-syscall-11 10
-i = i + 1
-GOTO _label16
-	prev:[35,]
-	next:[37,35,]
-	use:[k,i,]
-	def:[#TMP45,]
-	activeIn:[k,i,y,]
-	activeOut:[k,i,y,]
-==============
-====Block37====
 _label17: syscall-4  
 syscall-11 10
 syscall-4 ---------------------------------------------------------------
@@ -685,187 +663,174 @@ syscall-11 10
 h=0
 leap=1
 m=2
-	prev:[36,35,]
-	next:[38,]
+	prev:[35,34,]
+	next:[37,]
 	use:[]
 	def:[m,h,leap,]
 	activeIn:[]
 	activeOut:[m,h,leap,]
 ==============
-====Block38====
-_label18: #TMP46 = m <= 128
-BZ #TMP46 _label19
-	prev:[37,48,]
-	next:[39,49,]
+====Block37====
+_label18: #TMP45 = m <= 128
+BZ #TMP45 _label19
+	prev:[36,47,]
+	next:[38,48,]
 	use:[m,]
-	def:[#TMP46,]
+	def:[#TMP45,]
 	activeIn:[m,h,leap,]
 	activeOut:[m,h,leap,]
 ==============
-====Block39====
+====Block38====
 k2 = m / 2
 i=2
-	prev:[38,]
-	next:[40,]
+	prev:[37,]
+	next:[39,]
 	use:[m,]
 	def:[i,k2,]
 	activeIn:[m,h,leap,]
 	activeOut:[i,m,k2,h,leap,]
 ==============
-====Block40====
-_label20: #TMP48 = i <= k2
-BZ #TMP48 _label21
-	prev:[39,44,]
-	next:[41,45,]
+====Block39====
+_label20: #TMP47 = i <= k2
+BZ #TMP47 _label21
+	prev:[38,43,]
+	next:[40,44,]
 	use:[i,k2,]
-	def:[#TMP48,]
+	def:[#TMP47,]
+	activeIn:[i,m,k2,h,leap,]
+	activeOut:[i,m,k2,h,leap,]
+==============
+====Block40====
+#TMP48 = m / i
+x2 = #TMP48 * i
+push m
+push i
+call mod
+	prev:[39,]
+	next:[41,]
+	use:[i,m,]
+	def:[#TMP48,x2,]
 	activeIn:[i,m,k2,h,leap,]
 	activeOut:[i,m,k2,h,leap,]
 ==============
 ====Block41====
-#TMP49 = m / i
-x2 = #TMP49 * i
-push m
-push i
-call mod
+#TMP50=RET
+#TMP51 = #TMP50 == 0
+BZ #TMP51 _label22
 	prev:[40,]
-	next:[42,]
-	use:[i,m,]
-	def:[#TMP49,x2,]
+	next:[42,43,]
+	use:[]
+	def:[#TMP51,#TMP50,]
 	activeIn:[i,m,k2,h,leap,]
 	activeOut:[i,m,k2,h,leap,]
 ==============
 ====Block42====
-#TMP51=RET
-#TMP52 = #TMP51 == 0
-BZ #TMP52 _label22
-	prev:[41,]
-	next:[43,44,]
-	use:[]
-	def:[#TMP52,#TMP51,]
-	activeIn:[i,m,k2,h,leap,]
-	activeOut:[i,m,k2,h,leap,]
-==============
-====Block43====
 leap=0
-	prev:[42,]
-	next:[44,]
+	prev:[41,]
+	next:[43,]
 	use:[]
 	def:[leap,]
 	activeIn:[i,m,k2,h,]
 	activeOut:[i,m,k2,h,leap,]
 ==============
-====Block44====
+====Block43====
 _label22: i = i + 1
 GOTO _label20
-	prev:[43,42,]
-	next:[45,40,]
+	prev:[42,41,]
+	next:[44,39,]
 	use:[i,]
 	def:[]
 	activeIn:[i,m,k2,h,leap,]
 	activeOut:[i,m,k2,h,leap,]
 ==============
-====Block45====
-_label21: #TMP53 = leap == 1
-BZ #TMP53 _label23
-	prev:[44,40,]
-	next:[46,48,]
+====Block44====
+_label21: #TMP52 = leap == 1
+BZ #TMP52 _label23
+	prev:[43,39,]
+	next:[45,47,]
 	use:[leap,]
-	def:[#TMP53,]
+	def:[#TMP52,]
 	activeIn:[m,h,leap,]
 	activeOut:[m,h,]
 ==============
-====Block46====
+====Block45====
 syscall-4  
 syscall-1 m
 syscall-11 10
 h = h + 1
-#TMP55 = h / 10
-x2 = #TMP55 * 10
-#TMP57 = x2 == h
-BZ #TMP57 _label23
-	prev:[45,]
-	next:[47,48,]
+#TMP54 = h / 10
+x2 = #TMP54 * 10
+#TMP56 = x2 == h
+BZ #TMP56 _label23
+	prev:[44,]
+	next:[46,47,]
 	use:[m,h,]
-	def:[#TMP57,#TMP55,x2,]
+	def:[#TMP56,#TMP54,x2,]
 	activeIn:[m,h,]
 	activeOut:[m,h,]
 ==============
-====Block47====
+====Block46====
 syscall-4  
 syscall-11 10
-	prev:[46,]
-	next:[48,]
+	prev:[45,]
+	next:[47,]
 	use:[]
 	def:[]
 	activeIn:[m,h,]
 	activeOut:[m,h,]
 ==============
-====Block48====
+====Block47====
 _label23: leap=1
 m = m + 1
 GOTO _label18
-	prev:[47,45,46,]
-	next:[49,38,]
+	prev:[46,44,45,]
+	next:[48,37,]
 	use:[m,]
 	def:[leap,]
 	activeIn:[m,h,]
 	activeOut:[m,h,leap,]
 ==============
-====Block49====
+====Block48====
 _label19: syscall-4 The total is 
 syscall-1 h
 syscall-11 10
 ret 
-	prev:[48,38,]
+	prev:[47,37,]
 	next:[]
 	use:[h,]
 	def:[]
 	activeIn:[h,]
 	activeOut:[]
 ==============
-====Block50====
+====Block49====
 void main()
-g_val=0
 push 5
 call factorial
 	prev:[]
-	next:[51,]
+	next:[50,]
 	use:[]
-	def:[g_val,]
+	def:[]
 	activeIn:[]
 	activeOut:[]
 ==============
-====Block51====
+====Block50====
 n=RET
 syscall-4 5 != 
 syscall-1 n
 syscall-11 10
-g_val=5
-push g_val
-call add_g_val
-	prev:[50,]
-	next:[52,]
-	use:[]
-	def:[g_val,n,]
-	activeIn:[]
-	activeOut:[g_val,]
-==============
-====Block52====
-#TMP59=RET
-push g_val
-push #TMP59
+push 5
+push 10
 call swap
-	prev:[51,]
-	next:[53,]
-	use:[g_val,]
-	def:[#TMP59,]
-	activeIn:[g_val,]
+	prev:[49,]
+	next:[51,]
+	use:[]
+	def:[n,]
+	activeIn:[]
 	activeOut:[]
 ==============
-====Block53====
+====Block51====
 call complete_flower_num
-	prev:[52,]
+	prev:[50,]
 	next:[]
 	use:[]
 	def:[]
@@ -875,28 +840,23 @@ call complete_flower_num
 
 
 const int MAX_NUM
-int g_val
-char add_g_val()
-para int i
-g_val = g_val + i
-ret g_val
 char factorial()
 para int n
-#TMP3 = n <= 1
-BZ #TMP3 _label2
+#TMP2 = n <= 1
+BZ #TMP2 _label2
 ret 1
-_label2: #TMP4 = n - 1
-push #TMP4
+_label2: #TMP3 = n - 1
+push #TMP3
 call factorial
-#TMP5=RET
-#TMP6 = n * #TMP5
-ret #TMP6
+#TMP4=RET
+#TMP5 = n * #TMP4
+ret #TMP5
 char mod()
 para int x
 para int y
-#TMP7 = x / y
-#TMP8 = #TMP7 * y
-x = x - #TMP8
+#TMP6 = x / y
+#TMP7 = #TMP6 * y
+x = x - #TMP7
 ret x
 int temp
 void swap()
@@ -922,24 +882,24 @@ char full_num()
 para int n
 para int j
 para int a
-#TMP10 = n * 100
-#TMP11 = j * 10
-#TMP12 = #TMP10 + #TMP11
-#TMP13 = #TMP12 + a
-ret #TMP13
+#TMP9 = n * 100
+#TMP10 = j * 10
+#TMP11 = #TMP9 + #TMP10
+#TMP12 = #TMP11 + a
+ret #TMP12
 char flower_num()
 para int n
 para int j
 para int a
-#TMP14 = n * n
-#TMP15 = #TMP14 * n
-#TMP16 = j * j
-#TMP17 = #TMP16 * j
-#TMP18 = #TMP15 + #TMP17
-#TMP19 = a * a
-#TMP20 = #TMP19 * a
-#TMP21 = #TMP18 + #TMP20
-ret #TMP21
+#TMP13 = n * n
+#TMP14 = #TMP13 * n
+#TMP15 = j * j
+#TMP16 = #TMP15 * j
+#TMP17 = #TMP14 + #TMP16
+#TMP18 = a * a
+#TMP19 = #TMP18 * a
+#TMP20 = #TMP17 + #TMP19
+ret #TMP20
 int a
 int b
 int c
@@ -957,42 +917,42 @@ int x2
 int y
 void complete_flower_num()
 j=2
-_label3: #TMP22 = j < 128
-BZ #TMP22 _label4
+_label3: #TMP21 = j < 128
+BZ #TMP21 _label4
 n=-1
 s=j
 i=1
-_label5: #TMP23 = i < j
-BZ #TMP23 _label6
-#TMP24 = j / i
-x1 = #TMP24 * i
+_label5: #TMP22 = i < j
+BZ #TMP22 _label6
+#TMP23 = j / i
+x1 = #TMP23 * i
 push j
 push i
 call mod
-#TMP26=RET
-#TMP27 = #TMP26 == 0
-BZ #TMP27 _label7
+#TMP25=RET
+#TMP26 = #TMP25 == 0
+BZ #TMP26 _label7
 n = n + 1
 s = s - i
-#TMP30 = n >= 128
-BZ #TMP30 _label8
+#TMP29 = n >= 128
+BZ #TMP29 _label8
 syscall-4 OVERFLOW!
 syscall-11 10
 GOTO _label7
 _label8: k[n] =i
 _label7: i = i + 1
 GOTO _label5
-_label6: #TMP31 = s == 0
-BZ #TMP31 _label10
+_label6: #TMP30 = s == 0
+BZ #TMP30 _label10
 syscall-4 complete number: 
 syscall-1 j
 syscall-11 10
 i=0
-_label11: #TMP32 = i <= n
-BZ #TMP32 _label12
+_label11: #TMP31 = i <= n
+BZ #TMP31 _label12
 syscall-4   
-#TMP33 = k [ i ] 
-syscall-1 #TMP33
+#TMP32 = k [ i ] 
+syscall-1 #TMP32
 syscall-11 10
 i = i + 1
 GOTO _label11
@@ -1006,12 +966,12 @@ syscall-4 'water flower'number is:
 syscall-11 10
 y=0
 i=100
-_label13: #TMP34 = 100 + 128
-#TMP35 = i < #TMP34
-BZ #TMP35 _label14
+_label13: #TMP33 = 100 + 128
+#TMP34 = i < #TMP33
+BZ #TMP34 _label14
 n = i / 100
-#TMP37 = i / 10
-push #TMP37
+#TMP36 = i / 10
+push #TMP36
 push 10
 call mod
 j=RET
@@ -1023,24 +983,24 @@ push n
 push j
 push a
 call full_num
-#TMP40=RET
+#TMP39=RET
 push n
 push j
 push a
 call flower_num
-#TMP41=RET
-#TMP42 = #TMP40 == #TMP41
-BZ #TMP42 _label15
+#TMP40=RET
+#TMP41 = #TMP39 == #TMP40
+BZ #TMP41 _label15
 k[y] =i
 y = y + 1
 _label15: i = i + 1
 GOTO _label13
 _label14: i=0
-_label16: #TMP44 = i < y
-BZ #TMP44 _label17
+_label16: #TMP43 = i < y
+BZ #TMP43 _label17
 syscall-4   
-#TMP45 = k [ i ] 
-syscall-1 #TMP45
+#TMP44 = k [ i ] 
+syscall-1 #TMP44
 syscall-11 10
 i = i + 1
 GOTO _label16
@@ -1051,33 +1011,33 @@ syscall-11 10
 h=0
 leap=1
 m=2
-_label18: #TMP46 = m <= 128
-BZ #TMP46 _label19
+_label18: #TMP45 = m <= 128
+BZ #TMP45 _label19
 k2 = m / 2
 i=2
-_label20: #TMP48 = i <= k2
-BZ #TMP48 _label21
-#TMP49 = m / i
-x2 = #TMP49 * i
+_label20: #TMP47 = i <= k2
+BZ #TMP47 _label21
+#TMP48 = m / i
+x2 = #TMP48 * i
 push m
 push i
 call mod
-#TMP51=RET
-#TMP52 = #TMP51 == 0
-BZ #TMP52 _label22
+#TMP50=RET
+#TMP51 = #TMP50 == 0
+BZ #TMP51 _label22
 leap=0
 _label22: i = i + 1
 GOTO _label20
-_label21: #TMP53 = leap == 1
-BZ #TMP53 _label23
+_label21: #TMP52 = leap == 1
+BZ #TMP52 _label23
 syscall-4  
 syscall-1 m
 syscall-11 10
 h = h + 1
-#TMP55 = h / 10
-x2 = #TMP55 * 10
-#TMP57 = x2 == h
-BZ #TMP57 _label23
+#TMP54 = h / 10
+x2 = #TMP54 * 10
+#TMP56 = x2 == h
+BZ #TMP56 _label23
 syscall-4  
 syscall-11 10
 _label23: leap=1
@@ -1089,122 +1049,111 @@ syscall-11 10
 ret 
 int n
 void main()
-g_val=0
 push 5
 call factorial
 n=RET
 syscall-4 5 != 
 syscall-1 n
 syscall-11 10
-g_val=5
-push g_val
-call add_g_val
-#TMP59=RET
-push g_val
-push #TMP59
+push 5
+push 10
 call swap
 call complete_flower_num
 
 
 global:
-name:MAX_NUM	id:0	type:const int	scope:	addr:4	dimension:0link:NULL
-name:add_g_val	id:2	type:function	scope:	addr:-1	dimension:0
-link:		returnType:int	paraNum:1	paras:[3 ]
-name:complete_flower_num	id:21	type:function	scope:	addr:-1	dimension:0
+name:MAX_NUM	id:0	type:const int	scope:	addr:0	dimension:0link:NULL
+name:complete_flower_num	id:18	type:function	scope:	addr:-1	dimension:0
 link:		returnType:void	paraNum:0	paras:[]
-name:factorial	id:4	type:function	scope:	addr:-1	dimension:0
-link:		returnType:int	paraNum:1	paras:[5 ]
-name:flower_num	id:17	type:function	scope:	addr:-1	dimension:0
-link:		returnType:int	paraNum:3	paras:[18 19 20 ]
-name:full_num	id:13	type:function	scope:	addr:-1	dimension:0
-link:		returnType:int	paraNum:3	paras:[14 15 16 ]
-name:g_val	id:1	type:int	scope:	addr:0	dimension:0link:NULL
-name:main	id:37	type:function	scope:	addr:-1	dimension:0
+name:factorial	id:1	type:function	scope:	addr:-1	dimension:0
+link:		returnType:int	paraNum:1	paras:[2 ]
+name:flower_num	id:14	type:function	scope:	addr:-1	dimension:0
+link:		returnType:int	paraNum:3	paras:[15 16 17 ]
+name:full_num	id:10	type:function	scope:	addr:-1	dimension:0
+link:		returnType:int	paraNum:3	paras:[11 12 13 ]
+name:main	id:34	type:function	scope:	addr:-1	dimension:0
 link:		returnType:void	paraNum:0	paras:[]
-name:mod	id:6	type:function	scope:	addr:-1	dimension:0
-link:		returnType:int	paraNum:2	paras:[7 8 ]
-name:swap	id:9	type:function	scope:	addr:-1	dimension:0
-link:		returnType:void	paraNum:2	paras:[10 11 ]
-add_g_val:
-name:i	id:3	type:int	scope:add_g_val	addr:36	dimension:0link:NULL
+name:mod	id:3	type:function	scope:	addr:-1	dimension:0
+link:		returnType:int	paraNum:2	paras:[4 5 ]
+name:swap	id:6	type:function	scope:	addr:-1	dimension:0
+link:		returnType:void	paraNum:2	paras:[7 8 ]
 complete_flower_num:
-name:a	id:34	type:int	scope:complete_flower_num	addr:612	dimension:0link:NULL
-name:b	id:35	type:int	scope:complete_flower_num	addr:616	dimension:0link:NULL
-name:c	id:36	type:int	scope:complete_flower_num	addr:620	dimension:0link:NULL
-name:h	id:31	type:int	scope:complete_flower_num	addr:624	dimension:0link:NULL
-name:i	id:23	type:int	scope:complete_flower_num	addr:628	dimension:0link:NULL
-name:j	id:24	type:int	scope:complete_flower_num	addr:632	dimension:0link:NULL
-name:k	id:22	type:int[]	scope:complete_flower_num	addr:100	dimension:128link:NULL
-name:k2	id:30	type:int	scope:complete_flower_num	addr:636	dimension:0link:NULL
-name:leap	id:32	type:int	scope:complete_flower_num	addr:640	dimension:0link:NULL
-name:m	id:29	type:int	scope:complete_flower_num	addr:644	dimension:0link:NULL
-name:n	id:25	type:int	scope:complete_flower_num	addr:648	dimension:0link:NULL
-name:s	id:26	type:int	scope:complete_flower_num	addr:652	dimension:0link:NULL
-name:x1	id:27	type:int	scope:complete_flower_num	addr:656	dimension:0link:NULL
-name:x2	id:33	type:int	scope:complete_flower_num	addr:660	dimension:0link:NULL
-name:y	id:28	type:int	scope:complete_flower_num	addr:664	dimension:0link:NULL
-tmp57 addr:0
-tmp55 addr:4
-tmp53 addr:8
-tmp52 addr:12
-tmp51 addr:16
-tmp49 addr:20
-tmp48 addr:24
-tmp46 addr:28
-tmp45 addr:32
-tmp44 addr:36
-tmp42 addr:40
-tmp41 addr:44
-tmp40 addr:48
-tmp37 addr:52
-tmp35 addr:56
-tmp34 addr:60
-tmp33 addr:64
-tmp32 addr:68
-tmp31 addr:72
-tmp30 addr:76
-tmp27 addr:80
-tmp26 addr:84
-tmp24 addr:88
-tmp23 addr:92
-tmp22 addr:96
+name:a	id:31	type:int	scope:complete_flower_num	addr:612	dimension:0link:NULL
+name:b	id:32	type:int	scope:complete_flower_num	addr:616	dimension:0link:NULL
+name:c	id:33	type:int	scope:complete_flower_num	addr:620	dimension:0link:NULL
+name:h	id:28	type:int	scope:complete_flower_num	addr:624	dimension:0link:NULL
+name:i	id:20	type:int	scope:complete_flower_num	addr:628	dimension:0link:NULL
+name:j	id:21	type:int	scope:complete_flower_num	addr:632	dimension:0link:NULL
+name:k	id:19	type:int[]	scope:complete_flower_num	addr:100	dimension:128link:NULL
+name:k2	id:27	type:int	scope:complete_flower_num	addr:636	dimension:0link:NULL
+name:leap	id:29	type:int	scope:complete_flower_num	addr:640	dimension:0link:NULL
+name:m	id:26	type:int	scope:complete_flower_num	addr:644	dimension:0link:NULL
+name:n	id:22	type:int	scope:complete_flower_num	addr:648	dimension:0link:NULL
+name:s	id:23	type:int	scope:complete_flower_num	addr:652	dimension:0link:NULL
+name:x1	id:24	type:int	scope:complete_flower_num	addr:656	dimension:0link:NULL
+name:x2	id:30	type:int	scope:complete_flower_num	addr:660	dimension:0link:NULL
+name:y	id:25	type:int	scope:complete_flower_num	addr:664	dimension:0link:NULL
+tmp56 addr:0
+tmp54 addr:4
+tmp52 addr:8
+tmp51 addr:12
+tmp50 addr:16
+tmp48 addr:20
+tmp47 addr:24
+tmp45 addr:28
+tmp44 addr:32
+tmp43 addr:36
+tmp41 addr:40
+tmp40 addr:44
+tmp39 addr:48
+tmp36 addr:52
+tmp34 addr:56
+tmp33 addr:60
+tmp32 addr:64
+tmp31 addr:68
+tmp30 addr:72
+tmp29 addr:76
+tmp26 addr:80
+tmp25 addr:84
+tmp23 addr:88
+tmp22 addr:92
+tmp21 addr:96
 factorial:
-name:n	id:5	type:int	scope:factorial	addr:52	dimension:0link:NULL
-tmp6 addr:0
-tmp5 addr:4
-tmp4 addr:8
-tmp3 addr:12
+name:n	id:2	type:int	scope:factorial	addr:52	dimension:0link:NULL
+tmp5 addr:0
+tmp4 addr:4
+tmp3 addr:8
+tmp2 addr:12
 flower_num:
-name:a	id:20	type:int	scope:flower_num	addr:76	dimension:0link:NULL
-name:j	id:19	type:int	scope:flower_num	addr:72	dimension:0link:NULL
-name:n	id:18	type:int	scope:flower_num	addr:68	dimension:0link:NULL
-tmp21 addr:0
-tmp20 addr:4
-tmp19 addr:8
-tmp18 addr:12
-tmp17 addr:16
-tmp16 addr:20
-tmp15 addr:24
-tmp14 addr:28
+name:a	id:17	type:int	scope:flower_num	addr:76	dimension:0link:NULL
+name:j	id:16	type:int	scope:flower_num	addr:72	dimension:0link:NULL
+name:n	id:15	type:int	scope:flower_num	addr:68	dimension:0link:NULL
+tmp20 addr:0
+tmp19 addr:4
+tmp18 addr:8
+tmp17 addr:12
+tmp16 addr:16
+tmp15 addr:20
+tmp14 addr:24
+tmp13 addr:28
 full_num:
-name:a	id:16	type:int	scope:full_num	addr:60	dimension:0link:NULL
-name:j	id:15	type:int	scope:full_num	addr:56	dimension:0link:NULL
-name:n	id:14	type:int	scope:full_num	addr:52	dimension:0link:NULL
-tmp13 addr:0
-tmp12 addr:4
-tmp11 addr:8
-tmp10 addr:12
+name:a	id:13	type:int	scope:full_num	addr:60	dimension:0link:NULL
+name:j	id:12	type:int	scope:full_num	addr:56	dimension:0link:NULL
+name:n	id:11	type:int	scope:full_num	addr:52	dimension:0link:NULL
+tmp12 addr:0
+tmp11 addr:4
+tmp10 addr:8
+tmp9 addr:12
 main:
-name:n	id:38	type:int	scope:main	addr:4	dimension:0link:NULL
-tmp59 addr:0
+name:n	id:35	type:int	scope:main	addr:0	dimension:0link:NULL
 mod:
-name:x	id:7	type:int	scope:mod	addr:44	dimension:0link:NULL
-name:y	id:8	type:int	scope:mod	addr:48	dimension:0link:NULL
-tmp8 addr:0
-tmp7 addr:4
+name:x	id:4	type:int	scope:mod	addr:44	dimension:0link:NULL
+name:y	id:5	type:int	scope:mod	addr:48	dimension:0link:NULL
+tmp7 addr:0
+tmp6 addr:4
 swap:
-name:temp	id:12	type:int	scope:swap	addr:0	dimension:0link:NULL
-name:x	id:10	type:int	scope:swap	addr:40	dimension:0link:NULL
-name:y	id:11	type:int	scope:swap	addr:44	dimension:0link:NULL
+name:temp	id:9	type:int	scope:swap	addr:0	dimension:0link:NULL
+name:x	id:7	type:int	scope:swap	addr:40	dimension:0link:NULL
+name:y	id:8	type:int	scope:swap	addr:44	dimension:0link:NULL
 
 

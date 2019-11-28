@@ -17,383 +17,218 @@ string$14: .asciiz " "
 string$15: .asciiz "The total is "
 string$16: .asciiz "5 != "
 .align 2
-g_val: .space 4
 MAX_NUM: .word 128
 .text:
 jal main
-add_g_val:
-sw $ra,32($sp)#save the return value
-sw $s0,0($sp)
-sw $s1,4($sp)
-sw $s2,8($sp)
-sw $s3,12($sp)
-sw $s4,16($sp)
-sw $s5,20($sp)
-sw $s6,24($sp)
-sw $s7,28($sp)
-lw $t0,g_val#load global variable g_val
-lw $t1,36($sp)#load variablei
-addu $t0,$t0,$t1#g_val = g_val + i
-
-sw $t0,g_val#write back global variable g_val
-lw $v0,g_val
-lw $s0,0($sp)
-lw $s1,4($sp)
-lw $s2,8($sp)
-lw $s3,12($sp)
-lw $s4,16($sp)
-lw $s5,20($sp)
-lw $s6,24($sp)
-lw $s7,28($sp)
-lw $ra,32($sp)
-addiu $sp,$sp,40
-jr $ra
-sw $t1,36($sp)#write back temporary variable i
 factorial:
 sw $ra,48($sp)#save the return value
-sw $s0,16($sp)
-sw $s1,20($sp)
-sw $s2,24($sp)
-sw $s3,28($sp)
-sw $s4,32($sp)
-sw $s5,36($sp)
-sw $s6,40($sp)
-sw $s7,44($sp)
-lw $t0,12($sp)#load variable#TMP3
-lw $t1,52($sp)#load variablen
-li $t2,1# load immediate1
-sle $t0,$t1,$t2##TMP3 = n <= 1
+sle $t0,$a0,1##TMP2 = n <= 1
 
-sw $t1,52($sp)#write back temporary variable n
-blez $t0,label$2#BZ #TMP3 _label2
+blez $t0,label$2#BZ #TMP2 _label2
 
-sw $t0,12($sp)#write back temporary variable #TMP3
 li $v0,1
-lw $s0,16($sp)
-lw $s1,20($sp)
-lw $s2,24($sp)
-lw $s3,28($sp)
-lw $s4,32($sp)
-lw $s5,36($sp)
-lw $s6,40($sp)
-lw $s7,44($sp)
 lw $ra,48($sp)
 addiu $sp,$sp,56
 jr $ra
 label$2:
-lw $t0,8($sp)#load variable#TMP4
-lw $t1,52($sp)#load variablen
-li $t2,1# load immediate1
-subu $t0,$t1,$t2#_label2: #TMP4 = n - 1
+subiu $t0,$a0,1#_label2: #TMP3 = n - 1
 
-sw $t0,-4($sp)
+sw $a0,52($sp)
 move $a0,$t0
-sw $t1,52($sp)#write back temporary variable n
+sw $t0,-4($sp)
 addiu $sp,$sp,-56
 jal factorial
-sw $t0,8($sp)#write back temporary variable #TMP4
-lw $t0,4($sp)#load variable#TMP5
-move $t0,$v0##TMP5=RET
+lw $a0,52($sp)
+move $t0,$v0##TMP4=RET
 
-lw $t1,0($sp)#load variable#TMP6
-lw $t2,52($sp)#load variablen
-mul $t1,$t2,$t0##TMP6 = n * #TMP5
+mul $t1,$a0,$t0##TMP5 = n * #TMP4
 
 move $v0,$t1
-lw $s0,16($sp)
-lw $s1,20($sp)
-lw $s2,24($sp)
-lw $s3,28($sp)
-lw $s4,32($sp)
-lw $s5,36($sp)
-lw $s6,40($sp)
-lw $s7,44($sp)
 lw $ra,48($sp)
 addiu $sp,$sp,56
 jr $ra
-sw $t0,4($sp)#write back temporary variable #TMP5
-sw $t1,0($sp)#write back temporary variable #TMP6
-sw $t2,52($sp)#write back temporary variable n
 mod:
 sw $ra,40($sp)#save the return value
-sw $s0,8($sp)
-sw $s1,12($sp)
-sw $s2,16($sp)
-sw $s3,20($sp)
-sw $s4,24($sp)
-sw $s5,28($sp)
-sw $s6,32($sp)
-sw $s7,36($sp)
-lw $t0,4($sp)#load variable#TMP7
-lw $t1,44($sp)#load variablex
-lw $t2,48($sp)#load variabley
-div $t1,$t2
-mflo $t0##TMP7 = x / y
+div $a0,$a1
+mflo $t0##TMP6 = x / y
 
-lw $t3,0($sp)#load variable#TMP8
-mul $t3,$t0,$t2##TMP8 = #TMP7 * y
+mul $t1,$t0,$a1##TMP7 = #TMP6 * y
 
-subu $t1,$t1,$t3#x = x - #TMP8
+subu $a0,$a0,$t1#x = x - #TMP7
 
-sw $t1,44($sp)#write back temporary variable x
-lw $v0,44($sp)
-lw $s0,8($sp)
-lw $s1,12($sp)
-lw $s2,16($sp)
-lw $s3,20($sp)
-lw $s4,24($sp)
-lw $s5,28($sp)
-lw $s6,32($sp)
-lw $s7,36($sp)
+move $v0,$a0
 lw $ra,40($sp)
 addiu $sp,$sp,52
 jr $ra
-sw $t0,4($sp)#write back temporary variable #TMP7
-sw $t2,48($sp)#write back temporary variable y
-sw $t3,0($sp)#write back temporary variable #TMP8
 swap:
 sw $ra,36($sp)#save the return value
-sw $s0,4($sp)
-sw $s1,8($sp)
-sw $s2,12($sp)
-sw $s3,16($sp)
-sw $s4,20($sp)
-sw $s5,24($sp)
-sw $s6,28($sp)
-sw $s7,32($sp)
+sw $a0,40($sp)
 la $a0,string$0
 li $v0,4
 syscall #printstring
+lw $a0,40($sp)	#load variablex
+sw $a0,40($sp)
 lw $a0,40($sp)
 li $v0,1
 syscall #printint
+lw $a0,40($sp)	#load variablex
 li $a0,10
 li $v0,11
 syscall #printchar
+lw $a0,40($sp)	#load variablex
+sw $a0,40($sp)
 la $a0,string$1
 li $v0,4
 syscall #printstring
-lw $a0,44($sp)
+lw $a0,40($sp)	#load variablex
+sw $a0,40($sp)
+move $a0,$a1
 li $v0,1
 syscall #printint
+lw $a0,40($sp)	#load variablex
 li $a0,10
 li $v0,11
 syscall #printchar
-lw $t0,0($sp)#load variabletemp
+lw $a0,40($sp)	#load variablex
+lw $t0,0($sp)	#load variabletemp
 lw $t0,40($sp)#temp=x
 
-lw $t1,40($sp)#load variablex
-lw $t1,44($sp)#x=y
+lw $a0,40($sp)	#load variablex
+move $a0,$a1#x=y
 
-sw $t1,40($sp)#write back temporary variable x
-lw $t1,44($sp)#load variabley
-move $t1,$t0#y=temp
+move $a1,$t0#y=temp
 
-sw $t1,44($sp)#write back temporary variable y
+sw $a0,40($sp)
 la $a0,string$2
 li $v0,4
 syscall #printstring
+lw $a0,40($sp)	#load variablex
+sw $a0,40($sp)
 lw $a0,40($sp)
 li $v0,1
 syscall #printint
+lw $a0,40($sp)	#load variablex
 li $a0,10
 li $v0,11
 syscall #printchar
+lw $a0,40($sp)	#load variablex
+sw $a0,40($sp)
 la $a0,string$3
 li $v0,4
 syscall #printstring
-lw $a0,44($sp)
+lw $a0,40($sp)	#load variablex
+sw $a0,40($sp)
+move $a0,$a1
 li $v0,1
 syscall #printint
+lw $a0,40($sp)	#load variablex
 li $a0,10
 li $v0,11
 syscall #printchar
-lw $s0,4($sp)
-lw $s1,8($sp)
-lw $s2,12($sp)
-lw $s3,16($sp)
-lw $s4,20($sp)
-lw $s5,24($sp)
-lw $s6,28($sp)
-lw $s7,32($sp)
+lw $a0,40($sp)	#load variablex
 lw $ra,36($sp)
 addiu $sp,$sp,48
 jr $ra
-sw $t0,0($sp)#write back temporary variable temp
 full_num:
 sw $ra,48($sp)#save the return value
-sw $s0,16($sp)
-sw $s1,20($sp)
-sw $s2,24($sp)
-sw $s3,28($sp)
-sw $s4,32($sp)
-sw $s5,36($sp)
-sw $s6,40($sp)
-sw $s7,44($sp)
-lw $t0,12($sp)#load variable#TMP10
-lw $t1,52($sp)#load variablen
-li $t2,100# load immediate100
-mul $t0,$t1,$t2##TMP10 = n * 100
+li $t1,100	# load immediate 100
+mul $t0,$a0,$t1##TMP9 = n * 100
 
-lw $t3,8($sp)#load variable#TMP11
-lw $t4,56($sp)#load variablej
-li $t5,10# load immediate10
-mul $t3,$t4,$t5##TMP11 = j * 10
+li $t3,10	# load immediate 10
+mul $t2,$a1,$t3##TMP10 = j * 10
 
-lw $t6,4($sp)#load variable#TMP12
-addu $t6,$t0,$t3##TMP12 = #TMP10 + #TMP11
+addu $t4,$t0,$t2##TMP11 = #TMP9 + #TMP10
 
-lw $t7,0($sp)#load variable#TMP13
-lw $t8,60($sp)#load variablea
-addu $t7,$t6,$t8##TMP13 = #TMP12 + a
+addu $t5,$t4,$a2##TMP12 = #TMP11 + a
 
-move $v0,$t7
-lw $s0,16($sp)
-lw $s1,20($sp)
-lw $s2,24($sp)
-lw $s3,28($sp)
-lw $s4,32($sp)
-lw $s5,36($sp)
-lw $s6,40($sp)
-lw $s7,44($sp)
+move $v0,$t5
 lw $ra,48($sp)
 addiu $sp,$sp,64
 jr $ra
-sw $t0,12($sp)#write back temporary variable #TMP10
-sw $t1,52($sp)#write back temporary variable n
-sw $t3,8($sp)#write back temporary variable #TMP11
-sw $t4,56($sp)#write back temporary variable j
-sw $t6,4($sp)#write back temporary variable #TMP12
-sw $t7,0($sp)#write back temporary variable #TMP13
-sw $t8,60($sp)#write back temporary variable a
 flower_num:
 sw $ra,64($sp)#save the return value
-sw $s0,32($sp)
-sw $s1,36($sp)
-sw $s2,40($sp)
-sw $s3,44($sp)
-sw $s4,48($sp)
-sw $s5,52($sp)
-sw $s6,56($sp)
-sw $s7,60($sp)
-lw $t0,28($sp)#load variable#TMP14
-lw $t1,68($sp)#load variablen
-mul $t0,$t1,$t1##TMP14 = n * n
+mul $t0,$a0,$a0##TMP13 = n * n
 
-lw $t2,24($sp)#load variable#TMP15
-mul $t2,$t0,$t1##TMP15 = #TMP14 * n
+mul $t1,$t0,$a0##TMP14 = #TMP13 * n
 
-lw $t3,20($sp)#load variable#TMP16
-lw $t4,72($sp)#load variablej
-mul $t3,$t4,$t4##TMP16 = j * j
+mul $t2,$a1,$a1##TMP15 = j * j
 
-lw $t5,16($sp)#load variable#TMP17
-mul $t5,$t3,$t4##TMP17 = #TMP16 * j
+mul $t3,$t2,$a1##TMP16 = #TMP15 * j
 
-lw $t6,12($sp)#load variable#TMP18
-addu $t6,$t2,$t5##TMP18 = #TMP15 + #TMP17
+addu $t4,$t1,$t3##TMP17 = #TMP14 + #TMP16
 
-lw $t7,8($sp)#load variable#TMP19
-lw $t8,76($sp)#load variablea
-mul $t7,$t8,$t8##TMP19 = a * a
+mul $t5,$a2,$a2##TMP18 = a * a
 
-lw $t9,4($sp)#load variable#TMP20
-mul $t9,$t7,$t8##TMP20 = #TMP19 * a
+mul $t6,$t5,$a2##TMP19 = #TMP18 * a
 
-sw $t0,28($sp)#write back temporary variable #TMP14
-lw $t0,0($sp)#load variable#TMP21
-addu $t0,$t6,$t9##TMP21 = #TMP18 + #TMP20
+addu $t7,$t4,$t6##TMP20 = #TMP17 + #TMP19
 
-move $v0,$t0
-lw $s0,32($sp)
-lw $s1,36($sp)
-lw $s2,40($sp)
-lw $s3,44($sp)
-lw $s4,48($sp)
-lw $s5,52($sp)
-lw $s6,56($sp)
-lw $s7,60($sp)
+move $v0,$t7
 lw $ra,64($sp)
 addiu $sp,$sp,80
 jr $ra
-sw $t0,0($sp)#write back temporary variable #TMP21
-sw $t1,68($sp)#write back temporary variable n
-sw $t2,24($sp)#write back temporary variable #TMP15
-sw $t3,20($sp)#write back temporary variable #TMP16
-sw $t4,72($sp)#write back temporary variable j
-sw $t5,16($sp)#write back temporary variable #TMP17
-sw $t6,12($sp)#write back temporary variable #TMP18
-sw $t7,8($sp)#write back temporary variable #TMP19
-sw $t8,76($sp)#write back temporary variable a
-sw $t9,4($sp)#write back temporary variable #TMP20
 complete_flower_num:
 sw $ra,700($sp)#save the return value
-sw $s0,668($sp)
-sw $s1,672($sp)
-sw $s2,676($sp)
-sw $s3,680($sp)
-sw $s4,684($sp)
-sw $s5,688($sp)
-sw $s6,692($sp)
-sw $s7,696($sp)
 li $s1,2
 label$3:
-lw $t0,96($sp)#load variable#TMP22
-li $t1,128# load immediate128
-slt $t0,$s1,$t1#_label3: #TMP22 = j < 128
+slti $t0,$s1,128#_label3: #TMP21 = j < 128
 
-blez $t0,label$4#BZ #TMP22 _label4
+blez $t0,label$4#BZ #TMP21 _label4
 
-sw $t0,96($sp)#write back temporary variable #TMP22
 li $s2,-1
 move $s0,$s1#s=j
 
 li $s5,1
 label$5:
-lw $t0,92($sp)#load variable#TMP23
-slt $t0,$s5,$s1#_label5: #TMP23 = i < j
+slt $t0,$s5,$s1#_label5: #TMP22 = i < j
 
-blez $t0,label$6#BZ #TMP23 _label6
+blez $t0,label$6#BZ #TMP22 _label6
 
-sw $t0,92($sp)#write back temporary variable #TMP23
-lw $t0,88($sp)#load variable#TMP24
 div $s1,$s5
-mflo $t0##TMP24 = j / i
+mflo $t0##TMP23 = j / i
 
-lw $t1,656($sp)#load variablex1
-mul $t1,$t0,$s5#x1 = #TMP24 * i
+lw $t1,656($sp)	#load variablex1
+mul $t1,$t0,$s5#x1 = #TMP23 * i
 
-sw $s1,-8($sp)
+sw $a0,68($sp)
 move $a0,$s1
-sw $s5,-4($sp)
+sw $s1,-8($sp)
+sw $a1,72($sp)
 move $a1,$s5
+sw $s5,-4($sp)
+sw $a2,76($sp)
+sw $s0,-40($sp)
+sw $s1,-36($sp)
+sw $s2,-32($sp)
+sw $s3,-28($sp)
+sw $s4,-24($sp)
+sw $s5,-20($sp)
 addiu $sp,$sp,-52
 jal mod
-sw $t0,88($sp)#write back temporary variable #TMP24
-sw $t1,656($sp)#write back temporary variable x1
-lw $t0,84($sp)#load variable#TMP26
-move $t0,$v0##TMP26=RET
+lw $s0,-40($sp)
+lw $s1,-36($sp)
+lw $s2,-32($sp)
+lw $s3,-28($sp)
+lw $s4,-24($sp)
+lw $s5,-20($sp)
+lw $a0,68($sp)
+lw $a1,72($sp)
+lw $a2,76($sp)
+move $t0,$v0##TMP25=RET
 
-lw $t1,80($sp)#load variable#TMP27
-li $t2,0# load immediate0
-seq $t1,$t0,$t2##TMP27 = #TMP26 == 0
+seq $t1,$t0,0##TMP26 = #TMP25 == 0
 
-blez $t1,label$7#BZ #TMP27 _label7
+blez $t1,label$7#BZ #TMP26 _label7
 
-sw $t0,84($sp)#write back temporary variable #TMP26
-sw $t1,80($sp)#write back temporary variable #TMP27
-li $t0,1# load immediate1
-addu $s2,$s2,$t0#n = n + 1
+addiu $s2,$s2,1#n = n + 1
 
 subu $s0,$s0,$s5#s = s - i
 
-lw $t1,76($sp)#load variable#TMP30
-li $t2,128# load immediate128
-sge $t1,$s2,$t2##TMP30 = n >= 128
+sge $t0,$s2,128##TMP29 = n >= 128
 
-blez $t1,label$8#BZ #TMP30 _label8
+blez $t0,label$8#BZ #TMP29 _label8
 
-sw $t1,76($sp)#write back temporary variable #TMP30
+sw $a0,68($sp)
 la $a0,string$4
 li $v0,4
 syscall #printstring
@@ -408,19 +243,15 @@ addu $t0,$t0,$sp
 sw $s5,100($t0)#_label8: k[n] =i
 
 label$7:
-li $t0,1# load immediate1
-addu $s5,$s5,$t0#_label7: i = i + 1
+addiu $s5,$s5,1#_label7: i = i + 1
 
 j label$5#GOTO _label5
 
 label$6:
-lw $t0,72($sp)#load variable#TMP31
-li $t1,0# load immediate0
-seq $t0,$s0,$t1#_label6: #TMP31 = s == 0
+seq $t0,$s0,0#_label6: #TMP30 = s == 0
 
-blez $t0,label$10#BZ #TMP31 _label10
+blez $t0,label$10#BZ #TMP30 _label10
 
-sw $t0,72($sp)#write back temporary variable #TMP31
 la $a0,string$5
 li $v0,4
 syscall #printstring
@@ -432,19 +263,16 @@ li $v0,11
 syscall #printchar
 li $s5,0
 label$11:
-lw $t0,68($sp)#load variable#TMP32
-sle $t0,$s5,$s2#_label11: #TMP32 = i <= n
+sle $t0,$s5,$s2#_label11: #TMP31 = i <= n
 
-blez $t0,label$12#BZ #TMP32 _label12
+blez $t0,label$12#BZ #TMP31 _label12
 
-sw $t0,68($sp)#write back temporary variable #TMP32
 la $a0,string$6
 li $v0,4
 syscall #printstring
-lw $t0,64($sp)#load variable#TMP33
 sll $t1,$s5,2
 addu $t1,$t1,$sp
-lw $t0,100($t1)##TMP33 = k [ i ] 
+lw $t0,100($t1)##TMP32 = k [ i ] 
 
 move $a0,$t0
 li $v0,1
@@ -452,12 +280,10 @@ syscall #printint
 li $a0,10
 li $v0,11
 syscall #printchar
-li $t2,1# load immediate1
-addu $s5,$s5,$t2#i = i + 1
+addiu $s5,$s5,1#i = i + 1
 
 j label$11#GOTO _label11
 
-sw $t0,64($sp)#write back temporary variable #TMP33
 label$12:
 la $a0,string$7
 li $v0,4
@@ -466,8 +292,7 @@ li $a0,10
 li $v0,11
 syscall #printchar
 label$10:
-li $t0,1# load immediate1
-addu $s1,$s1,$t0#_label10: j = j + 1
+addiu $s1,$s1,1#_label10: j = j + 1
 
 j label$3#GOTO _label3
 
@@ -487,103 +312,151 @@ syscall #printchar
 li $s3,0
 li $s5,100
 label$13:
-lw $t0,60($sp)#load variable#TMP34
-li $t1,100# load immediate100
-li $t2,128# load immediate128
-addu $t0,$t1,$t2#_label13: #TMP34 = 100 + 128
+li $t1,100	# load immediate 100
+addiu $t0,$t1,128#_label13: #TMP33 = 100 + 128
 
-lw $t3,56($sp)#load variable#TMP35
-slt $t3,$s5,$t0##TMP35 = i < #TMP34
+slt $t2,$s5,$t0##TMP34 = i < #TMP33
 
-blez $t3,label$14#BZ #TMP35 _label14
+blez $t2,label$14#BZ #TMP34 _label14
 
-sw $t0,60($sp)#write back temporary variable #TMP34
-sw $t3,56($sp)#write back temporary variable #TMP35
-li $t0,100# load immediate100
+li $t0,100	# load immediate 100
 div $s5,$t0
 mflo $s2#n = i / 100
 
-lw $t1,52($sp)#load variable#TMP37
-li $t2,10# load immediate10
+li $t2,10	# load immediate 10
 div $s5,$t2
-mflo $t1##TMP37 = i / 10
+mflo $t1##TMP36 = i / 10
 
-sw $t1,-8($sp)
 move $a0,$t1
-li $t3,10# load immediate10
-sw $t3,-4($sp)
+sw $t1,-8($sp)
+li $t3,10	# load immediate 10
+sw $a1,72($sp)
 move $a1,$t3
+sw $t3,-4($sp)
+sw $a2,76($sp)
+sw $s0,-40($sp)
+sw $s1,-36($sp)
+sw $s2,-32($sp)
+sw $s3,-28($sp)
+sw $s4,-24($sp)
+sw $s5,-20($sp)
 addiu $sp,$sp,-52
 jal mod
-sw $t1,52($sp)#write back temporary variable #TMP37
+lw $s0,-40($sp)
+lw $s1,-36($sp)
+lw $s2,-32($sp)
+lw $s3,-28($sp)
+lw $s4,-24($sp)
+lw $s5,-20($sp)
+lw $a1,72($sp)
+lw $a2,76($sp)
 move $s1,$v0#j=RET
 
-sw $s5,-8($sp)
 move $a0,$s5
-li $t0,10# load immediate10
-sw $t0,-4($sp)
+sw $s5,-8($sp)
+li $t0,10	# load immediate 10
+sw $a1,72($sp)
 move $a1,$t0
+sw $t0,-4($sp)
+sw $a2,76($sp)
+sw $s0,-40($sp)
+sw $s1,-36($sp)
+sw $s2,-32($sp)
+sw $s3,-28($sp)
+sw $s4,-24($sp)
+sw $s5,-20($sp)
 addiu $sp,$sp,-52
 jal mod
+lw $s0,-40($sp)
+lw $s1,-36($sp)
+lw $s2,-32($sp)
+lw $s3,-28($sp)
+lw $s4,-24($sp)
+lw $s5,-20($sp)
+lw $a1,72($sp)
+lw $a2,76($sp)
 move $s4,$v0#a=RET
 
-sw $s2,-12($sp)
 move $a0,$s2
-sw $s1,-8($sp)
+sw $s2,-12($sp)
+sw $a1,72($sp)
 move $a1,$s1
-sw $s4,-4($sp)
+sw $s1,-8($sp)
+sw $a2,76($sp)
 move $a2,$s4
+sw $s4,-4($sp)
+sw $s0,-44($sp)
+sw $s1,-40($sp)
+sw $s2,-36($sp)
+sw $s3,-32($sp)
+sw $s4,-28($sp)
+sw $s5,-24($sp)
 addiu $sp,$sp,-64
 jal full_num
-move $s0,$v0##TMP40=RET
+lw $s0,-44($sp)
+lw $s1,-40($sp)
+lw $s2,-36($sp)
+lw $s3,-32($sp)
+lw $s4,-28($sp)
+lw $s5,-24($sp)
+lw $a1,72($sp)
+lw $a2,76($sp)
+move $s0,$v0##TMP39=RET
 
-sw $s2,-12($sp)
 move $a0,$s2
-sw $s1,-8($sp)
+sw $s2,-12($sp)
+sw $a1,72($sp)
 move $a1,$s1
-sw $s4,-4($sp)
+sw $s1,-8($sp)
+sw $a2,76($sp)
 move $a2,$s4
+sw $s4,-4($sp)
+sw $s0,-44($sp)
+sw $s1,-40($sp)
+sw $s2,-36($sp)
+sw $s3,-32($sp)
+sw $s4,-28($sp)
+sw $s5,-24($sp)
 addiu $sp,$sp,-80
 jal flower_num
-lw $t0,44($sp)#load variable#TMP41
-move $t0,$v0##TMP41=RET
+lw $s0,-44($sp)
+lw $s1,-40($sp)
+lw $s2,-36($sp)
+lw $s3,-32($sp)
+lw $s4,-28($sp)
+lw $s5,-24($sp)
+lw $a1,72($sp)
+lw $a2,76($sp)
+move $t0,$v0##TMP40=RET
 
-lw $t1,40($sp)#load variable#TMP42
-seq $t1,$s0,$t0##TMP42 = #TMP40 == #TMP41
+seq $t1,$s0,$t0##TMP41 = #TMP39 == #TMP40
 
-blez $t1,label$15#BZ #TMP42 _label15
+blez $t1,label$15#BZ #TMP41 _label15
 
-sw $t0,44($sp)#write back temporary variable #TMP41
-sw $t1,40($sp)#write back temporary variable #TMP42
 sll $t0,$s3,2
 addu $t0,$t0,$sp
 sw $s5,100($t0)#k[y] =i
 
-li $t1,1# load immediate1
-addu $s3,$s3,$t1#y = y + 1
+addiu $s3,$s3,1#y = y + 1
 
 label$15:
-li $t0,1# load immediate1
-addu $s5,$s5,$t0#_label15: i = i + 1
+addiu $s5,$s5,1#_label15: i = i + 1
 
 j label$13#GOTO _label13
 
 label$14:
 li $s5,0
 label$16:
-lw $t0,36($sp)#load variable#TMP44
-slt $t0,$s5,$s3#_label16: #TMP44 = i < y
+slt $t0,$s5,$s3#_label16: #TMP43 = i < y
 
-blez $t0,label$17#BZ #TMP44 _label17
+blez $t0,label$17#BZ #TMP43 _label17
 
-sw $t0,36($sp)#write back temporary variable #TMP44
 la $a0,string$10
 li $v0,4
 syscall #printstring
-lw $t0,32($sp)#load variable#TMP45
 sll $t1,$s5,2
 addu $t1,$t1,$sp
-lw $t0,100($t1)##TMP45 = k [ i ] 
+lw $t0,100($t1)##TMP44 = k [ i ] 
 
 move $a0,$t0
 li $v0,1
@@ -591,12 +464,10 @@ syscall #printint
 li $a0,10
 li $v0,11
 syscall #printchar
-li $t2,1# load immediate1
-addu $s5,$s5,$t2#i = i + 1
+addiu $s5,$s5,1#i = i + 1
 
 j label$16#GOTO _label16
 
-sw $t0,32($sp)#write back temporary variable #TMP45
 label$17:
 la $a0,string$11
 li $v0,4
@@ -614,66 +485,65 @@ li $s2,0
 li $s3,1
 li $s0,2
 label$18:
-lw $t0,28($sp)#load variable#TMP46
-li $t1,128# load immediate128
-sle $t0,$s0,$t1#_label18: #TMP46 = m <= 128
+sle $t0,$s0,128#_label18: #TMP45 = m <= 128
 
-blez $t0,label$19#BZ #TMP46 _label19
+blez $t0,label$19#BZ #TMP45 _label19
 
-sw $t0,28($sp)#write back temporary variable #TMP46
-li $t0,2# load immediate2
+li $t0,2	# load immediate 2
 div $s0,$t0
 mflo $s1#k2 = m / 2
 
 li $s5,2
 label$20:
-lw $t0,24($sp)#load variable#TMP48
-sle $t0,$s5,$s1#_label20: #TMP48 = i <= k2
+sle $t0,$s5,$s1#_label20: #TMP47 = i <= k2
 
-blez $t0,label$21#BZ #TMP48 _label21
+blez $t0,label$21#BZ #TMP47 _label21
 
-sw $t0,24($sp)#write back temporary variable #TMP48
-lw $t0,20($sp)#load variable#TMP49
 div $s0,$s5
-mflo $t0##TMP49 = m / i
+mflo $t0##TMP48 = m / i
 
-lw $t1,660($sp)#load variablex2
-mul $t1,$t0,$s5#x2 = #TMP49 * i
+lw $t1,660($sp)	#load variablex2
+mul $t1,$t0,$s5#x2 = #TMP48 * i
 
-sw $s0,-8($sp)
 move $a0,$s0
-sw $s5,-4($sp)
+sw $s0,-8($sp)
+sw $a1,72($sp)
 move $a1,$s5
+sw $s5,-4($sp)
+sw $a2,76($sp)
+sw $s0,-40($sp)
+sw $s1,-36($sp)
+sw $s2,-32($sp)
+sw $s3,-28($sp)
+sw $s4,-24($sp)
+sw $s5,-20($sp)
 addiu $sp,$sp,-52
 jal mod
-sw $t0,20($sp)#write back temporary variable #TMP49
-sw $t1,660($sp)#write back temporary variable x2
-lw $t0,16($sp)#load variable#TMP51
-move $t0,$v0##TMP51=RET
+lw $s0,-40($sp)
+lw $s1,-36($sp)
+lw $s2,-32($sp)
+lw $s3,-28($sp)
+lw $s4,-24($sp)
+lw $s5,-20($sp)
+lw $a1,72($sp)
+lw $a2,76($sp)
+move $t0,$v0##TMP50=RET
 
-lw $t1,12($sp)#load variable#TMP52
-li $t2,0# load immediate0
-seq $t1,$t0,$t2##TMP52 = #TMP51 == 0
+seq $t1,$t0,0##TMP51 = #TMP50 == 0
 
-blez $t1,label$22#BZ #TMP52 _label22
+blez $t1,label$22#BZ #TMP51 _label22
 
-sw $t0,16($sp)#write back temporary variable #TMP51
-sw $t1,12($sp)#write back temporary variable #TMP52
 li $s3,0
 label$22:
-li $t0,1# load immediate1
-addu $s5,$s5,$t0#_label22: i = i + 1
+addiu $s5,$s5,1#_label22: i = i + 1
 
 j label$20#GOTO _label20
 
 label$21:
-lw $t0,8($sp)#load variable#TMP53
-li $t1,1# load immediate1
-seq $t0,$s3,$t1#_label21: #TMP53 = leap == 1
+seq $t0,$s3,1#_label21: #TMP52 = leap == 1
 
-blez $t0,label$23#BZ #TMP53 _label23
+blez $t0,label$23#BZ #TMP52 _label23
 
-sw $t0,8($sp)#write back temporary variable #TMP53
 la $a0,string$13
 li $v0,4
 syscall #printstring
@@ -683,26 +553,20 @@ syscall #printint
 li $a0,10
 li $v0,11
 syscall #printchar
-li $t0,1# load immediate1
-addu $s2,$s2,$t0#h = h + 1
+addiu $s2,$s2,1#h = h + 1
 
-lw $t1,4($sp)#load variable#TMP55
-li $t2,10# load immediate10
-div $s2,$t2
-mflo $t1##TMP55 = h / 10
+li $t1,10	# load immediate 10
+div $s2,$t1
+mflo $t0##TMP54 = h / 10
 
-lw $t3,660($sp)#load variablex2
-li $t4,10# load immediate10
-mul $t3,$t1,$t4#x2 = #TMP55 * 10
+lw $t2,660($sp)	#load variablex2
+li $t3,10	# load immediate 10
+mul $t2,$t0,$t3#x2 = #TMP54 * 10
 
-lw $t5,0($sp)#load variable#TMP57
-seq $t5,$t3,$s2##TMP57 = x2 == h
+seq $t4,$t2,$s2##TMP56 = x2 == h
 
-blez $t5,label$23#BZ #TMP57 _label23
+blez $t4,label$23#BZ #TMP56 _label23
 
-sw $t1,4($sp)#write back temporary variable #TMP55
-sw $t3,660($sp)#write back temporary variable x2
-sw $t5,0($sp)#write back temporary variable #TMP57
 la $a0,string$14
 li $v0,4
 syscall #printstring
@@ -711,8 +575,7 @@ li $v0,11
 syscall #printchar
 label$23:
 li $s3,1
-li $t0,1# load immediate1
-addu $s0,$s0,$t0#m = m + 1
+addiu $s0,$s0,1#m = m + 1
 
 j label$18#GOTO _label18
 
@@ -726,28 +589,21 @@ syscall #printint
 li $a0,10
 li $v0,11
 syscall #printchar
-lw $s0,668($sp)
-lw $s1,672($sp)
-lw $s2,676($sp)
-lw $s3,680($sp)
-lw $s4,684($sp)
-lw $s5,688($sp)
-lw $s6,692($sp)
-lw $s7,696($sp)
 lw $ra,700($sp)
 addiu $sp,$sp,704
 jr $ra
 main:
-addiu $sp,$sp,-8
-lw $t0,g_val#load global variable g_val
-li $t0,0
-sw $t0,g_val#write back global variable g_val
-li $t0,5# load immediate5
-sw $t0,-4($sp)
+addiu $sp,$sp,-4
+li $t0,5	# load immediate 5
 move $a0,$t0
+sw $t0,-4($sp)
+sw $a1,72($sp)
+sw $a2,76($sp)
 addiu $sp,$sp,-56
 jal factorial
-lw $t0,4($sp)#load variablen
+lw $a1,72($sp)
+lw $a2,76($sp)
+lw $t0,0($sp)	#load variablen
 move $t0,$v0#n=RET
 
 la $a0,string$16
@@ -759,27 +615,21 @@ syscall #printint
 li $a0,10
 li $v0,11
 syscall #printchar
-lw $t1,g_val#load global variable g_val
-li $t1,5
-sw $t1,g_val#write back global variable g_val
-lw $t1,g_val#load global variable g_val
-sw $t1,-4($sp)
+li $t1,5	# load immediate 5
 move $a0,$t1
-sw $t1,g_val#write back global variable g_val
-addiu $sp,$sp,-40
-jal add_g_val
-sw $t0,4($sp)#write back temporary variable n
-lw $t0,0($sp)#load variable#TMP59
-move $t0,$v0##TMP59=RET
-
-lw $t1,g_val#load global variable g_val
 sw $t1,-8($sp)
-move $a0,$t1
-sw $t0,-4($sp)
-move $a1,$t0
+li $t2,10	# load immediate 10
+sw $a1,72($sp)
+move $a1,$t2
+sw $t2,-4($sp)
+sw $a2,76($sp)
 addiu $sp,$sp,-48
 jal swap
-sw $t0,0($sp)#write back temporary variable #TMP59
-sw $t1,g_val#write back global variable g_val
+lw $a1,72($sp)
+lw $a2,76($sp)
+sw $a1,72($sp)
+sw $a2,76($sp)
 addiu $sp,$sp,-704
 jal complete_flower_num
+lw $a1,72($sp)
+lw $a2,76($sp)
