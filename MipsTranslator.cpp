@@ -384,18 +384,21 @@ void MipsTranslator::translate(MidCode c) {
 				}
 			}
 
-			
-			for (int i = 0; i < GLOBALREG; i++) {
-				if (Sstatus[i] != REGFREE) {
-					out << "sw " << name[i + 16] << "," << -report[s->id][1] - 32 + i * 4 << "($sp)" << endl;
+			if (!s->link->inlineable) {
+				for (int i = 0; i < GLOBALREG; i++) {
+					if (Sstatus[i] != REGFREE) {
+						out << "sw " << name[i + 16] << "," << -report[s->id][1] - 32 + i * 4 << "($sp)" << endl;
+					}
 				}
 			}
 
 			out << "addiu $sp,$sp," << -(report[s->id][0] + 36) << endl;
 			out << "jal " << s->name<<endl;
-			for (int i = 0; i < GLOBALREG; i++) {
-				if (Sstatus[i] != REGFREE) {
-					out << "lw " << name[i + 16] << "," << -report[s->id][1] - 32 + i * 4 << "($sp)" << endl;
+			if (!s->link->inlineable) {
+				for (int i = 0; i < GLOBALREG; i++) {
+					if (Sstatus[i] != REGFREE) {
+						out << "lw " << name[i + 16] << "," << -report[s->id][1] - 32 + i * 4 << "($sp)" << endl;
+					}
 				}
 			}
 			for (int i = 0; i < 4; i++) {

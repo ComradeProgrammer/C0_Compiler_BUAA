@@ -334,7 +334,7 @@ void GrammarAnalyzer::nonVoidFunctionDefination() {
 		if (entry != NULL) {
 			raw.midCodeInsert(MIDFUNC, MIDUNUSED,
 				entry->id, false,
-				retType == RETINT ? MIDINT : MIDCHAR, false, MIDNOLABEL);
+				(retType == INTTK ? MIDINT : MIDCHAR), false, MIDNOLABEL);
 		}
 		parameterList(entry);
 		//填入符号表信息
@@ -405,7 +405,7 @@ void GrammarAnalyzer::nonVoidFunctionDefination(Lexical retType,string functionN
 		if (entry != NULL) {
 			raw.midCodeInsert(MIDFUNC, MIDUNUSED,
 				entry->id, false,
-				retType == RETINT ? MIDINT : MIDCHAR, false, MIDNOLABEL);
+				(retType == INTTK ? MIDINT : MIDCHAR), false, MIDNOLABEL);
 		}
 		parameterList(entry);
 		//参数表

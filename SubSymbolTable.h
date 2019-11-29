@@ -31,6 +31,7 @@ struct FunctionLink {
 	vector<int>paraIds;
 	int tmpVarSize;
 	friend ostream& operator<<(ostream& stream,FunctionLink& f);
+	bool inlineable = false;
 };
 
 /*符号表项*/

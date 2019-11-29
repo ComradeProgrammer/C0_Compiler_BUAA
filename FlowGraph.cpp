@@ -53,11 +53,11 @@ void FlowGraph::addLink(Block* from, Block* to) {
 
 void FlowGraph::optimize() {
 	/*activeVariableAnalyze();
-	DAGoptimize();
+	DAGoptimize();*/
 	activeVariableAnalyze();
 	blockOptimize();
 	activeVariableAnalyze();
-	eliminateDeadCode();*/
+	eliminateDeadCode();
 	activeVariableAnalyze();
 	variableSummary();
 	conflictEdgeAnalyze();
@@ -87,6 +87,10 @@ void FlowGraph::activeVariableAnalyze() {
 }
 
 void FlowGraph::variableSummary() {
+	if (graph.size() == 1) {
+		SymbolEntry* currentFunction = MidCode::table->getSymbolById(functionId);
+		currentFunction->link->inlineable = true;
+	}
 	for (Block* i : graph) {
 		//所有跨基本块生存的变量
 		for (int active: i->activeIn) {

@@ -1,5 +1,5 @@
 const int MAX_NUM
-char factorial()
+int factorial()
 para int n
 #TMP2 = n <= 1
 BZ #TMP2 _label2
@@ -10,7 +10,7 @@ call factorial
 #TMP4=RET
 #TMP5 = n * #TMP4
 ret #TMP5
-char mod()
+int mod()
 para int x
 para int y
 #TMP6 = x / y
@@ -37,7 +37,7 @@ syscall-4 SWAP y =
 syscall-1 y
 syscall-11 10
 ret 
-char full_num()
+int full_num()
 para int n
 para int j
 para int a
@@ -46,7 +46,7 @@ para int a
 #TMP11 = #TMP9 + #TMP10
 #TMP12 = #TMP11 + a
 ret #TMP12
-char flower_num()
+int flower_num()
 para int n
 para int j
 para int a
@@ -220,7 +220,7 @@ call swap
 call complete_flower_num
 
 ====Block0====
-char factorial()
+int factorial()
 para int n
 #TMP2 = n <= 1
 BZ #TMP2 _label2
@@ -263,7 +263,7 @@ ret #TMP5
 	activeOut:[]
 ==============
 ====Block4====
-char mod()
+int mod()
 para int x
 para int y
 #TMP6 = x / y
@@ -289,12 +289,11 @@ syscall-1 y
 syscall-11 10
 temp=x
 x=y
-y=temp
 syscall-4 SWAP x = 
 syscall-1 x
 syscall-11 10
 syscall-4 SWAP y = 
-syscall-1 y
+syscall-1 temp
 syscall-11 10
 ret 
 	prev:[]
@@ -305,7 +304,7 @@ ret
 	activeOut:[]
 ==============
 ====Block6====
-char full_num()
+int full_num()
 para int n
 para int j
 para int a
@@ -322,7 +321,7 @@ ret #TMP12
 	activeOut:[]
 ==============
 ====Block7====
-char flower_num()
+int flower_num()
 para int n
 para int j
 para int a
@@ -363,9 +362,9 @@ BZ #TMP21 _label4
 	activeOut:[k,j,]
 ==============
 ====Block10====
+i=1
 n=-1
 s=j
-i=1
 	prev:[9,]
 	next:[11,]
 	use:[j,]
@@ -385,14 +384,13 @@ BZ #TMP22 _label6
 ==============
 ====Block12====
 #TMP23 = j / i
-x1 = #TMP23 * i
 push j
 push i
 call mod
 	prev:[11,]
 	next:[13,]
 	use:[i,j,]
-	def:[#TMP23,x1,]
+	def:[#TMP23,]
 	activeIn:[k,i,j,n,s,]
 	activeOut:[k,i,j,n,s,]
 ==============
@@ -520,8 +518,8 @@ _label4: syscall-4 -------------------------------------------------------------
 syscall-11 10
 syscall-4 'water flower'number is:
 syscall-11 10
-y=0
 i=100
+y=0
 	prev:[23,9,]
 	next:[25,]
 	use:[]
@@ -660,9 +658,9 @@ _label17: syscall-4
 syscall-11 10
 syscall-4 ---------------------------------------------------------------
 syscall-11 10
+m=2
 h=0
 leap=1
-m=2
 	prev:[35,34,]
 	next:[37,]
 	use:[]
@@ -702,14 +700,13 @@ BZ #TMP47 _label21
 ==============
 ====Block40====
 #TMP48 = m / i
-x2 = #TMP48 * i
 push m
 push i
 call mod
 	prev:[39,]
 	next:[41,]
 	use:[i,m,]
-	def:[#TMP48,x2,]
+	def:[#TMP48,]
 	activeIn:[i,m,k2,h,leap,]
 	activeOut:[i,m,k2,h,leap,]
 ==============
@@ -780,8 +777,8 @@ syscall-11 10
 	activeOut:[m,h,]
 ==============
 ====Block47====
-_label23: leap=1
-m = m + 1
+_label23: m = m + 1
+leap=1
 GOTO _label18
 	prev:[46,44,45,]
 	next:[48,37,]
@@ -840,7 +837,7 @@ call complete_flower_num
 
 
 const int MAX_NUM
-char factorial()
+int factorial()
 para int n
 #TMP2 = n <= 1
 BZ #TMP2 _label2
@@ -851,7 +848,7 @@ call factorial
 #TMP4=RET
 #TMP5 = n * #TMP4
 ret #TMP5
-char mod()
+int mod()
 para int x
 para int y
 #TMP6 = x / y
@@ -870,15 +867,14 @@ syscall-1 y
 syscall-11 10
 temp=x
 x=y
-y=temp
 syscall-4 SWAP x = 
 syscall-1 x
 syscall-11 10
 syscall-4 SWAP y = 
-syscall-1 y
+syscall-1 temp
 syscall-11 10
 ret 
-char full_num()
+int full_num()
 para int n
 para int j
 para int a
@@ -887,7 +883,7 @@ para int a
 #TMP11 = #TMP9 + #TMP10
 #TMP12 = #TMP11 + a
 ret #TMP12
-char flower_num()
+int flower_num()
 para int n
 para int j
 para int a
@@ -919,13 +915,12 @@ void complete_flower_num()
 j=2
 _label3: #TMP21 = j < 128
 BZ #TMP21 _label4
+i=1
 n=-1
 s=j
-i=1
 _label5: #TMP22 = i < j
 BZ #TMP22 _label6
 #TMP23 = j / i
-x1 = #TMP23 * i
 push j
 push i
 call mod
@@ -964,8 +959,8 @@ _label4: syscall-4 -------------------------------------------------------------
 syscall-11 10
 syscall-4 'water flower'number is:
 syscall-11 10
-y=0
 i=100
+y=0
 _label13: #TMP33 = 100 + 128
 #TMP34 = i < #TMP33
 BZ #TMP34 _label14
@@ -1008,9 +1003,9 @@ _label17: syscall-4
 syscall-11 10
 syscall-4 ---------------------------------------------------------------
 syscall-11 10
+m=2
 h=0
 leap=1
-m=2
 _label18: #TMP45 = m <= 128
 BZ #TMP45 _label19
 k2 = m / 2
@@ -1018,7 +1013,6 @@ i=2
 _label20: #TMP47 = i <= k2
 BZ #TMP47 _label21
 #TMP48 = m / i
-x2 = #TMP48 * i
 push m
 push i
 call mod
@@ -1040,8 +1034,8 @@ x2 = #TMP54 * 10
 BZ #TMP56 _label23
 syscall-4  
 syscall-11 10
-_label23: leap=1
-m = m + 1
+_label23: m = m + 1
+leap=1
 GOTO _label18
 _label19: syscall-4 The total is 
 syscall-1 h

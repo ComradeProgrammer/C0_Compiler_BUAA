@@ -115,6 +115,24 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 					res.push_back(c);
 					break;
 				}
+
+				set<int>del;
+				for (map<int, Item>::iterator itr = substitution.begin();
+					itr != substitution.end(); itr++) {
+					if (!itr->second.isImmediate && itr->second.id == c.target) {
+						MidCode tmp2;
+						tmp2.op = MIDASSIGN; tmp2.target = itr->first;
+						tmp2.operand1 = itr->second.id; tmp2.isImmediate1 = itr->second.isImmediate;
+						tmp2.operand2 = -1; tmp2.isImmediate2 = false;
+						tmp2.labelNo = -1;
+						res.push_back(tmp2);
+						del.insert(itr->first);
+					}
+				}
+				for (int j : del) {
+					substitution.erase(j);
+				}
+
 				Item tmp;
 				tmp.id=  c.operand1;
 				tmp.isImmediate = c.isImmediate1;

@@ -96,8 +96,6 @@ lw $t0,40($sp)#temp=x
 lw $a0,40($sp)	#load variablex
 move $a0,$a1#x=y
 
-move $a1,$t0#y=temp
-
 sw $a0,40($sp)
 la $a0,string$2
 li $v0,4
@@ -118,7 +116,7 @@ li $v0,4
 syscall #printstring
 lw $a0,40($sp)	#load variablex
 sw $a0,40($sp)
-move $a0,$a1
+move $a0,$t0
 li $v0,1
 syscall #printint
 lw $a0,40($sp)	#load variablex
@@ -175,10 +173,10 @@ slti $t0,$s1,128#_label3: #TMP21 = j < 128
 
 blez $t0,label$4#BZ #TMP21 _label4
 
+li $s5,1
 li $s2,-1
 move $s0,$s1#s=j
 
-li $s5,1
 label$5:
 slt $t0,$s5,$s1#_label5: #TMP22 = i < j
 
@@ -187,9 +185,6 @@ blez $t0,label$6#BZ #TMP22 _label6
 div $s1,$s5
 mflo $t0##TMP23 = j / i
 
-lw $t1,656($sp)	#load variablex1
-mul $t1,$t0,$s5#x1 = #TMP23 * i
-
 sw $a0,68($sp)
 move $a0,$s1
 sw $s1,-8($sp)
@@ -197,20 +192,8 @@ sw $a1,72($sp)
 move $a1,$s5
 sw $s5,-4($sp)
 sw $a2,76($sp)
-sw $s0,-40($sp)
-sw $s1,-36($sp)
-sw $s2,-32($sp)
-sw $s3,-28($sp)
-sw $s4,-24($sp)
-sw $s5,-20($sp)
 addiu $sp,$sp,-52
 jal mod
-lw $s0,-40($sp)
-lw $s1,-36($sp)
-lw $s2,-32($sp)
-lw $s3,-28($sp)
-lw $s4,-24($sp)
-lw $s5,-20($sp)
 lw $a0,68($sp)
 lw $a1,72($sp)
 lw $a2,76($sp)
@@ -309,8 +292,8 @@ syscall #printstring
 li $a0,10
 li $v0,11
 syscall #printchar
-li $s3,0
 li $s5,100
+li $s3,0
 label$13:
 li $t1,100	# load immediate 100
 addiu $t0,$t1,128#_label13: #TMP33 = 100 + 128
@@ -334,20 +317,8 @@ sw $a1,72($sp)
 move $a1,$t3
 sw $t3,-4($sp)
 sw $a2,76($sp)
-sw $s0,-40($sp)
-sw $s1,-36($sp)
-sw $s2,-32($sp)
-sw $s3,-28($sp)
-sw $s4,-24($sp)
-sw $s5,-20($sp)
 addiu $sp,$sp,-52
 jal mod
-lw $s0,-40($sp)
-lw $s1,-36($sp)
-lw $s2,-32($sp)
-lw $s3,-28($sp)
-lw $s4,-24($sp)
-lw $s5,-20($sp)
 lw $a1,72($sp)
 lw $a2,76($sp)
 move $s1,$v0#j=RET
@@ -359,20 +330,8 @@ sw $a1,72($sp)
 move $a1,$t0
 sw $t0,-4($sp)
 sw $a2,76($sp)
-sw $s0,-40($sp)
-sw $s1,-36($sp)
-sw $s2,-32($sp)
-sw $s3,-28($sp)
-sw $s4,-24($sp)
-sw $s5,-20($sp)
 addiu $sp,$sp,-52
 jal mod
-lw $s0,-40($sp)
-lw $s1,-36($sp)
-lw $s2,-32($sp)
-lw $s3,-28($sp)
-lw $s4,-24($sp)
-lw $s5,-20($sp)
 lw $a1,72($sp)
 lw $a2,76($sp)
 move $s4,$v0#a=RET
@@ -385,20 +344,8 @@ sw $s1,-8($sp)
 sw $a2,76($sp)
 move $a2,$s4
 sw $s4,-4($sp)
-sw $s0,-44($sp)
-sw $s1,-40($sp)
-sw $s2,-36($sp)
-sw $s3,-32($sp)
-sw $s4,-28($sp)
-sw $s5,-24($sp)
 addiu $sp,$sp,-64
 jal full_num
-lw $s0,-44($sp)
-lw $s1,-40($sp)
-lw $s2,-36($sp)
-lw $s3,-32($sp)
-lw $s4,-28($sp)
-lw $s5,-24($sp)
 lw $a1,72($sp)
 lw $a2,76($sp)
 move $s0,$v0##TMP39=RET
@@ -411,20 +358,8 @@ sw $s1,-8($sp)
 sw $a2,76($sp)
 move $a2,$s4
 sw $s4,-4($sp)
-sw $s0,-44($sp)
-sw $s1,-40($sp)
-sw $s2,-36($sp)
-sw $s3,-32($sp)
-sw $s4,-28($sp)
-sw $s5,-24($sp)
 addiu $sp,$sp,-80
 jal flower_num
-lw $s0,-44($sp)
-lw $s1,-40($sp)
-lw $s2,-36($sp)
-lw $s3,-32($sp)
-lw $s4,-28($sp)
-lw $s5,-24($sp)
 lw $a1,72($sp)
 lw $a2,76($sp)
 move $t0,$v0##TMP40=RET
@@ -481,9 +416,9 @@ syscall #printstring
 li $a0,10
 li $v0,11
 syscall #printchar
+li $s0,2
 li $s2,0
 li $s3,1
-li $s0,2
 label$18:
 sle $t0,$s0,128#_label18: #TMP45 = m <= 128
 
@@ -502,29 +437,14 @@ blez $t0,label$21#BZ #TMP47 _label21
 div $s0,$s5
 mflo $t0##TMP48 = m / i
 
-lw $t1,660($sp)	#load variablex2
-mul $t1,$t0,$s5#x2 = #TMP48 * i
-
 move $a0,$s0
 sw $s0,-8($sp)
 sw $a1,72($sp)
 move $a1,$s5
 sw $s5,-4($sp)
 sw $a2,76($sp)
-sw $s0,-40($sp)
-sw $s1,-36($sp)
-sw $s2,-32($sp)
-sw $s3,-28($sp)
-sw $s4,-24($sp)
-sw $s5,-20($sp)
 addiu $sp,$sp,-52
 jal mod
-lw $s0,-40($sp)
-lw $s1,-36($sp)
-lw $s2,-32($sp)
-lw $s3,-28($sp)
-lw $s4,-24($sp)
-lw $s5,-20($sp)
 lw $a1,72($sp)
 lw $a2,76($sp)
 move $t0,$v0##TMP50=RET
@@ -574,9 +494,9 @@ li $a0,10
 li $v0,11
 syscall #printchar
 label$23:
-li $s3,1
-addiu $s0,$s0,1#m = m + 1
+addiu $s0,$s0,1#_label23: m = m + 1
 
+li $s3,1
 j label$18#GOTO _label18
 
 label$19:
