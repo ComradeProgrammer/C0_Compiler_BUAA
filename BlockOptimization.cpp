@@ -78,6 +78,7 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 				for (int j : del) {
 					substitution.erase(j);
 				}
+				substitution.erase(c.target);
 				res.push_back(tmp);
 				break;
 			}
@@ -105,6 +106,7 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 				for (int j : del) {
 					substitution.erase(j);
 				}
+				substitution.erase(c.target);
 				res.push_back(tmp);
 				break;
 			}
@@ -163,6 +165,7 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 				for (int j : del) {
 					substitution.erase(j);
 				}
+				substitution.erase(c.target);
 				res.push_back(tmp);
 				break;
 			}
@@ -202,6 +205,7 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 				for (int j : del) {
 					substitution.erase(j);
 				}
+				substitution.erase(c.target);
 				res.push_back(tmp);
 				break;
 			}
@@ -221,7 +225,8 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 	}
 	//todo implement
 	for (auto& i : substitution) {
-		if (activeOut.find(i.first) != activeOut.end()) {
+		SymbolEntry* e = MidCode::table->getSymbolById(i.first);
+		if (activeOut.find(i.first) != activeOut.end()||e->scope=="") {
 			MidCode tmp2;
 			tmp2.op = MIDASSIGN; tmp2.target = i.first;
 			tmp2.operand1 = i.second.id; tmp2.isImmediate1 = i.second.isImmediate;

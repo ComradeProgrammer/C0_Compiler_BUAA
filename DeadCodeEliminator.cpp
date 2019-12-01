@@ -17,7 +17,9 @@ vector<MidCode> DeadCodeEliminator::eliminateDeadCode(vector<MidCode>& v) {
 			|| i.op == MIDDIV || i.op == MIDLSS || i.op == MIDLEQ
 			|| i.op == MIDGRE || i.op == MIDGEQ || i.op == MIDEQL
 			|| i.op == MIDNEQ || i.op == MIDARRAYGET) {
-			if (localActive.find(i.target) == localActive.end()) {
+			SymbolEntry* entry = MidCode::table->getSymbolById(i.target);
+			if (localActive.find(i.target) == localActive.end()
+				&& (i.target < 0 || entry->scope != "")) {
 				del.push_back(line);
 			}
 			else {
@@ -39,7 +41,9 @@ vector<MidCode> DeadCodeEliminator::eliminateDeadCode(vector<MidCode>& v) {
 		}
 		//使用operand1并返回值，其中assign需要考虑排除-1
 		else if (i.op == MIDNEGATE || i.op == MIDASSIGN) {
-			if (localActive.find(i.target) == localActive.end()) {
+			SymbolEntry* entry = MidCode::table->getSymbolById(i.target);
+			if (localActive.find(i.target) == localActive.end()
+				&&(i.target<0||entry->scope!="")) {
 				del.push_back(line);
 			}
 			else {

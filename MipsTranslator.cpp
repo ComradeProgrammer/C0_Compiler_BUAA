@@ -281,13 +281,15 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 			if (entry->type == TYPEINT || entry->type == TYPECHAR || entry->type == TYPETMP
 				||entry->type==TYPEINTCONST||entry->type==TYPECHARCONST) {
 				//此处可以建立机制防止未初始化的内存被加载进入寄存器，可以节省访存
-				if (!(var < 0 && globalVariable.find(var) == globalVariable.end())) {
+				if (!(var < 0 && globalVariable.find(var) == globalVariable.end()
+					&&loaded.find(var)==loaded.end())) {
 					int bias = entry->addr;
 					out << "lw " << name[res[0]] << "," << bias << "($sp)";
 					out << "	#load variable" << MidCode::getOperandName(var, false);
 					out << endl;
-					loaded.insert(var);
+					//loaded.insert(var);
 				}
+				loaded.insert(var);
 			}
 			//在传入变量是数组时返回数组地址，不过这段代码现在应该永远不会被执行
 			else if (entry->type == TYPEINTARRAY || entry->type == TYPECHARARRAY) {
@@ -348,9 +350,10 @@ void MipsTranslator::translate(MidCode c) {
 				//若不是main函数，保存s寄存器，返回地址，不需要下移sp因为call时候会移动的
 				out << "sw $ra," << report[s->id][0] - report[s->id][1] + 32 << "($sp)";
 				out << "#save the return value" << endl;
-				/*for (int i = 0; i < GLOBALREG; i++) {
-					out << "sw " << name[i + 16] << "," << report[s->id][0] - report[s->id][1] + i * 4 << "($sp)" << endl;
-				}*/
+				for (int i = 0; i < GLOBALREG; i++) {
+					if(Sstatus[i]==REGVAR)
+						out << "sw " << name[i + 16] << "," << report[s->id][0] - report[s->id][1] + i * 4 << "($sp)" << endl;
+				}
 				for (int i = 0; i < 4 && i < s->link->paraNum; i++) {
 					varReg[s->link->paraIds[i]] = Aregister[i];
 					Astatus[i] = REGVAR;
@@ -384,23 +387,23 @@ void MipsTranslator::translate(MidCode c) {
 				}
 			}
 
-			if (!s->link->inlineable) {
+			/*if (!s->link->inlineable) {
 				for (int i = 0; i < GLOBALREG; i++) {
 					if (Sstatus[i] != REGFREE) {
 						out << "sw " << name[i + 16] << "," << -report[s->id][1] - 32 + i * 4 << "($sp)" << endl;
 					}
 				}
-			}
+			}*/
 
 			out << "addiu $sp,$sp," << -(report[s->id][0] + 36) << endl;
 			out << "jal " << s->name<<endl;
-			if (!s->link->inlineable) {
+			/*if (!s->link->inlineable) {
 				for (int i = 0; i < GLOBALREG; i++) {
 					if (Sstatus[i] != REGFREE) {
 						out << "lw " << name[i + 16] << "," << -report[s->id][1] - 32 + i * 4 << "($sp)" << endl;
 					}
 				}
-			}
+			}*/
 			for (int i = 0; i < 4; i++) {
 				if (Astatus[i] == REGVAR) {
 					SymbolEntry* tmp = MidCode::table->getSymbolById(Auser[i]);
@@ -436,10 +439,11 @@ void MipsTranslator::translate(MidCode c) {
 				else if (c.isImmediate1) {
 					out << "li $v0," << c.operand1 << endl;
 				}
-				/*for (int i = 0; i < GLOBALREG; i++) {
+				for (int i = 0; i < GLOBALREG; i++) {
+					if(Sstatus[i]==REGVAR)
 					out << "lw " << name[i + 16] << "," << report[currentFunction][0] -
 						report[currentFunction][1] + i * 4 << "($sp)" << endl;
-				}*/
+				}
 				out << "lw $ra," << report[currentFunction][0]
 					- report[currentFunction][1] + 32 << "($sp)" << endl;
 				out << "addiu $sp,$sp," << report[currentFunction][0] + 36 << endl;
@@ -979,6 +983,7 @@ void MipsTranslator::translate(MidCode c) {
 				}
 			}
 			else if (c.isImmediate1) {
+				revokeAregister(4);
 				out << "li $a0," << c.operand1 << endl;
 			}
 			out << "li $v0,1" << endl;
@@ -1014,6 +1019,7 @@ void MipsTranslator::translate(MidCode c) {
 				}
 			}
 			else if (c.isImmediate1) {
+				revokeAregister(4);
 				out << "li $a0," << c.operand1 << endl;
 			}
 			out << "li $v0,11" << endl;
