@@ -162,7 +162,6 @@ void MipsTranslator::translate(MidCode c) {
 		{
 
 			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
-			writeBackAfterBlock();
 			if (func->name != "main") {
 				//不是main函数，如果是main函数就没啥需要干的了,向v0寄存器写入返回值
 				if (c.operand1 != -1 && !c.isImmediate1) {
@@ -437,8 +436,7 @@ void MipsTranslator::translate(MidCode c) {
 			out << "li $v0,12" << endl;
 			out << "syscall" << endl;
 			out << "move " << name[target] <<",$v0"<< endl;
-			specialVarwriteback(c.target, false);
-			writeBackAfterBlock();
+			writeback(c.target, 8);
 			break;
 		}
 		case MIDREADINTEGER:
@@ -447,8 +445,7 @@ void MipsTranslator::translate(MidCode c) {
 			out << "li $v0,5" << endl;
 			out << "syscall" << endl;
 			out << "move " << name[target] << ",$v0" << endl;
-			specialVarwriteback(c.target, false);
-			writeBackAfterBlock();
+			writeback(c.target, 8);
 			break;
 		}
 		case MIDNOP:
