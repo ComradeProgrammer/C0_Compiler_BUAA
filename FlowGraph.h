@@ -21,7 +21,4 @@ public:
 	void activeVariableAnalyze();
 	void conflictEdgeAnalyze();
 	void variableSummary();
-	void DAGoptimize();
-	void eliminateDeadCode();
-	void blockOptimize();
 };

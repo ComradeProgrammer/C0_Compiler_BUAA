@@ -15,7 +15,7 @@ public:
 	void setReport(map<int, vector<int>>report);
 	void generateProgramHeader();
 	void translateFunction(FlowGraph& g);
-	
+
 private:
 	int currentFunction;
 	Block* currentBlock = nullptr;
@@ -24,20 +24,7 @@ private:
 	set<int>allVariable;
 	map<int, set<int>>conflictMap;
 	map<int, vector<int>> report;//记录着每个函数栈大小的信息
-	//全局寄存器分配
-	vector<int>Sregister = { 16,17,18,19,20,21,22,23 };
-	vector<int>Sstatus = { 0,0,0,0,0,0,0,0 };
-	map<int,set<int>>SregisterUser;//一个s寄存器可以分给多个变量，所以要如此使用
-	//临时寄存器分配
-	vector<int>Tregister = { 8,9,10,11,12,13,14,15,24,25 };
-	vector<int>Tstatus = { 0,0,0,0,0,0,0,0,0,0,0 };
-	vector<int>Tuser = { -1,-1,-1,-1,-1,-1,-1,-1,-1,-1 };
-	// 参数寄存器分配
-	vector<int>Aregister = {4,5,6,7};
-	vector<int>Astatus = { 0,0,0,0 };
-	vector<int>Auser = { -1,-1,-1,-1 };
-	inline int getTmpRegIndex(int i);
-	//当前策略:全局变量，参数不得占用临时寄存器，必须立即写回
+
 
 	//变量-寄存器
 	map<int, int>varReg;
@@ -53,19 +40,9 @@ private:
 	fstream out;
 
 	void translateBlock(Block* b);
-	void SregisterAlloc();
-	vector<int> TregisterAlloc(int var, int isImmediate
-		, vector<int>conflictVar, vector<int> conflictReg);
-	int loadOperand(int var, int isImmediate
-		, vector<int>conflictVar, vector<int> conflictReg);
-	void writeback(int var,int reg);
+
+	int loadOperand(int var, bool isImmediate, int reg);
+	void writeback(int var, int reg);
 	void translate(MidCode c);
 	void translate(vector<MidCode>c);
-	void specialVarwriteback(int var,bool isImmediate);
-	void revokeAregister(int reg);
-	void writeBackAfterBlock();
-
-
-
-
 };

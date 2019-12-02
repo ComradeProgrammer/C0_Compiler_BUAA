@@ -174,19 +174,6 @@ vector<vector<int>>Block::conflictEdgeAnalyze(){
 	return res;
 }
 
-void Block::DAGoptimize() {
-	DagMap dag(activeOut,activeIn);
-	for (MidCode c : v) {
-		dag.handleMidCode(c);
-	}
-	v = dag.dumpMidCode();
-}
-
-void Block::eliminateDeadCode() {
-	DeadCodeEliminator eliminator(activeOut);
-	v=eliminator.eliminateDeadCode(v);
-}
-
 set<int>Block::setUnion(set<int> a, set<int> b) {
 	set<int>res;
 	for (int i : a) {
@@ -255,7 +242,3 @@ ostream& operator<<(ostream& out, Block b) {
 	return out;
 }
 
-void Block::blockOptimize() {
-	BlockOptimization bop(activeOut);
-	v = bop.propagationInBlock(v);
-}
