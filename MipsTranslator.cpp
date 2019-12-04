@@ -136,13 +136,19 @@ void MipsTranslator::SregisterAlloc() {
 					varReg[i] = Sregister[j];
 					Sstatus[j] = REGVAR;
 					SregisterUser[j + 16].insert(i);
-					cout << "assign reg $s" << j << "to var No." << i << endl;
+					//cout << "assign reg $s" << j << "to var No." << i << endl;
 					break;
 				}
 			}
 		}
 	}
 }
+vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
+	, vector<int>conflictVar, vector<int> conflictReg) {
+	
+	return TregisterAlloc(var, isImmediate, conflictVar, conflictReg,nullptr);
+}
+
 	/*
 	@param
 	var:待分配寄存器的变量编号/立即数值，若为-1则意味着分配一个临时寄存器
@@ -154,7 +160,7 @@ void MipsTranslator::SregisterAlloc() {
 	在返回时寄存器将已被进行所有注册，只有写回操作需要完成（？？为啥这么干来着我忘了）
 	*/
 vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
-	, vector<int>conflictVar, vector<int> conflictReg) {
+	, vector<int>conflictVar, vector<int> conflictReg,set<int>*activeVariable) {
 	//如果是变量（不是立即数）且已经分配了寄存器，直接返回
 	if (!isImmediate&&var!=-1&&varReg[var] >0) {
 		return { varReg[var],-1 };
@@ -174,6 +180,36 @@ vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 					varReg[var] = Tregister[i];//登记
 				}
 				return { Tregister[i],-1 };
+			}
+		}
+		if (nullptr != activeVariable) {
+			for (int i = 0; i < TMPREG; i++) {
+				if (Tstatus[i] == REGVAR &&
+					find(conflictVar.begin(), conflictVar.end(), Tuser[i]) != conflictVar.end()) {
+					continue;//不分配相关变量的寄存器
+				}
+				else if (Tstatus[i] == REGOCCUPY &&
+					find(conflictReg.begin(), conflictReg.end(), Tregister[i]) != conflictReg.end()) {
+					continue;//不分配相关变量占用的寄存器
+				}
+				if (Tstatus[i] == REGVAR &&/*Tuser[i]<-1&&*/
+					activeVariable->find(Tuser[i]) == activeVariable->end()) {
+					//这是不活跃的变量
+					SymbolEntry* entry = MidCode::table->getSymbolById(Tuser[i]);
+					if (entry->scope == "") {
+						continue;
+					}
+					if (isImmediate || var == -1) {
+						Tstatus[i] = REGOCCUPY;//改状态
+						Tuser[i] = -1;//改使用者
+					}
+					else {
+						Tstatus[i] = REGVAR;
+						Tuser[i] = var;
+						varReg[var] = Tregister[i];//登记
+					}
+					return { Tregister[i],-1 };
+				}
 			}
 		}
 		//此处分配策略可选择进行优化
@@ -231,14 +267,15 @@ void MipsTranslator::setReport(map<int, vector<int>>_report) {
 }
 
 int MipsTranslator::loadOperand(int var, int isImmediate
-	, vector<int>conflictVar, vector<int> conflictReg) {
+	, vector<int>conflictVar, vector<int> conflictReg, set<int>* activeVariable) {
 	if (var!=-1&&!isImmediate && varReg[var] >0) {
 		//已分配寄存器
 		return varReg[var];
 	}
 	else if (isImmediate) {
 		//是立即数
-		vector<int>res = TregisterAlloc(var, isImmediate, conflictVar, conflictReg);
+		vector<int>res = TregisterAlloc(var, isImmediate, conflictVar
+			, conflictReg, activeVariable);
 		if (res[1] != -1) { writeback(res[1], res[0]); }//写回
 		out << "li " << name[res[0]] << "," << var;
 		out << "	# load immediate " << var;
@@ -247,7 +284,8 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 	}
 	else {
 		if (var == -1) { 
-			vector<int>res = TregisterAlloc(var, isImmediate, conflictVar, conflictReg);
+			vector<int>res = TregisterAlloc(var, isImmediate, conflictVar
+				, conflictReg,activeVariable);
 			if (res[1] != -1) { writeback(res[1], res[0]); }
 			return res[0]; 
 		}
@@ -272,7 +310,7 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 				return order+4;
 			}
 		}
-		res = TregisterAlloc(var, isImmediate, conflictVar, conflictReg);
+		res = TregisterAlloc(var, isImmediate, conflictVar, conflictReg, activeVariable);
 		if (res[1] != -1) { writeback( res[1],res[0] ); }
 		
 		
@@ -410,6 +448,7 @@ void MipsTranslator::translate(MidCode c) {
 					out << "lw " << name[Aregister[i]] << "," << tmp->addr << "($sp)" << endl;
 				}
 			}
+			out << "#" << c << endl;
 			break;
 		}
 		case MIDRET:
@@ -449,6 +488,7 @@ void MipsTranslator::translate(MidCode c) {
 				out << "addiu $sp,$sp," << report[currentFunction][0] + 36 << endl;
 				out << "jr $ra" << endl;
 			}
+			out << "#" << c << endl;
 			break;
 		}
 		case MIDADD:
@@ -456,12 +496,12 @@ void MipsTranslator::translate(MidCode c) {
 			if (c.isImmediate2) {
 				vector<int>conflictVar;
 				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
-				int target = loadOperand(c.target, false, conflictVar, {});
+				int target = loadOperand(c.target, false, conflictVar, {},&(c.activeVariable));
 
 				conflictVar.clear();
 				conflictVar.push_back(c.target);
 				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-					{ target });
+					{ target }, &(c.activeVariable));
 
 				out << "addiu " << name[target] << "," << name[operand1] << "," << c.operand2;
 				out << "#" << c << endl;
@@ -473,19 +513,19 @@ void MipsTranslator::translate(MidCode c) {
 			vector<int>conflictVar;
 			if (!c.isImmediate1) {conflictVar.push_back(c.operand1);}
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-			int target = loadOperand(c.target, false, conflictVar, {});
+			int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-				{ target });
+				{ target }, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			int operand2 = loadOperand(c.operand2, c.isImmediate2, conflictVar,
-				{ target,operand1 });
+				{ target,operand1 }, &(c.activeVariable));
 
 			out << "addu " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c<<endl;
@@ -497,12 +537,12 @@ void MipsTranslator::translate(MidCode c) {
 			if (c.isImmediate2) {
 				vector<int>conflictVar;
 				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
-				int target = loadOperand(c.target, false, conflictVar, {});
+				int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 				conflictVar.clear();
 				conflictVar.push_back(c.target);
 				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-					{ target });
+					{ target }, &(c.activeVariable));
 
 				out << "subiu " << name[target] << "," << name[operand1] << "," << c.operand2;
 				out << "#" << c << endl;
@@ -512,19 +552,19 @@ void MipsTranslator::translate(MidCode c) {
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-			int target = loadOperand(c.target, false, conflictVar, {});
+			int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-				{ target });
+				{ target }, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			int operand2 = loadOperand(c.operand2, c.isImmediate2, conflictVar,
-				{ target,operand1 });
+				{ target,operand1 }, &(c.activeVariable));
 
 			out << "subu " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
@@ -536,19 +576,19 @@ void MipsTranslator::translate(MidCode c) {
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-			int target = loadOperand(c.target, false, conflictVar, {});
+			int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-				{ target });
+				{ target }, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			int operand2 = loadOperand(c.operand2, c.isImmediate2, conflictVar,
-				{ target,operand1 });
+				{ target,operand1 }, &(c.activeVariable));
 
 			out << "mul " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
@@ -560,19 +600,19 @@ void MipsTranslator::translate(MidCode c) {
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-			int target = loadOperand(c.target, false, conflictVar, {});
+			int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-				{ target });
+				{ target }, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			int operand2 = loadOperand(c.operand2, c.isImmediate2, conflictVar,
-				{ target,operand1 });
+				{ target,operand1 }, &(c.activeVariable));
 
 			out << "div "  << name[operand1] << "," << name[operand2]<<endl;
 			out << "mflo " << name[target];
@@ -586,12 +626,12 @@ void MipsTranslator::translate(MidCode c) {
 			if (c.isImmediate2&&c.operand2>=0&&c.operand2<=32767) {
 				vector<int>conflictVar;
 				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
-				int target = loadOperand(c.target, false, conflictVar, {});
+				int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 				conflictVar.clear();
 				conflictVar.push_back(c.target);
 				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-					{ target });
+					{ target }, &(c.activeVariable));
 
 				out << "slti " << name[target] << "," << name[operand1] << "," << c.operand2;
 				out << "#" << c << endl;
@@ -601,19 +641,19 @@ void MipsTranslator::translate(MidCode c) {
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-			int target = loadOperand(c.target, false, conflictVar, {});
+			int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-				{ target });
+				{ target }, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			int operand2 = loadOperand(c.operand2, c.isImmediate2, conflictVar,
-				{ target,operand1 });
+				{ target,operand1 }, &(c.activeVariable));
 
 			out << "slt " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
@@ -625,12 +665,12 @@ void MipsTranslator::translate(MidCode c) {
 			if (c.isImmediate2) {
 				vector<int>conflictVar;
 				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
-				int target = loadOperand(c.target, false, conflictVar, {});
+				int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 				conflictVar.clear();
 				conflictVar.push_back(c.target);
 				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-					{ target });
+					{ target }, &(c.activeVariable));
 
 				out << "sle " << name[target] << "," << name[operand1] << "," << c.operand2;
 				out << "#" << c << endl;
@@ -640,19 +680,19 @@ void MipsTranslator::translate(MidCode c) {
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-			int target = loadOperand(c.target, false, conflictVar, {});
+			int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-				{ target });
+				{ target }, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			int operand2 = loadOperand(c.operand2, c.isImmediate2, conflictVar,
-				{ target,operand1 });
+				{ target,operand1 }, &(c.activeVariable));
 
 			out << "sle " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
@@ -664,12 +704,12 @@ void MipsTranslator::translate(MidCode c) {
 			if (c.isImmediate2) {
 				vector<int>conflictVar;
 				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
-				int target = loadOperand(c.target, false, conflictVar, {});
+				int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 				conflictVar.clear();
 				conflictVar.push_back(c.target);
 				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-					{ target });
+					{ target }, &(c.activeVariable));
 
 				out << "sgt " << name[target] << "," << name[operand1] << "," << c.operand2;
 				out << "#" << c << endl;
@@ -679,19 +719,19 @@ void MipsTranslator::translate(MidCode c) {
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-			int target = loadOperand(c.target, false, conflictVar, {});
+			int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-				{ target });
+				{ target }, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			int operand2 = loadOperand(c.operand2, c.isImmediate2, conflictVar,
-				{ target,operand1 });
+				{ target,operand1 }, &(c.activeVariable));
 
 			out << "sgt " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
@@ -703,12 +743,12 @@ void MipsTranslator::translate(MidCode c) {
 			if (c.isImmediate2) {
 				vector<int>conflictVar;
 				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
-				int target = loadOperand(c.target, false, conflictVar, {});
+				int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 				conflictVar.clear();
 				conflictVar.push_back(c.target);
 				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-					{ target });
+					{ target }, &(c.activeVariable));
 
 				out << "sge " << name[target] << "," << name[operand1] << "," << c.operand2;
 				out << "#" << c << endl;
@@ -718,19 +758,19 @@ void MipsTranslator::translate(MidCode c) {
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-			int target = loadOperand(c.target, false, conflictVar, {});
+			int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-				{ target });
+				{ target }, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			int operand2 = loadOperand(c.operand2, c.isImmediate2, conflictVar,
-				{ target,operand1 });
+				{ target,operand1 }, &(c.activeVariable));
 
 			out << "sge " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
@@ -742,12 +782,12 @@ void MipsTranslator::translate(MidCode c) {
 			if (c.isImmediate2) {
 				vector<int>conflictVar;
 				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
-				int target = loadOperand(c.target, false, conflictVar, {});
+				int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 				conflictVar.clear();
 				conflictVar.push_back(c.target);
 				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-					{ target });
+					{ target }, &(c.activeVariable));
 
 				out << "seq " << name[target] << "," << name[operand1] << "," << c.operand2;
 				out << "#" << c << endl;
@@ -757,19 +797,19 @@ void MipsTranslator::translate(MidCode c) {
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-			int target = loadOperand(c.target, false, conflictVar, {});
+			int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-				{ target });
+				{ target }, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			int operand2 = loadOperand(c.operand2, c.isImmediate2, conflictVar,
-				{ target,operand1 });
+				{ target,operand1 }, &(c.activeVariable));
 
 			out << "seq " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
@@ -781,12 +821,12 @@ void MipsTranslator::translate(MidCode c) {
 			if (c.isImmediate2) {
 				vector<int>conflictVar;
 				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
-				int target = loadOperand(c.target, false, conflictVar, {});
+				int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 				conflictVar.clear();
 				conflictVar.push_back(c.target);
 				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-					{ target });
+					{ target }, &(c.activeVariable));
 
 				out << "sne " << name[target] << "," << name[operand1] << "," << c.operand2;
 				out << "#" << c << endl;
@@ -796,19 +836,19 @@ void MipsTranslator::translate(MidCode c) {
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-			int target = loadOperand(c.target, false, conflictVar, {});
+			int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-				{ target });
+				{ target }, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			int operand2 = loadOperand(c.operand2, c.isImmediate2, conflictVar,
-				{ target,operand1 });
+				{ target,operand1 }, &(c.activeVariable));
 
 			out << "sne " << name[target] << "," << name[operand1] << "," << name[operand2];
 			out << "#" << c << endl;
@@ -819,12 +859,12 @@ void MipsTranslator::translate(MidCode c) {
 		{
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
-			int target = loadOperand(c.target, false, conflictVar, {});
+			int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
-				{ target });
+				{ target }, &(c.activeVariable));
 
 			out << "subu "<<name[target]<<",$0," << name[operand1] ;
 			out << "#" << c << endl;
@@ -836,20 +876,20 @@ void MipsTranslator::translate(MidCode c) {
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-			int target = loadOperand(c.target, false, conflictVar, {});
+			int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 			
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			int operand2 = loadOperand(c.operand2, c.isImmediate2, conflictVar,
-				{ target });
+				{ target }, &(c.activeVariable));
 
 			SymbolEntry* s = MidCode::table->getSymbolById(c.operand1);
 			if (s->scope == "") {
 				conflictVar.clear();
 				conflictVar.push_back(c.target);
 				if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-				int tmpreg = loadOperand(-1, false, conflictVar, { target,operand2 });
+				int tmpreg = loadOperand(-1, false, conflictVar, { target,operand2 }, &(c.activeVariable));
 				out << "sll " << name[tmpreg] << "," << name[operand2] << ",2" << endl;
 				out << "lw " << name[target] << "," << s->name << "(" << name[tmpreg] << ")" << endl;;
 				out << "#" << c << endl;
@@ -858,7 +898,7 @@ void MipsTranslator::translate(MidCode c) {
 				conflictVar.clear();
 				conflictVar.push_back(c.target);
 				if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-				int tmpreg = loadOperand(-1, false, conflictVar, { target,operand2 });
+				int tmpreg = loadOperand(-1, false, conflictVar, { target,operand2 }, &(c.activeVariable));
 				out << "sll " << name[tmpreg] << "," << name[operand2] << ",2" << endl;
 				out << "addu " << name[tmpreg] << "," << name[tmpreg] << ",$sp" << endl;
 				out << "lw " << name[target] << "," << s->addr<<"("<<name[tmpreg]<<")";
@@ -873,20 +913,20 @@ void MipsTranslator::translate(MidCode c) {
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-			int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,{});
+			int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,{}, &(c.activeVariable));
 
 			conflictVar.clear();
 			conflictVar.push_back(c.target);
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			int operand2 = loadOperand(c.operand2, c.isImmediate2, conflictVar,
-				{ operand1 });
+				{ operand1 }, &(c.activeVariable));
 			
 			SymbolEntry* s = MidCode::table->getSymbolById(c.target);
 			if (s->scope == "") {
 				conflictVar.clear();
 				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 				if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-				int tmpreg = loadOperand(-1, false, conflictVar, { operand1,operand2 });
+				int tmpreg = loadOperand(-1, false, conflictVar, { operand1,operand2 }, &(c.activeVariable));
 				out << "sll " << name[tmpreg] << "," << name[operand1] << ",2" << endl;
 				out << "sw " << name[operand2] << "," << s->name << "("<<name[tmpreg] << ")"<<endl;
 				out << "#" << c << endl;
@@ -895,7 +935,7 @@ void MipsTranslator::translate(MidCode c) {
 				conflictVar.clear();
 				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 				if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
-				int tmpreg = loadOperand(-1, false, conflictVar, { operand1,operand2 });
+				int tmpreg = loadOperand(-1, false, conflictVar, { operand1,operand2 }, &(c.activeVariable));
 				out << "sll " << name[tmpreg] << "," << name[operand1] << ",2" << endl;
 				out << "addu " << name[tmpreg] << "," << name[tmpreg] << ",$sp" << endl;
 				out << "sw " << name[operand2] << "," << s->addr << "(" << name[tmpreg] << ")";
@@ -907,7 +947,7 @@ void MipsTranslator::translate(MidCode c) {
 		{
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
-			int target = loadOperand(c.target, false, conflictVar, {});
+			int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
 			if (c.isImmediate1) {
 				out << "li " << name[target] << "," << c.operand1<<endl;
 			}
@@ -945,7 +985,7 @@ void MipsTranslator::translate(MidCode c) {
 		case MIDBNZ:
 		{
 			writeBackAfterBlock();
-			int operand1 = loadOperand(c.operand1, c.isImmediate1, {}, {});
+			int operand1 = loadOperand(c.operand1, c.isImmediate1, {}, {}, &(c.activeVariable));
 			out << "bgtz " << name[operand1] << ",label$" << -c.operand2;
 			out << "#" << c << endl;
 			break;
@@ -953,7 +993,7 @@ void MipsTranslator::translate(MidCode c) {
 		case MIDBZ:
 		{
 			writeBackAfterBlock();
-			int operand1 = loadOperand(c.operand1, c.isImmediate1, {}, {});
+			int operand1 = loadOperand(c.operand1, c.isImmediate1, {}, {}, &(c.activeVariable));
 			out << "blez " << name[operand1] << ",label$" << -c.operand2;
 			out << "#" << c << endl;
 			break;
@@ -991,7 +1031,7 @@ void MipsTranslator::translate(MidCode c) {
 			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
 			if (func->link->paraNum > 0) {
 				//restore a0
-				loadOperand(func->link->paraIds[0], false, {}, {});
+				loadOperand(func->link->paraIds[0], false, {}, {}, & (c.activeVariable));
 			}
 			break;
 		}
@@ -1027,7 +1067,7 @@ void MipsTranslator::translate(MidCode c) {
 			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
 			if (func->link->paraNum > 0) {
 				//restore a0
-				loadOperand(func->link->paraIds[0], false, {}, {});
+				loadOperand(func->link->paraIds[0], false, {}, {}, & (c.activeVariable));
 			}
 			break;
 		}
@@ -1040,13 +1080,13 @@ void MipsTranslator::translate(MidCode c) {
 			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
 			if (func->link->paraNum > 0) {
 				//restore a0
-				loadOperand(func->link->paraIds[0], false, {}, {});
+				loadOperand(func->link->paraIds[0], false, {}, {}, & (c.activeVariable));
 			}
 			break;
 		}
 		case MIDREADCHAR:
 		{
-			int target = loadOperand(c.target, false, {}, {});
+			int target = loadOperand(c.target, false, {}, {}, &(c.activeVariable));
 			out << "li $v0,12" << endl;
 			out << "syscall" << endl;
 			out << "move " << name[target] <<",$v0"<< endl;
@@ -1056,7 +1096,7 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDREADINTEGER:
 		{
-			int target = loadOperand(c.target, false, {}, {});
+			int target = loadOperand(c.target, false, {}, {}, &(c.activeVariable));
 			out << "li $v0,5" << endl;
 			out << "syscall" << endl;
 			out << "move " << name[target] << ",$v0" << endl;
@@ -1083,7 +1123,7 @@ void MipsTranslator::translate(vector<MidCode>c) {
 		if (c[i].labelNo != MIDNOLABEL) {
 			out << "label$" << -c[i].labelNo << ":" << endl;
 		}
-		int tmpreg = loadOperand(c[i].operand1,c[i].isImmediate1, {}, {});
+		int tmpreg = loadOperand(c[i].operand1, c[i].isImmediate1, {}, {}, nullptr);
 		
 		if (i >= 0 && i <= 3) {
 			if (Astatus[i] == REGVAR) {

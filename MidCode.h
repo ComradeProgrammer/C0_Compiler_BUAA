@@ -60,7 +60,8 @@ public:
 	int operand2;
 	bool isImmediate2 = false;
 	int labelNo = -1;
-
+	//该行处活跃变量
+	set<int>activeVariable;
 	friend ostream& operator<<(ostream& out, MidCode c);
 	static string getOperandName(int n,bool isImmediate);
 	static string getLabelName(int n);

@@ -2,6 +2,7 @@
 BlockOptimization::BlockOptimization(set<int>&_activeOut) {
 	activeOut = _activeOut;
 }
+
 vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 	map<int, Item>substitution;
 	vector<MidCode>res;
@@ -9,7 +10,8 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 	for (int i = 0; i < v.size(); i++) {
 		MidCode c = v[i];
 		if (c.labelNo != -1) {
-			label = c.labelNo;
+			label = c.labelNo;//一个基本块最多有一个标签，
+			//考虑到这个带标签语句可能被优化掉就保存起来
 		}
 		switch (c.op) {
 			//只使用op1,且只会出现在最后
@@ -21,13 +23,16 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 				MidCode tmp = c;
 				if (c.operand1 != -1 && !c.isImmediate1 &&
 					substitution.find(c.operand1) != substitution.end()) {
+					//不是立即数是个变量而且替换表中是有这个变量的
 					tmp.operand1 = substitution[c.operand1].id;
 					tmp.isImmediate1 = substitution[c.operand1].isImmediate;
 				}
-				resEnd.push_back(tmp);
+				resEnd.push_back(tmp);//都是只能在最后出现的中间代码
+				//push只能连着最后跟着call伪指令，这一串指令肯定在基本块最后
+				//为了给最后的写回留下机会，不能在跳转之后写回
 				break;
 			}
-			//只使用op1
+			//只使用op1还不再最后的指令
 			case MIDPRINTINT:
 			case MIDPRINTCHAR:
 			{
@@ -62,6 +67,7 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 					tmp.operand2 = substitution[c.operand2].id;
 					tmp.isImmediate2 = substitution[c.operand2].isImmediate;
 				}
+				//如果在标记表中有被标记var1=var2然后var2被改了，那么var1必须在此之前被明确赋值
 				set<int>del;
 				for (map<int, Item>::iterator itr = substitution.begin();
 					itr != substitution.end(); itr++) {
@@ -113,7 +119,7 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 			case MIDASSIGN:
 			{
 				if (!c.isImmediate1 && c.operand1 == -1) {
-					//ret
+					//返回值赋值的事情已经在这里解决了
 					res.push_back(c);
 					break;
 				}
@@ -138,6 +144,7 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 				Item tmp;
 				tmp.id=  c.operand1;
 				tmp.isImmediate = c.isImmediate1;
+				//a=b,若是此前已经记录a=c那么此时也应记录a=c
 				if (!c.isImmediate1&&substitution.find(c.operand1) != substitution.end()) {
 					tmp.id = substitution[c.operand1].id;
 					tmp.isImmediate = substitution[c.operand1].isImmediate;
@@ -231,6 +238,7 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 	//todo implement
 	for (auto& i : substitution) {
 		SymbolEntry* e = MidCode::table->getSymbolById(i.first);
+		//此时临时变量尚未加入符号表，e可以是null
 		if (activeOut.find(i.first) != activeOut.end()||(i.first>0&&e->scope=="")) {
 			MidCode tmp2;
 			tmp2.op = MIDASSIGN; tmp2.target = i.first;

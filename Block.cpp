@@ -259,3 +259,52 @@ void Block::blockOptimize() {
 	BlockOptimization bop(activeOut);
 	v = bop.propagationInBlock(v);
 }
+
+void Block::activeVariableAnalyzePerLine() {
+	set<int>localActive = activeOut;
+	for (int line = v.size() - 1; line >= 0; line--) {
+		MidCode i = v[line];
+		v[line].activeVariable = localActive;
+		//三地址运算
+		if (i.op == MIDADD || i.op == MIDSUB || i.op == MIDMULT
+			|| i.op == MIDDIV || i.op == MIDLSS || i.op == MIDLEQ
+			|| i.op == MIDGRE || i.op == MIDGEQ || i.op == MIDEQL
+			|| i.op == MIDNEQ || i.op == MIDARRAYGET) {
+			localActive.erase(i.target);
+			if (!i.isImmediate1) {
+				localActive.insert(i.operand1);
+			}
+			if (!i.isImmediate2) {
+				localActive.insert(i.operand2);
+			}
+		}
+		//只使用operand1
+		else if (i.op == MIDPUSH || i.op == MIDRET || i.op == MIDBNZ || i.op == MIDBZ
+			|| i.op == MIDPRINTINT || i.op == MIDPRINTCHAR) {
+			if (!i.isImmediate1 && i.operand1 != -1) {
+				localActive.insert(i.operand1);
+			}
+		}
+		//使用operand1并返回值，其中assign需要考虑排除-1
+		else if (i.op == MIDNEGATE || i.op == MIDASSIGN) {
+			localActive.erase(i.target);
+			if (!i.isImmediate1 && i.operand1 != -1) {
+				localActive.insert(i.operand1);
+			}	
+		}
+		else if (i.op == MIDARRAYWRITE) {
+			if (!i.isImmediate1) {
+				localActive.insert(i.operand1);
+			}
+			if (!i.isImmediate2) {
+				localActive.insert(i.operand2);
+			}
+
+		}
+		else if (i.op == MIDREADCHAR || i.op == MIDREADINTEGER) {
+			localActive.erase(i.target);
+		}
+		
+	}
+	
+}

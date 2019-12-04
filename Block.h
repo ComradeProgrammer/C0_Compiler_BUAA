@@ -33,4 +33,5 @@ public:
 	void DAGoptimize();
 	void eliminateDeadCode();
 	void blockOptimize();
+	void activeVariableAnalyzePerLine();
 };

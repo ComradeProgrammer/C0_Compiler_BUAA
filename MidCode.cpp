@@ -148,8 +148,12 @@ ostream& operator<<(ostream& out, MidCode c) {
 		default:
 			out << "unknown instruction";
 	}
-
-	out << endl;
+	out << "   active[";
+	for (int i : c.activeVariable) {
+		out << i << " ";
+	}
+	out <<"]"<< endl;
+	//out << endl;
 	return out;
 }
 MidCode MidCode::generateMidCode(MidCodeOp op, int target,

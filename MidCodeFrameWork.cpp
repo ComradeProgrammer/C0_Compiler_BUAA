@@ -124,6 +124,7 @@ vector<MidCode>MidCodeFramework::inlinedSimpleFunction(string functionName
 			case MIDFUNC:
 			case MIDPARA:
 				break;
+			//这都是不应该出现的指令
 			case MIDCALL:
 			case MIDARRAYGET:
 			case MIDARRAYWRITE:
@@ -175,7 +176,7 @@ vector<MidCode>MidCodeFramework::inlinedSimpleFunction(string functionName
 			{
 				SymbolEntry* targetEntry = MidCode::table->getSymbolById(c.target);
 				if (c.target<0||targetEntry->scope != "") {
-					//凡全局变量均应当替换,未分配替换变量者应当分配
+					//凡非全局变量均应当替换,未分配替换变量者应当分配
 					if (fakeTable.find(c.target) == fakeTable.end()) {
 						fakeTable[c.target] = MidCode::tmpVarAlloc();
 					}
@@ -209,7 +210,7 @@ vector<MidCode>MidCodeFramework::inlinedSimpleFunction(string functionName
 			{
 				SymbolEntry* targetEntry = MidCode::table->getSymbolById(c.target);
 				if (c.target < 0 || targetEntry->scope != "") {
-					//凡全局变量均应当替换,未分配替换变量者应当分配
+					//凡非全局变量均应当替换,未分配替换变量者应当分配
 					if (fakeTable.find(c.target) == fakeTable.end()) {
 						fakeTable[c.target] = MidCode::tmpVarAlloc();
 					}

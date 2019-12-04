@@ -60,6 +60,7 @@ void FlowGraph::optimize() {
 	eliminateDeadCode();
 	activeVariableAnalyze();
 	variableSummary();
+	activeVariablePerLine();
 	conflictEdgeAnalyze();
 }
 
@@ -260,6 +261,11 @@ void FlowGraph::blockOptimize() {
 	}
 }
 
+void FlowGraph::activeVariablePerLine() {
+	for (Block* i : graph) {
+		i->activeVariableAnalyzePerLine();
+	}
+}
 ostream& operator<<(ostream& out, FlowGraph& f) {
 	for (Block* i : f.graph) {
 		out << (*i);
