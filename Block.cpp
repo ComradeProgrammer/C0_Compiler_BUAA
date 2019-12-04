@@ -179,7 +179,10 @@ void Block::DAGoptimize() {
 	for (MidCode c : v) {
 		dag.handleMidCode(c);
 	}
-	v = dag.dumpMidCode();
+	vector<MidCode>tmp = dag.dumpMidCode();
+	if (v.size() > tmp.size()) {
+		v = tmp;
+	}
 }
 
 void Block::eliminateDeadCode() {

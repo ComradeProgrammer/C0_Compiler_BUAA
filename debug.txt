@@ -1,64 +1,64 @@
 const int MAX_NUM
-int factorial()   active[]
-para int n   active[]
-#TMP2 = n <= 1   active[]
-BZ #TMP2 _label2   active[]
-ret 1   active[]
-_label2: #TMP3 = n - 1   active[]
-push #TMP3   active[]
-call factorial   active[]
-#TMP4=RET   active[]
-#TMP5 = n * #TMP4   active[]
-ret #TMP5   active[]
-int mod()   active[]
-para int x   active[]
-para int y   active[]
-#TMP6 = x / y   active[]
-#TMP7 = #TMP6 * y   active[]
-x = x - #TMP7   active[]
-ret x   active[]
+int factorial()
+para int n
+#TMP2 = n <= 1
+BZ #TMP2 _label2
+ret 1
+_label2: #TMP3 = n - 1
+push #TMP3
+call factorial
+#TMP4=RET
+#TMP5 = n * #TMP4
+ret #TMP5
+int mod()
+para int x
+para int y
+#TMP6 = x / y
+#TMP7 = #TMP6 * y
+x = x - #TMP7
+ret x
 int temp
-void swap()   active[]
-para int x   active[]
-para int y   active[]
-syscall-4 x =    active[]
-syscall-1 x   active[]
-syscall-11 10   active[]
-syscall-4 y =    active[]
-syscall-1 y   active[]
-syscall-11 10   active[]
-temp=x   active[]
-x=y   active[]
-y=temp   active[]
-syscall-4 SWAP x =    active[]
-syscall-1 x   active[]
-syscall-11 10   active[]
-syscall-4 SWAP y =    active[]
-syscall-1 y   active[]
-syscall-11 10   active[]
-ret    active[]
-int full_num()   active[]
-para int n   active[]
-para int j   active[]
-para int a   active[]
-#TMP9 = n * 100   active[]
-#TMP10 = j * 10   active[]
-#TMP11 = #TMP9 + #TMP10   active[]
-#TMP12 = #TMP11 + a   active[]
-ret #TMP12   active[]
-int flower_num()   active[]
-para int n   active[]
-para int j   active[]
-para int a   active[]
-#TMP13 = n * n   active[]
-#TMP14 = #TMP13 * n   active[]
-#TMP15 = j * j   active[]
-#TMP16 = #TMP15 * j   active[]
-#TMP17 = #TMP14 + #TMP16   active[]
-#TMP18 = a * a   active[]
-#TMP19 = #TMP18 * a   active[]
-#TMP20 = #TMP17 + #TMP19   active[]
-ret #TMP20   active[]
+void swap()
+para int x
+para int y
+syscall-4 x = 
+syscall-1 x
+syscall-11 10
+syscall-4 y = 
+syscall-1 y
+syscall-11 10
+temp=x
+x=y
+y=temp
+syscall-4 SWAP x = 
+syscall-1 x
+syscall-11 10
+syscall-4 SWAP y = 
+syscall-1 y
+syscall-11 10
+ret 
+int full_num()
+para int n
+para int j
+para int a
+#TMP9 = n * 100
+#TMP10 = j * 10
+#TMP11 = #TMP9 + #TMP10
+#TMP12 = #TMP11 + a
+ret #TMP12
+int flower_num()
+para int n
+para int j
+para int a
+#TMP13 = n * n
+#TMP14 = #TMP13 * n
+#TMP15 = j * j
+#TMP16 = #TMP15 * j
+#TMP17 = #TMP14 + #TMP16
+#TMP18 = a * a
+#TMP19 = #TMP18 * a
+#TMP20 = #TMP17 + #TMP19
+ret #TMP20
 int a
 int b
 int c
@@ -74,180 +74,180 @@ int s
 int x1
 int x2
 int y
-void complete_flower_num()   active[]
-j=2   active[]
-_label3: #TMP21 = j < 128   active[]
-BZ #TMP21 _label4   active[]
-n=-1   active[]
-s=j   active[]
-i=1   active[]
-_label5: #TMP22 = i < j   active[]
-BZ #TMP22 _label6   active[]
-#TMP23 = j / i   active[]
-x1 = #TMP23 * i   active[]
-#TMP27=j   active[]
-#TMP28=i   active[]
-#TMP29 = #TMP27 / #TMP28   active[]
-#TMP30 = #TMP29 * #TMP28   active[]
-#TMP27 = #TMP27 - #TMP30   active[]
-#TMP26=#TMP27   active[]
-#TMP25=#TMP26   active[]
-#TMP31 = #TMP25 == 0   active[]
-BZ #TMP31 _label7   active[]
-n = n + 1   active[]
-s = s - i   active[]
-#TMP34 = n >= 128   active[]
-BZ #TMP34 _label8   active[]
-syscall-4 OVERFLOW!   active[]
-syscall-11 10   active[]
-GOTO _label7   active[]
-_label8: k[n] =i   active[]
-_label7: i = i + 1   active[]
-GOTO _label5   active[]
-_label6: #TMP35 = s == 0   active[]
-BZ #TMP35 _label10   active[]
-syscall-4 complete number:    active[]
-syscall-1 j   active[]
-syscall-11 10   active[]
-i=0   active[]
-_label11: #TMP36 = i <= n   active[]
-BZ #TMP36 _label12   active[]
-syscall-4      active[]
-#TMP37 = k [ i ]    active[]
-syscall-1 #TMP37   active[]
-syscall-11 10   active[]
-i = i + 1   active[]
-GOTO _label11   active[]
-_label12: syscall-4     active[]
-syscall-11 10   active[]
-_label10: j = j + 1   active[]
-GOTO _label3   active[]
-_label4: syscall-4 ---------------------------------------------------------------   active[]
-syscall-11 10   active[]
-syscall-4 'water flower'number is:   active[]
-syscall-11 10   active[]
-y=0   active[]
-i=100   active[]
-_label13: #TMP38 = 100 + 128   active[]
-#TMP39 = i < #TMP38   active[]
-BZ #TMP39 _label14   active[]
-n = i / 100   active[]
-#TMP41 = i / 10   active[]
-#TMP44=#TMP41   active[]
-#TMP45=10   active[]
-#TMP46 = #TMP44 / #TMP45   active[]
-#TMP47 = #TMP46 * #TMP45   active[]
-#TMP44 = #TMP44 - #TMP47   active[]
-#TMP43=#TMP44   active[]
-j=#TMP43   active[]
-#TMP50=i   active[]
-#TMP51=10   active[]
-#TMP52 = #TMP50 / #TMP51   active[]
-#TMP53 = #TMP52 * #TMP51   active[]
-#TMP50 = #TMP50 - #TMP53   active[]
-#TMP49=#TMP50   active[]
-a=#TMP49   active[]
-#TMP58=n   active[]
-#TMP57=j   active[]
-#TMP56=a   active[]
-#TMP59 = #TMP58 * 100   active[]
-#TMP60 = #TMP57 * 10   active[]
-#TMP61 = #TMP59 + #TMP60   active[]
-#TMP62 = #TMP61 + #TMP56   active[]
-#TMP55=#TMP62   active[]
-#TMP54=#TMP55   active[]
-#TMP67=n   active[]
-#TMP66=j   active[]
-#TMP65=a   active[]
-#TMP68 = #TMP67 * #TMP67   active[]
-#TMP69 = #TMP68 * #TMP67   active[]
-#TMP70 = #TMP66 * #TMP66   active[]
-#TMP71 = #TMP70 * #TMP66   active[]
-#TMP72 = #TMP69 + #TMP71   active[]
-#TMP73 = #TMP65 * #TMP65   active[]
-#TMP74 = #TMP73 * #TMP65   active[]
-#TMP75 = #TMP72 + #TMP74   active[]
-#TMP64=#TMP75   active[]
-#TMP63=#TMP64   active[]
-#TMP76 = #TMP54 == #TMP63   active[]
-BZ #TMP76 _label15   active[]
-k[y] =i   active[]
-y = y + 1   active[]
-_label15: i = i + 1   active[]
-GOTO _label13   active[]
-_label14: i=0   active[]
-_label16: #TMP78 = i < y   active[]
-BZ #TMP78 _label17   active[]
-syscall-4      active[]
-#TMP79 = k [ i ]    active[]
-syscall-1 #TMP79   active[]
-syscall-11 10   active[]
-i = i + 1   active[]
-GOTO _label16   active[]
-_label17: syscall-4     active[]
-syscall-11 10   active[]
-syscall-4 ---------------------------------------------------------------   active[]
-syscall-11 10   active[]
-h=0   active[]
-leap=1   active[]
-m=2   active[]
-_label18: #TMP80 = m <= 128   active[]
-BZ #TMP80 _label19   active[]
-k2 = m / 2   active[]
-i=2   active[]
-_label20: #TMP82 = i <= k2   active[]
-BZ #TMP82 _label21   active[]
-#TMP83 = m / i   active[]
-x2 = #TMP83 * i   active[]
-#TMP87=m   active[]
-#TMP88=i   active[]
-#TMP89 = #TMP87 / #TMP88   active[]
-#TMP90 = #TMP89 * #TMP88   active[]
-#TMP87 = #TMP87 - #TMP90   active[]
-#TMP86=#TMP87   active[]
-#TMP85=#TMP86   active[]
-#TMP91 = #TMP85 == 0   active[]
-BZ #TMP91 _label22   active[]
-leap=0   active[]
-_label22: i = i + 1   active[]
-GOTO _label20   active[]
-_label21: #TMP92 = leap == 1   active[]
-BZ #TMP92 _label23   active[]
-syscall-4     active[]
-syscall-1 m   active[]
-syscall-11 10   active[]
-h = h + 1   active[]
-#TMP94 = h / 10   active[]
-x2 = #TMP94 * 10   active[]
-#TMP96 = x2 == h   active[]
-BZ #TMP96 _label23   active[]
-syscall-4     active[]
-syscall-11 10   active[]
-_label23: leap=1   active[]
-m = m + 1   active[]
-GOTO _label18   active[]
-_label19: syscall-4 The total is    active[]
-syscall-1 h   active[]
-syscall-11 10   active[]
-ret    active[]
+void complete_flower_num()
+j=2
+_label3: #TMP21 = j < 128
+BZ #TMP21 _label4
+n=-1
+s=j
+i=1
+_label5: #TMP22 = i < j
+BZ #TMP22 _label6
+#TMP23 = j / i
+x1 = #TMP23 * i
+#TMP27=j
+#TMP28=i
+#TMP29 = #TMP27 / #TMP28
+#TMP30 = #TMP29 * #TMP28
+#TMP27 = #TMP27 - #TMP30
+#TMP26=#TMP27
+#TMP25=#TMP26
+#TMP31 = #TMP25 == 0
+BZ #TMP31 _label7
+n = n + 1
+s = s - i
+#TMP34 = n >= 128
+BZ #TMP34 _label8
+syscall-4 OVERFLOW!
+syscall-11 10
+GOTO _label7
+_label8: k[n] =i
+_label7: i = i + 1
+GOTO _label5
+_label6: #TMP35 = s == 0
+BZ #TMP35 _label10
+syscall-4 complete number: 
+syscall-1 j
+syscall-11 10
+i=0
+_label11: #TMP36 = i <= n
+BZ #TMP36 _label12
+syscall-4   
+#TMP37 = k [ i ] 
+syscall-1 #TMP37
+syscall-11 10
+i = i + 1
+GOTO _label11
+_label12: syscall-4  
+syscall-11 10
+_label10: j = j + 1
+GOTO _label3
+_label4: syscall-4 ---------------------------------------------------------------
+syscall-11 10
+syscall-4 'water flower'number is:
+syscall-11 10
+y=0
+i=100
+_label13: #TMP38 = 100 + 128
+#TMP39 = i < #TMP38
+BZ #TMP39 _label14
+n = i / 100
+#TMP41 = i / 10
+#TMP44=#TMP41
+#TMP45=10
+#TMP46 = #TMP44 / #TMP45
+#TMP47 = #TMP46 * #TMP45
+#TMP44 = #TMP44 - #TMP47
+#TMP43=#TMP44
+j=#TMP43
+#TMP50=i
+#TMP51=10
+#TMP52 = #TMP50 / #TMP51
+#TMP53 = #TMP52 * #TMP51
+#TMP50 = #TMP50 - #TMP53
+#TMP49=#TMP50
+a=#TMP49
+#TMP58=n
+#TMP57=j
+#TMP56=a
+#TMP59 = #TMP58 * 100
+#TMP60 = #TMP57 * 10
+#TMP61 = #TMP59 + #TMP60
+#TMP62 = #TMP61 + #TMP56
+#TMP55=#TMP62
+#TMP54=#TMP55
+#TMP67=n
+#TMP66=j
+#TMP65=a
+#TMP68 = #TMP67 * #TMP67
+#TMP69 = #TMP68 * #TMP67
+#TMP70 = #TMP66 * #TMP66
+#TMP71 = #TMP70 * #TMP66
+#TMP72 = #TMP69 + #TMP71
+#TMP73 = #TMP65 * #TMP65
+#TMP74 = #TMP73 * #TMP65
+#TMP75 = #TMP72 + #TMP74
+#TMP64=#TMP75
+#TMP63=#TMP64
+#TMP76 = #TMP54 == #TMP63
+BZ #TMP76 _label15
+k[y] =i
+y = y + 1
+_label15: i = i + 1
+GOTO _label13
+_label14: i=0
+_label16: #TMP78 = i < y
+BZ #TMP78 _label17
+syscall-4   
+#TMP79 = k [ i ] 
+syscall-1 #TMP79
+syscall-11 10
+i = i + 1
+GOTO _label16
+_label17: syscall-4  
+syscall-11 10
+syscall-4 ---------------------------------------------------------------
+syscall-11 10
+h=0
+leap=1
+m=2
+_label18: #TMP80 = m <= 128
+BZ #TMP80 _label19
+k2 = m / 2
+i=2
+_label20: #TMP82 = i <= k2
+BZ #TMP82 _label21
+#TMP83 = m / i
+x2 = #TMP83 * i
+#TMP87=m
+#TMP88=i
+#TMP89 = #TMP87 / #TMP88
+#TMP90 = #TMP89 * #TMP88
+#TMP87 = #TMP87 - #TMP90
+#TMP86=#TMP87
+#TMP85=#TMP86
+#TMP91 = #TMP85 == 0
+BZ #TMP91 _label22
+leap=0
+_label22: i = i + 1
+GOTO _label20
+_label21: #TMP92 = leap == 1
+BZ #TMP92 _label23
+syscall-4  
+syscall-1 m
+syscall-11 10
+h = h + 1
+#TMP94 = h / 10
+x2 = #TMP94 * 10
+#TMP96 = x2 == h
+BZ #TMP96 _label23
+syscall-4  
+syscall-11 10
+_label23: leap=1
+m = m + 1
+GOTO _label18
+_label19: syscall-4 The total is 
+syscall-1 h
+syscall-11 10
+ret 
 int n
-void main()   active[]
-push 5   active[]
-call factorial   active[]
-n=RET   active[]
-syscall-4 5 !=    active[]
-syscall-1 n   active[]
-syscall-11 10   active[]
-push 5   active[]
-push 10   active[]
-call swap   active[]
-call complete_flower_num   active[]
+void main()
+push 5
+call factorial
+n=RET
+syscall-4 5 != 
+syscall-1 n
+syscall-11 10
+push 5
+push 10
+call swap
+call complete_flower_num
 
 ====Block0====
-int factorial()   active[2 ]
-para int n   active[2 ]
-#TMP2 = n <= 1   active[-2 2 ]
-BZ #TMP2 _label2   active[2 ]
+int factorial()
+para int n
+#TMP2 = n <= 1
+BZ #TMP2 _label2
 	prev:[]
 	next:[1,2,]
 	use:[n,]
@@ -256,7 +256,7 @@ BZ #TMP2 _label2   active[2 ]
 	activeOut:[n,]
 ==============
 ====Block1====
-ret 1   active[2 ]
+ret 1
 	prev:[0,]
 	next:[2,]
 	use:[]
@@ -265,9 +265,9 @@ ret 1   active[2 ]
 	activeOut:[n,]
 ==============
 ====Block2====
-_label2: #TMP3 = n - 1   active[-3 2 ]
-push #TMP3   active[2 ]
-call factorial   active[2 ]
+_label2: #TMP3 = n - 1
+push #TMP3
+call factorial
 	prev:[1,0,]
 	next:[3,]
 	use:[n,]
@@ -276,9 +276,9 @@ call factorial   active[2 ]
 	activeOut:[n,]
 ==============
 ====Block3====
-#TMP4=RET   active[-4 2 ]
-#TMP5 = n * #TMP4   active[-5 ]
-ret #TMP5   active[]
+#TMP4=RET
+#TMP5 = n * #TMP4
+ret #TMP5
 	prev:[2,]
 	next:[]
 	use:[n,]
@@ -287,13 +287,13 @@ ret #TMP5   active[]
 	activeOut:[]
 ==============
 ====Block4====
-int mod()   active[4 5 ]
-para int x   active[4 5 ]
-para int y   active[4 5 ]
-#TMP6 = x / y   active[-6 4 5 ]
-#TMP7 = #TMP6 * y   active[-7 4 ]
-x = x - #TMP7   active[4 ]
-ret x   active[]
+int mod()
+para int x
+para int y
+#TMP6 = x / y
+#TMP7 = #TMP6 * y
+x = x - #TMP7
+ret x
 	prev:[]
 	next:[]
 	use:[x,y,]
@@ -302,24 +302,24 @@ ret x   active[]
 	activeOut:[]
 ==============
 ====Block5====
-void swap()   active[7 8 ]
-para int x   active[7 8 ]
-para int y   active[7 8 ]
-syscall-4 x =    active[7 8 ]
-syscall-1 x   active[7 8 ]
-syscall-11 10   active[7 8 ]
-syscall-4 y =    active[7 8 ]
-syscall-1 y   active[7 8 ]
-syscall-11 10   active[7 8 ]
-temp=x   active[8 9 ]
-x=y   active[7 9 ]
-syscall-4 SWAP x =    active[7 9 ]
-syscall-1 x   active[9 ]
-syscall-11 10   active[9 ]
-syscall-4 SWAP y =    active[9 ]
-syscall-1 temp   active[]
-syscall-11 10   active[]
-ret    active[]
+void swap()
+para int x
+para int y
+syscall-4 x = 
+syscall-1 x
+syscall-11 10
+syscall-4 y = 
+syscall-1 y
+syscall-11 10
+temp=x
+x=y
+syscall-4 SWAP x = 
+syscall-1 x
+syscall-11 10
+syscall-4 SWAP y = 
+syscall-1 temp
+syscall-11 10
+ret 
 	prev:[]
 	next:[]
 	use:[x,y,]
@@ -328,15 +328,15 @@ ret    active[]
 	activeOut:[]
 ==============
 ====Block6====
-int full_num()   active[11 12 13 ]
-para int n   active[11 12 13 ]
-para int j   active[11 12 13 ]
-para int a   active[11 12 13 ]
-#TMP9 = n * 100   active[-9 12 13 ]
-#TMP10 = j * 10   active[-10 -9 13 ]
-#TMP11 = #TMP9 + #TMP10   active[-11 13 ]
-#TMP12 = #TMP11 + a   active[-12 ]
-ret #TMP12   active[]
+int full_num()
+para int n
+para int j
+para int a
+#TMP9 = n * 100
+#TMP10 = j * 10
+#TMP11 = #TMP9 + #TMP10
+#TMP12 = #TMP11 + a
+ret #TMP12
 	prev:[]
 	next:[]
 	use:[n,j,a,]
@@ -345,19 +345,19 @@ ret #TMP12   active[]
 	activeOut:[]
 ==============
 ====Block7====
-int flower_num()   active[15 16 17 ]
-para int n   active[15 16 17 ]
-para int j   active[15 16 17 ]
-para int a   active[15 16 17 ]
-#TMP13 = n * n   active[-13 15 16 17 ]
-#TMP14 = #TMP13 * n   active[-14 16 17 ]
-#TMP15 = j * j   active[-15 -14 16 17 ]
-#TMP16 = #TMP15 * j   active[-16 -14 17 ]
-#TMP17 = #TMP14 + #TMP16   active[-17 17 ]
-#TMP18 = a * a   active[-18 -17 17 ]
-#TMP19 = #TMP18 * a   active[-19 -17 ]
-#TMP20 = #TMP17 + #TMP19   active[-20 ]
-ret #TMP20   active[]
+int flower_num()
+para int n
+para int j
+para int a
+#TMP13 = n * n
+#TMP14 = #TMP13 * n
+#TMP15 = j * j
+#TMP16 = #TMP15 * j
+#TMP17 = #TMP14 + #TMP16
+#TMP18 = a * a
+#TMP19 = #TMP18 * a
+#TMP20 = #TMP17 + #TMP19
+ret #TMP20
 	prev:[]
 	next:[]
 	use:[n,j,a,]
@@ -366,8 +366,8 @@ ret #TMP20   active[]
 	activeOut:[]
 ==============
 ====Block8====
-void complete_flower_num()   active[19 ]
-j=2   active[19 21 ]
+void complete_flower_num()
+j=2
 	prev:[]
 	next:[9,]
 	use:[]
@@ -376,8 +376,8 @@ j=2   active[19 21 ]
 	activeOut:[k,j,]
 ==============
 ====Block9====
-_label3: #TMP21 = j < 128   active[-21 19 21 ]
-BZ #TMP21 _label4   active[19 21 ]
+_label3: #TMP21 = j < 128
+BZ #TMP21 _label4
 	prev:[8,22,]
 	next:[10,23,]
 	use:[j,]
@@ -386,9 +386,9 @@ BZ #TMP21 _label4   active[19 21 ]
 	activeOut:[k,j,]
 ==============
 ====Block10====
-i=1   active[19 20 21 ]
-n=-1   active[19 20 21 22 ]
-s=j   active[19 20 21 22 23 ]
+i=1
+n=-1
+s=j
 	prev:[9,]
 	next:[11,]
 	use:[j,]
@@ -397,8 +397,8 @@ s=j   active[19 20 21 22 23 ]
 	activeOut:[k,i,j,n,s,]
 ==============
 ====Block11====
-_label5: #TMP22 = i < j   active[-22 19 20 21 22 23 ]
-BZ #TMP22 _label6   active[19 20 21 22 23 ]
+_label5: #TMP22 = i < j
+BZ #TMP22 _label6
 	prev:[10,16,]
 	next:[12,17,]
 	use:[i,j,]
@@ -407,12 +407,12 @@ BZ #TMP22 _label6   active[19 20 21 22 23 ]
 	activeOut:[k,i,j,n,s,]
 ==============
 ====Block12====
-#TMP23 = j / i   active[19 20 21 22 23 ]
-#TMP29 = j / i   active[-29 19 20 21 22 23 ]
-#TMP30 = #TMP29 * i   active[-30 19 20 21 22 23 ]
-#TMP27 = j - #TMP30   active[-27 19 20 21 22 23 ]
-#TMP31 = #TMP27 == 0   active[-31 19 20 21 22 23 ]
-BZ #TMP31 _label7   active[19 20 21 22 23 ]
+#TMP23 = j / i
+#TMP29 = j / i
+#TMP30 = #TMP29 * i
+#TMP27 = j - #TMP30
+#TMP31 = #TMP27 == 0
+BZ #TMP31 _label7
 	prev:[11,]
 	next:[13,16,]
 	use:[i,j,]
@@ -421,10 +421,10 @@ BZ #TMP31 _label7   active[19 20 21 22 23 ]
 	activeOut:[k,i,j,n,s,]
 ==============
 ====Block13====
-n = n + 1   active[19 20 21 22 23 ]
-s = s - i   active[19 20 21 22 23 ]
-#TMP34 = n >= 128   active[-34 19 20 21 22 23 ]
-BZ #TMP34 _label8   active[19 20 21 22 23 ]
+n = n + 1
+s = s - i
+#TMP34 = n >= 128
+BZ #TMP34 _label8
 	prev:[12,]
 	next:[14,15,]
 	use:[i,n,s,]
@@ -433,9 +433,9 @@ BZ #TMP34 _label8   active[19 20 21 22 23 ]
 	activeOut:[k,i,j,n,s,]
 ==============
 ====Block14====
-syscall-4 OVERFLOW!   active[19 20 21 22 23 ]
-syscall-11 10   active[19 20 21 22 23 ]
-GOTO _label7   active[19 20 21 22 23 ]
+syscall-4 OVERFLOW!
+syscall-11 10
+GOTO _label7
 	prev:[13,]
 	next:[15,16,]
 	use:[]
@@ -444,7 +444,7 @@ GOTO _label7   active[19 20 21 22 23 ]
 	activeOut:[k,i,j,n,s,]
 ==============
 ====Block15====
-_label8: k[n] =i   active[19 20 21 22 23 ]
+_label8: k[n] =i
 	prev:[14,13,]
 	next:[16,]
 	use:[i,n,]
@@ -453,8 +453,8 @@ _label8: k[n] =i   active[19 20 21 22 23 ]
 	activeOut:[k,i,j,n,s,]
 ==============
 ====Block16====
-_label7: i = i + 1   active[19 20 21 22 23 ]
-GOTO _label5   active[19 20 21 22 23 ]
+_label7: i = i + 1
+GOTO _label5
 	prev:[15,12,14,]
 	next:[17,11,]
 	use:[i,]
@@ -463,8 +463,8 @@ GOTO _label5   active[19 20 21 22 23 ]
 	activeOut:[k,i,j,n,s,]
 ==============
 ====Block17====
-_label6: #TMP35 = s == 0   active[-35 19 21 22 ]
-BZ #TMP35 _label10   active[19 21 22 ]
+_label6: #TMP35 = s == 0
+BZ #TMP35 _label10
 	prev:[16,11,]
 	next:[18,22,]
 	use:[s,]
@@ -473,10 +473,10 @@ BZ #TMP35 _label10   active[19 21 22 ]
 	activeOut:[k,j,n,]
 ==============
 ====Block18====
-syscall-4 complete number:    active[19 21 22 ]
-syscall-1 j   active[19 21 22 ]
-syscall-11 10   active[19 21 22 ]
-i=0   active[19 20 21 22 ]
+syscall-4 complete number: 
+syscall-1 j
+syscall-11 10
+i=0
 	prev:[17,]
 	next:[19,]
 	use:[j,]
@@ -485,8 +485,8 @@ i=0   active[19 20 21 22 ]
 	activeOut:[k,i,j,n,]
 ==============
 ====Block19====
-_label11: #TMP36 = i <= n   active[-36 19 20 21 22 ]
-BZ #TMP36 _label12   active[19 20 21 22 ]
+_label11: #TMP36 = i <= n
+BZ #TMP36 _label12
 	prev:[18,20,]
 	next:[20,21,]
 	use:[i,n,]
@@ -495,12 +495,12 @@ BZ #TMP36 _label12   active[19 20 21 22 ]
 	activeOut:[k,i,j,n,]
 ==============
 ====Block20====
-syscall-4      active[19 20 21 22 ]
-#TMP37 = k [ i ]    active[-37 19 20 21 22 ]
-syscall-1 #TMP37   active[19 20 21 22 ]
-syscall-11 10   active[19 20 21 22 ]
-i = i + 1   active[19 20 21 22 ]
-GOTO _label11   active[19 20 21 22 ]
+syscall-4   
+#TMP37 = k [ i ] 
+syscall-1 #TMP37
+syscall-11 10
+i = i + 1
+GOTO _label11
 	prev:[19,]
 	next:[21,19,]
 	use:[k,i,]
@@ -509,8 +509,8 @@ GOTO _label11   active[19 20 21 22 ]
 	activeOut:[k,i,j,n,]
 ==============
 ====Block21====
-_label12: syscall-4     active[19 21 ]
-syscall-11 10   active[19 21 ]
+_label12: syscall-4  
+syscall-11 10
 	prev:[20,19,]
 	next:[22,]
 	use:[]
@@ -519,8 +519,8 @@ syscall-11 10   active[19 21 ]
 	activeOut:[k,j,]
 ==============
 ====Block22====
-_label10: j = j + 1   active[19 21 ]
-GOTO _label3   active[19 21 ]
+_label10: j = j + 1
+GOTO _label3
 	prev:[21,17,]
 	next:[23,9,]
 	use:[j,]
@@ -529,12 +529,12 @@ GOTO _label3   active[19 21 ]
 	activeOut:[k,j,]
 ==============
 ====Block23====
-_label4: syscall-4 ---------------------------------------------------------------   active[19 ]
-syscall-11 10   active[19 ]
-syscall-4 'water flower'number is:   active[19 ]
-syscall-11 10   active[19 ]
-i=100   active[19 20 ]
-y=0   active[19 20 25 ]
+_label4: syscall-4 ---------------------------------------------------------------
+syscall-11 10
+syscall-4 'water flower'number is:
+syscall-11 10
+i=100
+y=0
 	prev:[22,9,]
 	next:[24,]
 	use:[]
@@ -543,9 +543,9 @@ y=0   active[19 20 25 ]
 	activeOut:[k,i,y,]
 ==============
 ====Block24====
-_label13: #TMP38 = 100 + 128   active[-38 19 20 25 ]
-#TMP39 = i < #TMP38   active[-39 19 20 25 ]
-BZ #TMP39 _label14   active[19 20 25 ]
+_label13: #TMP38 = 100 + 128
+#TMP39 = i < #TMP38
+BZ #TMP39 _label14
 	prev:[23,27,]
 	next:[25,28,]
 	use:[i,]
@@ -554,28 +554,28 @@ BZ #TMP39 _label14   active[19 20 25 ]
 	activeOut:[k,i,y,]
 ==============
 ====Block25====
-n = i / 100   active[19 20 22 25 ]
-#TMP41 = i / 10   active[-41 19 20 22 25 ]
-#TMP46 = #TMP41 / 10   active[-46 -41 19 20 22 25 ]
-#TMP47 = #TMP46 * 10   active[-47 -41 19 20 22 25 ]
-#TMP44 = #TMP41 - #TMP47   active[-44 19 20 22 25 ]
-#TMP52 = i / 10   active[-52 -44 19 20 22 25 ]
-#TMP53 = #TMP52 * 10   active[-53 -44 19 20 22 25 ]
-#TMP50 = i - #TMP53   active[-50 -44 19 20 22 25 ]
-#TMP59 = n * 100   active[-59 -50 -44 19 20 22 25 ]
-#TMP60 = #TMP44 * 10   active[-60 -59 -50 -44 19 20 22 25 ]
-#TMP61 = #TMP59 + #TMP60   active[-61 -50 -44 19 20 22 25 ]
-#TMP62 = #TMP61 + #TMP50   active[-62 -50 -44 19 20 22 25 ]
-#TMP68 = n * n   active[-68 -62 -50 -44 19 20 22 25 ]
-#TMP69 = #TMP68 * n   active[-69 -62 -50 -44 19 20 25 ]
-#TMP70 = #TMP44 * #TMP44   active[-70 -69 -62 -50 -44 19 20 25 ]
-#TMP71 = #TMP70 * #TMP44   active[-71 -69 -62 -50 19 20 25 ]
-#TMP72 = #TMP69 + #TMP71   active[-72 -62 -50 19 20 25 ]
-#TMP73 = #TMP50 * #TMP50   active[-73 -72 -62 -50 19 20 25 ]
-#TMP74 = #TMP73 * #TMP50   active[-74 -72 -62 19 20 25 ]
-#TMP75 = #TMP72 + #TMP74   active[-75 -62 19 20 25 ]
-#TMP76 = #TMP62 == #TMP75   active[-76 19 20 25 ]
-BZ #TMP76 _label15   active[19 20 25 ]
+n = i / 100
+#TMP41 = i / 10
+#TMP46 = #TMP41 / 10
+#TMP47 = #TMP46 * 10
+#TMP44 = #TMP41 - #TMP47
+#TMP52 = i / 10
+#TMP53 = #TMP52 * 10
+#TMP50 = i - #TMP53
+#TMP59 = n * 100
+#TMP60 = #TMP44 * 10
+#TMP61 = #TMP59 + #TMP60
+#TMP62 = #TMP61 + #TMP50
+#TMP68 = n * n
+#TMP69 = #TMP68 * n
+#TMP70 = #TMP44 * #TMP44
+#TMP71 = #TMP70 * #TMP44
+#TMP72 = #TMP69 + #TMP71
+#TMP73 = #TMP50 * #TMP50
+#TMP74 = #TMP73 * #TMP50
+#TMP75 = #TMP72 + #TMP74
+#TMP76 = #TMP62 == #TMP75
+BZ #TMP76 _label15
 	prev:[24,]
 	next:[26,27,]
 	use:[i,]
@@ -584,8 +584,8 @@ BZ #TMP76 _label15   active[19 20 25 ]
 	activeOut:[k,i,y,]
 ==============
 ====Block26====
-k[y] =i   active[19 20 25 ]
-y = y + 1   active[19 20 25 ]
+k[y] =i
+y = y + 1
 	prev:[25,]
 	next:[27,]
 	use:[i,y,]
@@ -594,8 +594,8 @@ y = y + 1   active[19 20 25 ]
 	activeOut:[k,i,y,]
 ==============
 ====Block27====
-_label15: i = i + 1   active[19 20 25 ]
-GOTO _label13   active[19 20 25 ]
+_label15: i = i + 1
+GOTO _label13
 	prev:[26,25,]
 	next:[28,24,]
 	use:[i,]
@@ -604,7 +604,7 @@ GOTO _label13   active[19 20 25 ]
 	activeOut:[k,i,y,]
 ==============
 ====Block28====
-_label14: i=0   active[19 20 25 ]
+_label14: i=0
 	prev:[27,24,]
 	next:[29,]
 	use:[]
@@ -613,8 +613,8 @@ _label14: i=0   active[19 20 25 ]
 	activeOut:[k,i,y,]
 ==============
 ====Block29====
-_label16: #TMP78 = i < y   active[-78 19 20 25 ]
-BZ #TMP78 _label17   active[19 20 25 ]
+_label16: #TMP78 = i < y
+BZ #TMP78 _label17
 	prev:[28,30,]
 	next:[30,31,]
 	use:[i,y,]
@@ -623,12 +623,12 @@ BZ #TMP78 _label17   active[19 20 25 ]
 	activeOut:[k,i,y,]
 ==============
 ====Block30====
-syscall-4      active[19 20 25 ]
-#TMP79 = k [ i ]    active[-79 19 20 25 ]
-syscall-1 #TMP79   active[19 20 25 ]
-syscall-11 10   active[19 20 25 ]
-i = i + 1   active[19 20 25 ]
-GOTO _label16   active[19 20 25 ]
+syscall-4   
+#TMP79 = k [ i ] 
+syscall-1 #TMP79
+syscall-11 10
+i = i + 1
+GOTO _label16
 	prev:[29,]
 	next:[31,29,]
 	use:[k,i,]
@@ -637,13 +637,13 @@ GOTO _label16   active[19 20 25 ]
 	activeOut:[k,i,y,]
 ==============
 ====Block31====
-_label17: syscall-4     active[]
-syscall-11 10   active[]
-syscall-4 ---------------------------------------------------------------   active[]
-syscall-11 10   active[]
-m=2   active[26 ]
-h=0   active[26 28 ]
-leap=1   active[26 28 29 ]
+_label17: syscall-4  
+syscall-11 10
+syscall-4 ---------------------------------------------------------------
+syscall-11 10
+m=2
+h=0
+leap=1
 	prev:[30,29,]
 	next:[32,]
 	use:[]
@@ -652,8 +652,8 @@ leap=1   active[26 28 29 ]
 	activeOut:[m,h,leap,]
 ==============
 ====Block32====
-_label18: #TMP80 = m <= 128   active[-80 26 28 29 ]
-BZ #TMP80 _label19   active[26 28 29 ]
+_label18: #TMP80 = m <= 128
+BZ #TMP80 _label19
 	prev:[31,41,]
 	next:[33,42,]
 	use:[m,]
@@ -662,8 +662,8 @@ BZ #TMP80 _label19   active[26 28 29 ]
 	activeOut:[m,h,leap,]
 ==============
 ====Block33====
-k2 = m / 2   active[26 27 28 29 ]
-i=2   active[20 26 27 28 29 ]
+k2 = m / 2
+i=2
 	prev:[32,]
 	next:[34,]
 	use:[m,]
@@ -672,8 +672,8 @@ i=2   active[20 26 27 28 29 ]
 	activeOut:[i,m,k2,h,leap,]
 ==============
 ====Block34====
-_label20: #TMP82 = i <= k2   active[-82 20 26 27 28 29 ]
-BZ #TMP82 _label21   active[20 26 27 28 29 ]
+_label20: #TMP82 = i <= k2
+BZ #TMP82 _label21
 	prev:[33,37,]
 	next:[35,38,]
 	use:[i,k2,]
@@ -682,12 +682,12 @@ BZ #TMP82 _label21   active[20 26 27 28 29 ]
 	activeOut:[i,m,k2,h,leap,]
 ==============
 ====Block35====
-#TMP83 = m / i   active[20 26 27 28 29 ]
-#TMP89 = m / i   active[-89 20 26 27 28 29 ]
-#TMP90 = #TMP89 * i   active[-90 20 26 27 28 29 ]
-#TMP87 = m - #TMP90   active[-87 20 26 27 28 29 ]
-#TMP91 = #TMP87 == 0   active[-91 20 26 27 28 29 ]
-BZ #TMP91 _label22   active[20 26 27 28 29 ]
+#TMP83 = m / i
+#TMP89 = m / i
+#TMP90 = #TMP89 * i
+#TMP87 = m - #TMP90
+#TMP91 = #TMP87 == 0
+BZ #TMP91 _label22
 	prev:[34,]
 	next:[36,37,]
 	use:[i,m,]
@@ -696,7 +696,7 @@ BZ #TMP91 _label22   active[20 26 27 28 29 ]
 	activeOut:[i,m,k2,h,leap,]
 ==============
 ====Block36====
-leap=0   active[20 26 27 28 29 ]
+leap=0
 	prev:[35,]
 	next:[37,]
 	use:[]
@@ -705,8 +705,8 @@ leap=0   active[20 26 27 28 29 ]
 	activeOut:[i,m,k2,h,leap,]
 ==============
 ====Block37====
-_label22: i = i + 1   active[20 26 27 28 29 ]
-GOTO _label20   active[20 26 27 28 29 ]
+_label22: i = i + 1
+GOTO _label20
 	prev:[36,35,]
 	next:[38,34,]
 	use:[i,]
@@ -715,8 +715,8 @@ GOTO _label20   active[20 26 27 28 29 ]
 	activeOut:[i,m,k2,h,leap,]
 ==============
 ====Block38====
-_label21: #TMP92 = leap == 1   active[-92 26 28 ]
-BZ #TMP92 _label23   active[26 28 ]
+_label21: #TMP92 = leap == 1
+BZ #TMP92 _label23
 	prev:[37,34,]
 	next:[39,41,]
 	use:[leap,]
@@ -725,14 +725,14 @@ BZ #TMP92 _label23   active[26 28 ]
 	activeOut:[m,h,]
 ==============
 ====Block39====
-syscall-4     active[26 28 ]
-syscall-1 m   active[26 28 ]
-syscall-11 10   active[26 28 ]
-h = h + 1   active[26 28 ]
-#TMP94 = h / 10   active[-94 26 28 ]
-x2 = #TMP94 * 10   active[26 28 30 ]
-#TMP96 = x2 == h   active[-96 26 28 ]
-BZ #TMP96 _label23   active[26 28 ]
+syscall-4  
+syscall-1 m
+syscall-11 10
+h = h + 1
+#TMP94 = h / 10
+x2 = #TMP94 * 10
+#TMP96 = x2 == h
+BZ #TMP96 _label23
 	prev:[38,]
 	next:[40,41,]
 	use:[m,h,]
@@ -741,8 +741,8 @@ BZ #TMP96 _label23   active[26 28 ]
 	activeOut:[m,h,]
 ==============
 ====Block40====
-syscall-4     active[26 28 ]
-syscall-11 10   active[26 28 ]
+syscall-4  
+syscall-11 10
 	prev:[39,]
 	next:[41,]
 	use:[]
@@ -751,9 +751,9 @@ syscall-11 10   active[26 28 ]
 	activeOut:[m,h,]
 ==============
 ====Block41====
-_label23: m = m + 1   active[26 28 ]
-leap=1   active[26 28 29 ]
-GOTO _label18   active[26 28 29 ]
+_label23: m = m + 1
+leap=1
+GOTO _label18
 	prev:[40,38,39,]
 	next:[42,32,]
 	use:[m,]
@@ -762,10 +762,10 @@ GOTO _label18   active[26 28 29 ]
 	activeOut:[m,h,leap,]
 ==============
 ====Block42====
-_label19: syscall-4 The total is    active[28 ]
-syscall-1 h   active[]
-syscall-11 10   active[]
-ret    active[]
+_label19: syscall-4 The total is 
+syscall-1 h
+syscall-11 10
+ret 
 	prev:[41,32,]
 	next:[]
 	use:[h,]
@@ -774,9 +774,9 @@ ret    active[]
 	activeOut:[]
 ==============
 ====Block43====
-void main()   active[]
-push 5   active[]
-call factorial   active[]
+void main()
+push 5
+call factorial
 	prev:[]
 	next:[44,]
 	use:[]
@@ -785,13 +785,13 @@ call factorial   active[]
 	activeOut:[]
 ==============
 ====Block44====
-n=RET   active[35 ]
-syscall-4 5 !=    active[35 ]
-syscall-1 n   active[]
-syscall-11 10   active[]
-push 5   active[]
-push 10   active[]
-call swap   active[]
+n=RET
+syscall-4 5 != 
+syscall-1 n
+syscall-11 10
+push 5
+push 10
+call swap
 	prev:[43,]
 	next:[45,]
 	use:[]
@@ -800,7 +800,7 @@ call swap   active[]
 	activeOut:[]
 ==============
 ====Block45====
-call complete_flower_num   active[]
+call complete_flower_num
 	prev:[44,]
 	next:[]
 	use:[]
@@ -811,65 +811,65 @@ call complete_flower_num   active[]
 
 
 const int MAX_NUM
-int factorial()   active[2 ]
-para int n   active[2 ]
-#TMP2 = n <= 1   active[-2 2 ]
-BZ #TMP2 _label2   active[2 ]
-ret 1   active[2 ]
-_label2: #TMP3 = n - 1   active[-3 2 ]
-push #TMP3   active[2 ]
-call factorial   active[2 ]
-#TMP4=RET   active[-4 2 ]
-#TMP5 = n * #TMP4   active[-5 ]
-ret #TMP5   active[]
-int mod()   active[4 5 ]
-para int x   active[4 5 ]
-para int y   active[4 5 ]
-#TMP6 = x / y   active[-6 4 5 ]
-#TMP7 = #TMP6 * y   active[-7 4 ]
-x = x - #TMP7   active[4 ]
-ret x   active[]
+int factorial()
+para int n
+#TMP2 = n <= 1
+BZ #TMP2 _label2
+ret 1
+_label2: #TMP3 = n - 1
+push #TMP3
+call factorial
+#TMP4=RET
+#TMP5 = n * #TMP4
+ret #TMP5
+int mod()
+para int x
+para int y
+#TMP6 = x / y
+#TMP7 = #TMP6 * y
+x = x - #TMP7
+ret x
 int temp
-void swap()   active[7 8 ]
-para int x   active[7 8 ]
-para int y   active[7 8 ]
-syscall-4 x =    active[7 8 ]
-syscall-1 x   active[7 8 ]
-syscall-11 10   active[7 8 ]
-syscall-4 y =    active[7 8 ]
-syscall-1 y   active[7 8 ]
-syscall-11 10   active[7 8 ]
-temp=x   active[8 9 ]
-x=y   active[7 9 ]
-syscall-4 SWAP x =    active[7 9 ]
-syscall-1 x   active[9 ]
-syscall-11 10   active[9 ]
-syscall-4 SWAP y =    active[9 ]
-syscall-1 temp   active[]
-syscall-11 10   active[]
-ret    active[]
-int full_num()   active[11 12 13 ]
-para int n   active[11 12 13 ]
-para int j   active[11 12 13 ]
-para int a   active[11 12 13 ]
-#TMP9 = n * 100   active[-9 12 13 ]
-#TMP10 = j * 10   active[-10 -9 13 ]
-#TMP11 = #TMP9 + #TMP10   active[-11 13 ]
-#TMP12 = #TMP11 + a   active[-12 ]
-ret #TMP12   active[]
-int flower_num()   active[15 16 17 ]
-para int n   active[15 16 17 ]
-para int j   active[15 16 17 ]
-para int a   active[15 16 17 ]
-#TMP13 = n * n   active[-13 15 16 17 ]
-#TMP14 = #TMP13 * n   active[-14 16 17 ]
-#TMP15 = j * j   active[-15 -14 16 17 ]
-#TMP16 = #TMP15 * j   active[-16 -14 17 ]
-#TMP17 = #TMP14 + #TMP16   active[-17 17 ]
-#TMP18 = a * a   active[-18 -17 17 ]
-#TMP19 = #TMP18 * a   active[-19 -17 ]
-#TMP20 = #TMP17 + #TMP19   active[-20 ]
-ret #TMP20   active[]
+void swap()
+para int x
+para int y
+syscall-4 x = 
+syscall-1 x
+syscall-11 10
+syscall-4 y = 
+syscall-1 y
+syscall-11 10
+temp=x
+x=y
+syscall-4 SWAP x = 
+syscall-1 x
+syscall-11 10
+syscall-4 SWAP y = 
+syscall-1 temp
+syscall-11 10
+ret 
+int full_num()
+para int n
+para int j
+para int a
+#TMP9 = n * 100
+#TMP10 = j * 10
+#TMP11 = #TMP9 + #TMP10
+#TMP12 = #TMP11 + a
+ret #TMP12
+int flower_num()
+para int n
+para int j
+para int a
+#TMP13 = n * n
+#TMP14 = #TMP13 * n
+#TMP15 = j * j
+#TMP16 = #TMP15 * j
+#TMP17 = #TMP14 + #TMP16
+#TMP18 = a * a
+#TMP19 = #TMP18 * a
+#TMP20 = #TMP17 + #TMP19
+ret #TMP20
 int a
 int b
 int c
@@ -885,146 +885,146 @@ int s
 int x1
 int x2
 int y
-void complete_flower_num()   active[19 ]
-j=2   active[19 21 ]
-_label3: #TMP21 = j < 128   active[-21 19 21 ]
-BZ #TMP21 _label4   active[19 21 ]
-i=1   active[19 20 21 ]
-n=-1   active[19 20 21 22 ]
-s=j   active[19 20 21 22 23 ]
-_label5: #TMP22 = i < j   active[-22 19 20 21 22 23 ]
-BZ #TMP22 _label6   active[19 20 21 22 23 ]
-#TMP23 = j / i   active[19 20 21 22 23 ]
-#TMP29 = j / i   active[-29 19 20 21 22 23 ]
-#TMP30 = #TMP29 * i   active[-30 19 20 21 22 23 ]
-#TMP27 = j - #TMP30   active[-27 19 20 21 22 23 ]
-#TMP31 = #TMP27 == 0   active[-31 19 20 21 22 23 ]
-BZ #TMP31 _label7   active[19 20 21 22 23 ]
-n = n + 1   active[19 20 21 22 23 ]
-s = s - i   active[19 20 21 22 23 ]
-#TMP34 = n >= 128   active[-34 19 20 21 22 23 ]
-BZ #TMP34 _label8   active[19 20 21 22 23 ]
-syscall-4 OVERFLOW!   active[19 20 21 22 23 ]
-syscall-11 10   active[19 20 21 22 23 ]
-GOTO _label7   active[19 20 21 22 23 ]
-_label8: k[n] =i   active[19 20 21 22 23 ]
-_label7: i = i + 1   active[19 20 21 22 23 ]
-GOTO _label5   active[19 20 21 22 23 ]
-_label6: #TMP35 = s == 0   active[-35 19 21 22 ]
-BZ #TMP35 _label10   active[19 21 22 ]
-syscall-4 complete number:    active[19 21 22 ]
-syscall-1 j   active[19 21 22 ]
-syscall-11 10   active[19 21 22 ]
-i=0   active[19 20 21 22 ]
-_label11: #TMP36 = i <= n   active[-36 19 20 21 22 ]
-BZ #TMP36 _label12   active[19 20 21 22 ]
-syscall-4      active[19 20 21 22 ]
-#TMP37 = k [ i ]    active[-37 19 20 21 22 ]
-syscall-1 #TMP37   active[19 20 21 22 ]
-syscall-11 10   active[19 20 21 22 ]
-i = i + 1   active[19 20 21 22 ]
-GOTO _label11   active[19 20 21 22 ]
-_label12: syscall-4     active[19 21 ]
-syscall-11 10   active[19 21 ]
-_label10: j = j + 1   active[19 21 ]
-GOTO _label3   active[19 21 ]
-_label4: syscall-4 ---------------------------------------------------------------   active[19 ]
-syscall-11 10   active[19 ]
-syscall-4 'water flower'number is:   active[19 ]
-syscall-11 10   active[19 ]
-i=100   active[19 20 ]
-y=0   active[19 20 25 ]
-_label13: #TMP38 = 100 + 128   active[-38 19 20 25 ]
-#TMP39 = i < #TMP38   active[-39 19 20 25 ]
-BZ #TMP39 _label14   active[19 20 25 ]
-n = i / 100   active[19 20 22 25 ]
-#TMP41 = i / 10   active[-41 19 20 22 25 ]
-#TMP46 = #TMP41 / 10   active[-46 -41 19 20 22 25 ]
-#TMP47 = #TMP46 * 10   active[-47 -41 19 20 22 25 ]
-#TMP44 = #TMP41 - #TMP47   active[-44 19 20 22 25 ]
-#TMP52 = i / 10   active[-52 -44 19 20 22 25 ]
-#TMP53 = #TMP52 * 10   active[-53 -44 19 20 22 25 ]
-#TMP50 = i - #TMP53   active[-50 -44 19 20 22 25 ]
-#TMP59 = n * 100   active[-59 -50 -44 19 20 22 25 ]
-#TMP60 = #TMP44 * 10   active[-60 -59 -50 -44 19 20 22 25 ]
-#TMP61 = #TMP59 + #TMP60   active[-61 -50 -44 19 20 22 25 ]
-#TMP62 = #TMP61 + #TMP50   active[-62 -50 -44 19 20 22 25 ]
-#TMP68 = n * n   active[-68 -62 -50 -44 19 20 22 25 ]
-#TMP69 = #TMP68 * n   active[-69 -62 -50 -44 19 20 25 ]
-#TMP70 = #TMP44 * #TMP44   active[-70 -69 -62 -50 -44 19 20 25 ]
-#TMP71 = #TMP70 * #TMP44   active[-71 -69 -62 -50 19 20 25 ]
-#TMP72 = #TMP69 + #TMP71   active[-72 -62 -50 19 20 25 ]
-#TMP73 = #TMP50 * #TMP50   active[-73 -72 -62 -50 19 20 25 ]
-#TMP74 = #TMP73 * #TMP50   active[-74 -72 -62 19 20 25 ]
-#TMP75 = #TMP72 + #TMP74   active[-75 -62 19 20 25 ]
-#TMP76 = #TMP62 == #TMP75   active[-76 19 20 25 ]
-BZ #TMP76 _label15   active[19 20 25 ]
-k[y] =i   active[19 20 25 ]
-y = y + 1   active[19 20 25 ]
-_label15: i = i + 1   active[19 20 25 ]
-GOTO _label13   active[19 20 25 ]
-_label14: i=0   active[19 20 25 ]
-_label16: #TMP78 = i < y   active[-78 19 20 25 ]
-BZ #TMP78 _label17   active[19 20 25 ]
-syscall-4      active[19 20 25 ]
-#TMP79 = k [ i ]    active[-79 19 20 25 ]
-syscall-1 #TMP79   active[19 20 25 ]
-syscall-11 10   active[19 20 25 ]
-i = i + 1   active[19 20 25 ]
-GOTO _label16   active[19 20 25 ]
-_label17: syscall-4     active[]
-syscall-11 10   active[]
-syscall-4 ---------------------------------------------------------------   active[]
-syscall-11 10   active[]
-m=2   active[26 ]
-h=0   active[26 28 ]
-leap=1   active[26 28 29 ]
-_label18: #TMP80 = m <= 128   active[-80 26 28 29 ]
-BZ #TMP80 _label19   active[26 28 29 ]
-k2 = m / 2   active[26 27 28 29 ]
-i=2   active[20 26 27 28 29 ]
-_label20: #TMP82 = i <= k2   active[-82 20 26 27 28 29 ]
-BZ #TMP82 _label21   active[20 26 27 28 29 ]
-#TMP83 = m / i   active[20 26 27 28 29 ]
-#TMP89 = m / i   active[-89 20 26 27 28 29 ]
-#TMP90 = #TMP89 * i   active[-90 20 26 27 28 29 ]
-#TMP87 = m - #TMP90   active[-87 20 26 27 28 29 ]
-#TMP91 = #TMP87 == 0   active[-91 20 26 27 28 29 ]
-BZ #TMP91 _label22   active[20 26 27 28 29 ]
-leap=0   active[20 26 27 28 29 ]
-_label22: i = i + 1   active[20 26 27 28 29 ]
-GOTO _label20   active[20 26 27 28 29 ]
-_label21: #TMP92 = leap == 1   active[-92 26 28 ]
-BZ #TMP92 _label23   active[26 28 ]
-syscall-4     active[26 28 ]
-syscall-1 m   active[26 28 ]
-syscall-11 10   active[26 28 ]
-h = h + 1   active[26 28 ]
-#TMP94 = h / 10   active[-94 26 28 ]
-x2 = #TMP94 * 10   active[26 28 30 ]
-#TMP96 = x2 == h   active[-96 26 28 ]
-BZ #TMP96 _label23   active[26 28 ]
-syscall-4     active[26 28 ]
-syscall-11 10   active[26 28 ]
-_label23: m = m + 1   active[26 28 ]
-leap=1   active[26 28 29 ]
-GOTO _label18   active[26 28 29 ]
-_label19: syscall-4 The total is    active[28 ]
-syscall-1 h   active[]
-syscall-11 10   active[]
-ret    active[]
+void complete_flower_num()
+j=2
+_label3: #TMP21 = j < 128
+BZ #TMP21 _label4
+i=1
+n=-1
+s=j
+_label5: #TMP22 = i < j
+BZ #TMP22 _label6
+#TMP23 = j / i
+#TMP29 = j / i
+#TMP30 = #TMP29 * i
+#TMP27 = j - #TMP30
+#TMP31 = #TMP27 == 0
+BZ #TMP31 _label7
+n = n + 1
+s = s - i
+#TMP34 = n >= 128
+BZ #TMP34 _label8
+syscall-4 OVERFLOW!
+syscall-11 10
+GOTO _label7
+_label8: k[n] =i
+_label7: i = i + 1
+GOTO _label5
+_label6: #TMP35 = s == 0
+BZ #TMP35 _label10
+syscall-4 complete number: 
+syscall-1 j
+syscall-11 10
+i=0
+_label11: #TMP36 = i <= n
+BZ #TMP36 _label12
+syscall-4   
+#TMP37 = k [ i ] 
+syscall-1 #TMP37
+syscall-11 10
+i = i + 1
+GOTO _label11
+_label12: syscall-4  
+syscall-11 10
+_label10: j = j + 1
+GOTO _label3
+_label4: syscall-4 ---------------------------------------------------------------
+syscall-11 10
+syscall-4 'water flower'number is:
+syscall-11 10
+i=100
+y=0
+_label13: #TMP38 = 100 + 128
+#TMP39 = i < #TMP38
+BZ #TMP39 _label14
+n = i / 100
+#TMP41 = i / 10
+#TMP46 = #TMP41 / 10
+#TMP47 = #TMP46 * 10
+#TMP44 = #TMP41 - #TMP47
+#TMP52 = i / 10
+#TMP53 = #TMP52 * 10
+#TMP50 = i - #TMP53
+#TMP59 = n * 100
+#TMP60 = #TMP44 * 10
+#TMP61 = #TMP59 + #TMP60
+#TMP62 = #TMP61 + #TMP50
+#TMP68 = n * n
+#TMP69 = #TMP68 * n
+#TMP70 = #TMP44 * #TMP44
+#TMP71 = #TMP70 * #TMP44
+#TMP72 = #TMP69 + #TMP71
+#TMP73 = #TMP50 * #TMP50
+#TMP74 = #TMP73 * #TMP50
+#TMP75 = #TMP72 + #TMP74
+#TMP76 = #TMP62 == #TMP75
+BZ #TMP76 _label15
+k[y] =i
+y = y + 1
+_label15: i = i + 1
+GOTO _label13
+_label14: i=0
+_label16: #TMP78 = i < y
+BZ #TMP78 _label17
+syscall-4   
+#TMP79 = k [ i ] 
+syscall-1 #TMP79
+syscall-11 10
+i = i + 1
+GOTO _label16
+_label17: syscall-4  
+syscall-11 10
+syscall-4 ---------------------------------------------------------------
+syscall-11 10
+m=2
+h=0
+leap=1
+_label18: #TMP80 = m <= 128
+BZ #TMP80 _label19
+k2 = m / 2
+i=2
+_label20: #TMP82 = i <= k2
+BZ #TMP82 _label21
+#TMP83 = m / i
+#TMP89 = m / i
+#TMP90 = #TMP89 * i
+#TMP87 = m - #TMP90
+#TMP91 = #TMP87 == 0
+BZ #TMP91 _label22
+leap=0
+_label22: i = i + 1
+GOTO _label20
+_label21: #TMP92 = leap == 1
+BZ #TMP92 _label23
+syscall-4  
+syscall-1 m
+syscall-11 10
+h = h + 1
+#TMP94 = h / 10
+x2 = #TMP94 * 10
+#TMP96 = x2 == h
+BZ #TMP96 _label23
+syscall-4  
+syscall-11 10
+_label23: m = m + 1
+leap=1
+GOTO _label18
+_label19: syscall-4 The total is 
+syscall-1 h
+syscall-11 10
+ret 
 int n
-void main()   active[]
-push 5   active[]
-call factorial   active[]
-n=RET   active[35 ]
-syscall-4 5 !=    active[35 ]
-syscall-1 n   active[]
-syscall-11 10   active[]
-push 5   active[]
-push 10   active[]
-call swap   active[]
-call complete_flower_num   active[]
+void main()
+push 5
+call factorial
+n=RET
+syscall-4 5 != 
+syscall-1 n
+syscall-11 10
+push 5
+push 10
+call swap
+call complete_flower_num
 
 
 global:
