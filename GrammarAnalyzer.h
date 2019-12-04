@@ -77,7 +77,7 @@ public:
 	ReturnBundle functionCall(string name, bool mustReturn);//这个函数应该带走两括号
 
 	/*值参数表，会抛出异常*/
-	void parameterValueList(SymbolEntry* entry);
+	vector<ReturnBundle> parameterValueList(SymbolEntry* entry,bool inlined);
 
 	/*会抛出异常*/
 	void scanSentence();
@@ -101,10 +101,14 @@ private:
 	FaultHandler& f;
 	SymbolTable& table;
 	LexicalAnalyzer& lex;
-	bool course=false;
-	fstream out;
+	
 	string currentScope ;
 	bool globalVariableDeclearation = false;
-	bool lexicalTest = false;
 	bool hasReturned;
+	bool inlineable;
+	
+
+	bool course = false;
+	fstream out;
+	bool lexicalTest = false;
 };

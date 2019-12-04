@@ -138,6 +138,11 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 				Item tmp;
 				tmp.id=  c.operand1;
 				tmp.isImmediate = c.isImmediate1;
+				if (!c.isImmediate1&&substitution.find(c.operand1) != substitution.end()) {
+					tmp.id = substitution[c.operand1].id;
+					tmp.isImmediate = substitution[c.operand1].isImmediate;
+				}
+				
 				substitution[c.target] = tmp;
 				break;
 			}
@@ -226,7 +231,7 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 	//todo implement
 	for (auto& i : substitution) {
 		SymbolEntry* e = MidCode::table->getSymbolById(i.first);
-		if (activeOut.find(i.first) != activeOut.end()||e->scope=="") {
+		if (activeOut.find(i.first) != activeOut.end()||(i.first>0&&e->scope=="")) {
 			MidCode tmp2;
 			tmp2.op = MIDASSIGN; tmp2.target = i.first;
 			tmp2.operand1 = i.second.id; tmp2.isImmediate1 = i.second.isImmediate;

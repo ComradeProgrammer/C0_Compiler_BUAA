@@ -267,7 +267,7 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 			if (order != -1) {
 				int bias = entry->addr;
 				out << "lw " << name[order+4] << "," << bias << "($sp)";
-				out << "	#load variable" << MidCode::getOperandName(var, false);
+				out << "	#load variable " << MidCode::getOperandName(var, false);
 				out << endl;
 				return order+4;
 			}

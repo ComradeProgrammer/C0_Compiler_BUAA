@@ -3,6 +3,7 @@
 #include"FlowGraph.h"
 #include"MipsTranslator.h"
 using namespace std;
+struct ReturnBundle;
 class MidCodeFramework {
 public :
 	MidCodeFramework(MipsTranslator& _mips);
@@ -25,10 +26,11 @@ public :
 	void generateMips();
 	void removeNops();
 	void dumpNewMidCode(ostream& out);
+	vector<MidCode> inlinedSimpleFunction(string functionName
+		, vector<ReturnBundle>parameters, int returnVar);
 private:
 	
 	vector<FlowGraph>graph;
-
 	MipsTranslator& mips;
 	map<int,vector<int>>report;
 

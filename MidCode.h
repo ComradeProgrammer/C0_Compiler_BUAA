@@ -64,4 +64,8 @@ public:
 	friend ostream& operator<<(ostream& out, MidCode c);
 	static string getOperandName(int n,bool isImmediate);
 	static string getLabelName(int n);
+	static MidCode generateMidCode(MidCodeOp op, int target,
+		int operand1, bool isImmediate1,
+		int operand2, bool isImmediate2,
+		int label );
 };

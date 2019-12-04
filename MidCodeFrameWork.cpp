@@ -1,5 +1,5 @@
 ﻿#include"MidCodeFramework.h"
-
+#include"GrammarAnalyzer.h"
 MidCodeFramework::MidCodeFramework(MipsTranslator& _mips):mips(_mips) {
 }
 
@@ -86,4 +86,152 @@ void MidCodeFramework::dumpNewMidCode(ostream&out) {
 			}
 		}
 	}
+}
+
+vector<MidCode>MidCodeFramework::inlinedSimpleFunction(string functionName
+	, vector<ReturnBundle>parameters, int returnVar=-1) {
+	//在目前版本的内联中，被内联的函数不能有函数调用，不能有跳转，不能有读写,不能有数组
+	vector<MidCode>res;
+	map<int, int>fakeTable;
+	SymbolEntry* entry = MidCode::table->getSymbolByName("",functionName);
+	//处理符号表中已知的所有变量
+	SubSymbolTable* table = MidCode::table->getSubSymbolTableByName(functionName);
+	for (auto& i : table->symbolMap) {
+		int tmpVar = MidCode::tmpVarAlloc();
+		fakeTable[i.second->id] = tmpVar;
+	}
+	//处理函数参数
+	for (int i = 0; i < entry->link->paraNum; i++) {
+		//还需要插入赋值语句令新生成的临时变量等于参数
+		MidCode tmp = MidCode::generateMidCode(MIDASSIGN, 
+			fakeTable[entry->link->paraIds[i]],
+			parameters[i].id,parameters[i].isImmediate,
+			MIDUNUSED, false, MIDNOLABEL);
+		res.push_back(tmp);
+	}
+	
+	MidCodeContainer func;
+	//找出对应的函数中间代码
+	for (MidCodeContainer& c : functionContainer) {
+		if (c.functionName == functionName) {
+			func = c;
+		}
+	}
+	for (MidCode& c : func.v) {
+		//逐句处理
+		MidCode newMidCode = c;
+		switch (c.op) {
+			case MIDFUNC:
+			case MIDPARA:
+				break;
+			case MIDCALL:
+			case MIDARRAYGET:
+			case MIDARRAYWRITE:
+			case MIDGOTO:
+			case MIDBNZ:
+			case MIDBZ:
+			case MIDPRINTCHAR:
+			case MIDPRINTINT:
+			case MIDPRINTSTRING:
+			case MIDREADCHAR:
+			case MIDREADINTEGER:
+				cout << "bug @ inlinedFunction" << endl;
+				break;
+			case MIDRET:
+				if (entry->link->returnType == RETVOID) {
+					break;
+				}
+				else {
+					//当一个变量是全局变量时不应替换，局部变量应该替换
+					int newVar;
+					if (c.isImmediate1) {
+						newVar = c.operand1;
+					}
+					else {
+						SymbolEntry* varEntry = MidCode::table->getSymbolById(c.operand1);
+						if (!c.operand1<0&&varEntry->scope == "") {
+							newVar = c.operand1;
+						}
+						else {
+							newVar = fakeTable[c.operand1];
+						}
+					}
+					MidCode tmp = MidCode::generateMidCode(MIDASSIGN, returnVar,
+						newVar, c.isImmediate1,
+						MIDUNUSED, false, MIDNOLABEL);//赋返回值
+					res.push_back(tmp);
+					break;
+				}
+			case MIDADD:
+			case MIDSUB:
+			case MIDMULT:
+			case MIDDIV:
+			case MIDLSS:
+			case MIDLEQ:
+			case MIDGRE:
+			case MIDGEQ:
+			case MIDEQL:
+			case MIDNEQ:
+			{
+				SymbolEntry* targetEntry = MidCode::table->getSymbolById(c.target);
+				if (c.target<0||targetEntry->scope != "") {
+					//凡全局变量均应当替换,未分配替换变量者应当分配
+					if (fakeTable.find(c.target) == fakeTable.end()) {
+						fakeTable[c.target] = MidCode::tmpVarAlloc();
+					}
+					newMidCode.target = fakeTable[c.target];
+				}
+				if (!c.isImmediate1) {
+					//若为常量不需要替换
+					SymbolEntry* op1Entry = MidCode::table->getSymbolById(c.operand1);
+					if (c.operand1<0||op1Entry->scope != "") {
+						if (fakeTable.find(c.operand1) == fakeTable.end()) {
+							fakeTable[c.operand1] = MidCode::tmpVarAlloc();
+						}
+						newMidCode.operand1 = fakeTable[c.operand1];
+					}
+				}
+				if (!c.isImmediate2) {
+					//若为常量不需要替换
+					SymbolEntry* op2Entry = MidCode::table->getSymbolById(c.operand2);
+					if (c.operand2<0||op2Entry->scope != "") {
+						if (fakeTable.find(c.operand2) == fakeTable.end()) {
+							fakeTable[c.operand2] = MidCode::tmpVarAlloc();
+						}
+						newMidCode.operand2 = fakeTable[c.operand2];
+					}
+				}
+				res.push_back(newMidCode);
+				break;
+			}
+			case MIDNEGATE:
+			case MIDASSIGN:
+			{
+				SymbolEntry* targetEntry = MidCode::table->getSymbolById(c.target);
+				if (c.target < 0 || targetEntry->scope != "") {
+					//凡全局变量均应当替换,未分配替换变量者应当分配
+					if (fakeTable.find(c.target) == fakeTable.end()) {
+						fakeTable[c.target] = MidCode::tmpVarAlloc();
+					}
+					newMidCode.target = fakeTable[c.target];
+				}
+				if (!c.isImmediate1) {
+					//若为常量不需要替换
+					SymbolEntry* op1Entry = MidCode::table->getSymbolById(c.operand1);
+					if (c.operand1 < 0 || op1Entry->scope != "") {
+						if (fakeTable.find(c.operand1) == fakeTable.end()) {
+							fakeTable[c.operand1] = MidCode::tmpVarAlloc();
+						}
+						newMidCode.operand1 = fakeTable[c.operand1];
+					}
+				}
+				res.push_back(newMidCode);
+				break;
+			}
+			case MIDNOP:
+				res.push_back(newMidCode);
+				break;			
+		}
+	}
+	return res;
 }

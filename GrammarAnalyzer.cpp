@@ -271,6 +271,9 @@ void GrammarAnalyzer::variableDefination(bool wraper,Lexical type,string name) {
 		}
 		int dimension = 0;
 		if (lex.sym().type == LBRACK) {//判断是不是数组元素
+			if (currentScope != "") {
+				inlineable = false;
+			}
 			getNextSym();
 			if (lex.sym().type != INTCON) {
 				f.handleCourseFault(lex.lineNumber(), ILLEGALINDEX);
@@ -746,9 +749,17 @@ void GrammarAnalyzer::parameterList(SymbolEntry* entry) {
 
 /*<复合语句>*/
  void GrammarAnalyzer::compoundSentence(){
+	inlineable = true;
+	if (currentScope == "main") {
+		inlineable = false;
+	}
 	constDeclearation();
 	variableDeclearation();
 	sentenceSeries();
+	SymbolEntry* entry = table.getSymbolByName("", currentScope);
+	if (inlineable == true) {
+		entry->link->inlineable = true;
+	}
 	if (course) { out << "<复合语句>" << endl; }
 }
 
@@ -1074,6 +1085,7 @@ void GrammarAnalyzer::assignSentence(string varname) {
 
 /*函数调用，若mustReturn是真意味着必须有返回值，否则有无返回值皆可，已被预读符号*/
 ReturnBundle GrammarAnalyzer::functionCall(string name,bool mustReturn) {
+	inlineable = false;
 	bool error = false;
 	ReturnBundle res;
 	SymbolEntry* entry = table.getSymbolByName(currentScope, name);
@@ -1105,7 +1117,8 @@ ReturnBundle GrammarAnalyzer::functionCall(string name,bool mustReturn) {
 	//完成左括号处理
 
 
-	parameterValueList(entry);//读取实参列表
+	vector<ReturnBundle>paras=
+		parameterValueList(entry, entry->link->inlineable);//读取实参列表
 
 	if (lex.sym().type != RPARENT) {
 		f.handleCourseFault(lex.lineNumber(), NORPARENT);
@@ -1117,13 +1130,26 @@ ReturnBundle GrammarAnalyzer::functionCall(string name,bool mustReturn) {
 	}
 	//右大括号读取完成
 	if (!error) {
-		raw.midCodeInsert(MIDCALL, MIDUNUSED,
-			entry->id, false, MIDUNUSED, false, MIDNOLABEL);
-		if (entry->link->returnType != RETVOID) {
+		if (!entry->link->inlineable) {
+			raw.midCodeInsert(MIDCALL, MIDUNUSED,
+				entry->id, false, MIDUNUSED, false, MIDNOLABEL);
+			if (entry->link->returnType != RETVOID) {
+				res.id = MidCode::tmpVarAlloc();
+				raw.midCodeInsert(MIDASSIGN, res.id, -1, false,
+					MIDUNUSED, false, MIDNOLABEL);
+				res.isImmediate = false;
+			}
+		}
+		else {
+			//内联
+			//	todo:返回类型??
 			res.id = MidCode::tmpVarAlloc();
-			raw.midCodeInsert(MIDASSIGN, res.id, -1, false,
-				MIDUNUSED, false, MIDNOLABEL);
 			res.isImmediate = false;
+			int returnTmp= MidCode::tmpVarAlloc();
+			vector<MidCode>midcode = raw.inlinedSimpleFunction(entry->name, paras, returnTmp);
+			raw.midCodeInsert(midcode);
+			raw.midCodeInsert(MIDASSIGN, res.id,
+				returnTmp, false, MIDUNUSED, false, MIDNOLABEL);
 		}
 	}
 	if (course) {
@@ -1138,7 +1164,7 @@ ReturnBundle GrammarAnalyzer::functionCall(string name,bool mustReturn) {
 }
 
 /*<值参数表>*/
-void GrammarAnalyzer::parameterValueList(SymbolEntry* entry) {
+vector<ReturnBundle> GrammarAnalyzer::parameterValueList(SymbolEntry* entry,bool inlined) {
 	int paraNum = 0;
 	bool init = true, error = false;
 	vector<vector<int>> codeIndex;//存储中间代码的下标
@@ -1202,16 +1228,20 @@ void GrammarAnalyzer::parameterValueList(SymbolEntry* entry) {
 			raw.midCodeInsert(codeSegment[i]);
 		}
 	}
-	for (int i = 0; i< returnBundles.size();i++) {
-		raw.midCodeInsert(MIDPUSH, MIDUNUSED,
-			returnBundles[i].id, returnBundles[i].isImmediate,
-			MIDUNUSED, false, MIDNOLABEL);
+	if (!inlined) {
+		for (int i = 0; i < returnBundles.size(); i++) {
+			raw.midCodeInsert(MIDPUSH, MIDUNUSED,
+				returnBundles[i].id, returnBundles[i].isImmediate,
+				MIDUNUSED, false, MIDNOLABEL);
+		}
+		//检查参数是否对应（个数，应该还有参数类型的标记）
 	}
-	//检查参数是否对应（个数，应该还有参数类型的标记）
 	if (course) { out << "<值参数表>" << endl; }
+	return returnBundles;
 }
 
 void GrammarAnalyzer::scanSentence() {
+	inlineable = false;
 	if (lex.sym().type != SCANFTK) {
 		f.handleFault(lex.lineNumber(), "缺少scanf标识符");
 		throw 0;
@@ -1280,6 +1310,7 @@ void GrammarAnalyzer::scanSentence() {
 }
 
 void GrammarAnalyzer::printSentence() {
+	inlineable = false;
 	if (lex.sym().type != PRINTFTK) {
 		f.handleFault(lex.lineNumber(), "缺少printf标识符");
 		throw 0;
@@ -1397,6 +1428,7 @@ void GrammarAnalyzer::returnSentence() {
 }
 
 void GrammarAnalyzer::ifSentence() {
+	inlineable = false;
 	if (lex.sym().type != IFTK) {
 		f.handleFault(lex.lineNumber(), "缺少if标识符");
 		throw 0;
@@ -1500,6 +1532,7 @@ ReturnBundle GrammarAnalyzer::condition() {
 }
 
 void GrammarAnalyzer::loopSentence() {
+	inlineable = false;
 	bool error = false;
 	if (lex.sym().type == WHILETK) {
 		getNextSym();

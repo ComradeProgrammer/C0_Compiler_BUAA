@@ -152,4 +152,17 @@ ostream& operator<<(ostream& out, MidCode c) {
 	out << endl;
 	return out;
 }
-
+MidCode MidCode::generateMidCode(MidCodeOp op, int target,
+	int operand1, bool isImmediate1,
+	int operand2, bool isImmediate2,
+	int label = -1) {
+	MidCode tmp;
+	tmp.op = op;
+	tmp.target = target;
+	tmp.operand1 = operand1;
+	tmp.operand2 = operand2;
+	tmp.isImmediate1 = isImmediate1;
+	tmp.isImmediate2 = isImmediate2;
+	tmp.labelNo = label;
+	return tmp;
+}
