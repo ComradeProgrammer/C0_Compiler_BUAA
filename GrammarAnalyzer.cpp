@@ -782,6 +782,7 @@ ReturnBundle GrammarAnalyzer::factor() {
 
 		if (lex.sym().type == LBRACK) {
 			//数组
+			inlineable = false;
 			if (!error && entry->type != TYPECHARARRAY && entry->type != TYPEINTARRAY) {
 				f.handleFault(lex.lineNumber(), varname + "变量不是数组类型");
 				error = true;
@@ -1018,6 +1019,7 @@ void GrammarAnalyzer::assignSentence(string varname) {
 	ReturnBundle indexBundle;
 	//检查变量合法性
 	if (lex.sym().type == LBRACK) {//左值是数组
+		inlineable = false;
 		if (!error && entry->type != TYPECHARARRAY && entry->type != TYPEINTARRAY) {
 			f.handleFault(lex.lineNumber(), varname + "变量不是数组类型");
 			error = true;
@@ -1117,8 +1119,10 @@ ReturnBundle GrammarAnalyzer::functionCall(string name,bool mustReturn) {
 	//完成左括号处理
 
 
-	vector<ReturnBundle>paras=
-		parameterValueList(entry, entry->link->inlineable);//读取实参列表
+	vector<ReturnBundle>paras;
+	if (!error) {
+		paras=parameterValueList(entry, entry->link->inlineable);//读取实参列表
+	}
 
 	if (lex.sym().type != RPARENT) {
 		f.handleCourseFault(lex.lineNumber(), NORPARENT);
