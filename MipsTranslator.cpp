@@ -18,6 +18,11 @@ void MipsTranslator::translateFunction(FlowGraph& g) {
 		Sstatus[i] = REGFREE;
 	}
 	SregisterUser.clear();
+	//所有A寄存器清除
+	for (int i = 0; i < 4; i++) {
+		Astatus[i] = REGFREE;
+		Auser[i] = -1;
+	}
 	//设置当前状态参数
 	currentFunction = g.functionId;//函数编号
 	globalVariable = g.globalVariable;//所有跨基本块

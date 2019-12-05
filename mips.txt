@@ -1,80 +1,304 @@
 .data:
 .align 2
+sort: .space 40
 .text:
 jal main
-func1:
-sw $ra,52($sp)#save the return value
-subu $a0,$0,$a0#x = negate x
+judge1:
+sw $ra,44($sp)#save the return value
+sw $s0,12($sp)
+slt $t0,$a0,$a1##TMP2 = a < b
 
-subu $a1,$0,$a1#y = negate y
+li $s0,0
+blez $t0,label$2#BZ #TMP2 _label2
 
-subu $a2,$0,$a2#z = negate z
+sge $t0,$a2,$a3##TMP3 = c >= d
 
-subu $a3,$0,$a3#x1 = negate x1
+blez $t0,label$2#BZ #TMP3 _label2
 
-lw $t0,72($sp)	#load variabley1
-subu $t0,$0,$t0#y1 = negate y1
-
-lw $t1,76($sp)	#load variablez1
-subu $t1,$0,$t1#z1 = negate z1
-
-addu $t2,$a0,$a1##TMP8 = x + y
-
-lw $t3,8($sp)	#load variablea
-addu $t3,$t2,$a2#a = #TMP8 + z
-
-addu $t4,$a3,$t0##TMP10 = x1 + y1
-
-lw $t5,12($sp)	#load variableb
-addu $t5,$t4,$t1#b = #TMP10 + z1
-
-lw $t6,16($sp)	#load variablec
-addu $t6,$t3,$t5#c = a + b
-
-move $v0,$t6
-lw $ra,52($sp)
-addiu $sp,$sp,80
+li $s0,1
+label$2:
+move $v0,$s0
+lw $s0,12($sp)
+lw $ra,44($sp)
+addiu $sp,$sp,64
 jr $ra
-#ret c
+#_label2: ret ret
 
-main:
-addiu $sp,$sp,-44
+judge2:
+sw $ra,44($sp)#save the return value
+sw $s0,12($sp)
+slt $t0,$a0,$a1##TMP4 = a < b
+
+li $s0,0
+blez $t0,label$4#BZ #TMP4 _label4
+
+sle $t0,$a2,$a3##TMP5 = c <= d
+
+blez $t0,label$4#BZ #TMP5 _label4
+
+li $s0,1
+label$4:
+move $v0,$s0
+lw $s0,12($sp)
+lw $ra,44($sp)
+addiu $sp,$sp,64
+jr $ra
+#_label4: ret ret
+
+Qsort:
+sw $ra,92($sp)#save the return value
+sw $s0,60($sp)
+sw $s1,64($sp)
+sw $s2,68($sp)
+sll $t0,$a0,2
+lw $s2,sort($t0)
+#key = sort [ low ] 
+
+sge $t1,$a0,$a1##TMP7 = low >= high
+
+move $s0,$a0#first=low
+
+move $s1,$a1#last=high
+
+blez $t1,label$7#BZ #TMP7 _label7
+
+lw $s0,60($sp)
+lw $s1,64($sp)
+lw $s2,68($sp)
+lw $ra,92($sp)
+addiu $sp,$sp,104
+jr $ra
+#ret 
+
+label$7:
+slt $t0,$s0,$s1#_label7: #TMP8 = first < last
+
+blez $t0,label$8#BZ #TMP8 _label8
+
+label$9:
+sll $t1,$s1,2
+lw $t0,sort($t1)
+#_label9: #TMP9 = sort [ last ] 
+
+sw $a0,96($sp)
+move $a0,$s0
+sw $s0,-16($sp)
+sw $a1,100($sp)
+move $a1,$s1
+sw $s1,-12($sp)
+move $a2,$t0
+sw $t0,-8($sp)
+move $a3,$s2
+sw $s2,-4($sp)
+addiu $sp,$sp,-64
+jal judge1
+lw $a0,96($sp)
+lw $a1,100($sp)
+#call judge1
+
+move $t0,$v0##TMP10=RET
+
+seq $t1,$t0,1##TMP11 = #TMP10 == 1
+
+blez $t1,label$10#BZ #TMP11 _label10
+
+subiu $s1,$s1,1#last = last - 1
+
+j label$9#GOTO _label9
+
+label$10:
+sll $t1,$s1,2
+lw $t0,sort($t1)
+#_label10: #TMP13 = sort [ last ] 
+
+sll $t2,$s0,2
+sw $t0,sort($t2)
+#sort[first] =#TMP13
+
+label$11:
+sll $t1,$s0,2
+lw $t0,sort($t1)
+#_label11: #TMP14 = sort [ first ] 
+
+sw $a0,96($sp)
+move $a0,$s0
+sw $s0,-16($sp)
+sw $a1,100($sp)
+move $a1,$s1
+sw $s1,-12($sp)
+move $a2,$t0
+sw $t0,-8($sp)
+move $a3,$s2
+sw $s2,-4($sp)
+addiu $sp,$sp,-64
+jal judge2
+lw $a0,96($sp)
+lw $a1,100($sp)
+#call judge2
+
+move $t0,$v0##TMP15=RET
+
+seq $t1,$t0,1##TMP16 = #TMP15 == 1
+
+blez $t1,label$12#BZ #TMP16 _label12
+
+addiu $s0,$s0,1#first = first + 1
+
+j label$11#GOTO _label11
+
+label$12:
+sll $t1,$s0,2
+lw $t0,sort($t1)
+#_label12: #TMP18 = sort [ first ] 
+
+sll $t2,$s1,2
+sw $t0,sort($t2)
+#sort[last] =#TMP18
+
+j label$7#GOTO _label7
+
+label$8:
+sll $t0,$s0,2
+sw $s2,sort($t0)
+#_label8: sort[first] =key
+
+subiu $t1,$s0,1##TMP19 = first - 1
+
+sw $a0,96($sp)
+move $a0,$a0
+sw $a0,-8($sp)
+sw $a1,100($sp)
+move $a1,$t1
+sw $t1,-4($sp)
+addiu $sp,$sp,-104
+jal Qsort
+lw $a0,96($sp)
+lw $a1,100($sp)
+#call Qsort
+
+addiu $t0,$s0,1##TMP20 = first + 1
+
+sw $a0,96($sp)
+move $a0,$t0
+sw $t0,-8($sp)
+sw $a1,100($sp)
+move $a1,$a1
+sw $a1,-4($sp)
+addiu $sp,$sp,-104
+jal Qsort
+lw $a0,96($sp)
+lw $a1,100($sp)
+#call Qsort
+
+lw $s0,60($sp)
+lw $s1,64($sp)
+lw $s2,68($sp)
+lw $ra,92($sp)
+addiu $sp,$sp,104
+jr $ra
+#ret 
+
+lw $s0,60($sp)
+lw $s1,64($sp)
+lw $s2,68($sp)
+lw $ra,92($sp)
+addiu $sp,$sp,104
+jr $ra
+#ret 
+
+testRecursion:
+sw $ra,44($sp)#save the return value
+sw $s0,12($sp)
+li $t0,0	# load immediate 0
+li $t1,5	# load immediate 5
+sll $t2,$t0,2
+sw $t1,sort($t2)
+#sort[0] =5
+
+li $t3,1	# load immediate 1
+li $t4,8	# load immediate 8
+sll $t5,$t3,2
+sw $t4,sort($t5)
+#sort[1] =8
+
+li $t6,2	# load immediate 2
+li $t7,3	# load immediate 3
+sll $t8,$t6,2
+sw $t7,sort($t8)
+#sort[2] =3
+
+li $t9,3	# load immediate 3
+li $t0,6	# load immediate 6
+sll $t1,$t9,2
+sw $t0,sort($t1)
+#sort[3] =6
+
+li $t0,4	# load immediate 4
+li $t1,4	# load immediate 4
+sll $t2,$t0,2
+sw $t1,sort($t2)
+#sort[4] =4
+
+li $t0,5	# load immediate 5
 li $t1,1	# load immediate 1
-subu $t0,$0,$t1##TMP18 = negate 1
+sll $t2,$t0,2
+sw $t1,sort($t2)
+#sort[5] =1
 
-li $t3,2	# load immediate 2
-subu $t2,$0,$t3##TMP20 = negate 2
+li $t0,6	# load immediate 6
+li $t1,2	# load immediate 2
+sll $t2,$t0,2
+sw $t1,sort($t2)
+#sort[6] =2
 
-li $t5,3	# load immediate 3
-subu $t4,$0,$t5##TMP22 = negate 3
+li $t0,7	# load immediate 7
+li $t1,7	# load immediate 7
+sll $t2,$t0,2
+sw $t1,sort($t2)
+#sort[7] =7
 
-li $t7,4	# load immediate 4
-subu $t6,$0,$t7##TMP19 = negate 4
+li $t0,0	# load immediate 0
+move $a0,$t0
+sw $t0,-8($sp)
+li $t0,7	# load immediate 7
+move $a1,$t0
+sw $t0,-4($sp)
+addiu $sp,$sp,-104
+jal Qsort
+#call Qsort
 
-li $t9,5	# load immediate 5
-subu $t8,$0,$t9##TMP21 = negate 5
+li $s0,0
+label$13:
+slti $t0,$s0,8#_label13: #TMP21 = i < 8
 
-sw $t0,28($sp)#write back temporary variable #TMP18
-li $t1,6	# load immediate 6
-subu $t0,$0,$t1##TMP23 = negate 6
+blez $t0,label$14#BZ #TMP21 _label14
 
-sw $t0,8($sp)#write back temporary variable #TMP23
-lw $t1,28($sp)	#load variable#TMP18
-addu $t0,$t1,$t2##TMP24 = #TMP18 + #TMP20
+sll $t1,$s0,2
+lw $t0,sort($t1)
+##TMP22 = sort [ i ] 
 
-addu $t1,$t0,$t4##TMP15 = #TMP24 + #TMP22
-
-addu $t0,$t6,$t8##TMP25 = #TMP19 + #TMP21
-
-lw $t4,8($sp)	#load variable#TMP23
-addu $t2,$t0,$t4##TMP16 = #TMP25 + #TMP23
-
-addu $t0,$t1,$t2##TMP17 = #TMP15 + #TMP16
-
-sw $a0,56($sp)
 move $a0,$t0
 li $v0,1
 syscall #printint
 li $a0,10
 li $v0,11
 syscall #printchar
+addiu $s0,$s0,1#i = i + 1
+
+j label$13#GOTO _label13
+
+label$14:
+lw $s0,12($sp)
+lw $ra,44($sp)
+addiu $sp,$sp,48
+jr $ra
+#_label14: ret 
+
+main:
+addiu $sp,$sp,0
+addiu $sp,$sp,-48
+jal testRecursion
+#call testRecursion
+
+#ret 
+

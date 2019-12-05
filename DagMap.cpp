@@ -279,9 +279,16 @@ vector<MidCode> DagMap::dumpMidCode() {
 			if (i->shouldReAssign && shouldAssign.find(i->formerName) != shouldAssign.end()) {
 				//该变量shouldassign被标记为true且在开头处活跃,生成赋值语句
 				MidCode code;
-				code.op = MIDASSIGN; code.target = i->name;
+				int tmp1 = MidCode::tmpVarAlloc();
+				code = MidCode::generateMidCode(MIDASSIGN, tmp1,
+					i->formerName, false, MIDUNUSED, false, MIDNOLABEL);
+				/*.op = MIDASSIGN; code.target = i->name;
 				code.operand1 = i->formerName; code.isImmediate1 = false;
 				code.operand2 = MIDUNUSED; code.isImmediate2 = false, code.labelNo = MIDNOLABEL;
+				*/
+				beginning.push_back(code);
+				code = MidCode::generateMidCode(MIDASSIGN, i->name,
+					tmp1, false, MIDUNUSED, false, MIDNOLABEL);
 				middle.push_back(code);
 			}
 		}
