@@ -90,7 +90,9 @@ void MipsTranslator::translateBlock(Block* b) {
 	}
 	//这里：暂时是把所有临时变量全部写回了，但是其实没这个必要，稍后可以加以改进
 	for (int i = 0; i < TMPREG; i++) {
-		varReg[Tuser[i]] = -1;
+		if (Tstatus[i] == REGVAR) {
+			varReg[Tuser[i]] = -1;
+		}
 		Tstatus[i] = REGFREE;
 		Tuser[i] = -1;
 	}
@@ -195,9 +197,13 @@ vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 		for (int i = 0; i < TMPREG; i++) {
 			if (Tstatus[i] == REGFREE) {
 				//如果找到了free状态的直接使用即可
-				if (isImmediate||var==-1) {
-					Tstatus[i] = REGOCCUPY;//改状态
+				if (!isImmediate && var == -1) {
+					Tstatus[i] = REGTMP;//改状态
 					Tuser[i] = -1;//改使用者
+				}
+				else if (isImmediate) {
+					Tstatus[i] = REGOCCUPY;//改状态
+					Tuser[i] = var;//改使用者
 				}
 				else {
 					Tstatus[i] = REGVAR;
@@ -214,7 +220,7 @@ vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 					find(conflictVar.begin(), conflictVar.end(), Tuser[i]) != conflictVar.end()) {
 					continue;//不分配相关变量的寄存器
 				}
-				else if (Tstatus[i] == REGOCCUPY &&
+				else if ((Tstatus[i] == REGOCCUPY||Tstatus[i]==REGTMP)&&
 					find(conflictReg.begin(), conflictReg.end(), Tregister[i]) != conflictReg.end()) {
 					continue;//不分配相关变量占用的寄存器
 				}
@@ -225,9 +231,13 @@ vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 					if (entry->scope == "") {
 						continue;
 					}
-					if (isImmediate || var == -1) {
-						Tstatus[i] = REGOCCUPY;//改状态
+					if (!isImmediate && var == -1) {
+						Tstatus[i] = REGTMP;//改状态
 						Tuser[i] = -1;//改使用者
+					}
+					else if (isImmediate ) {
+						Tstatus[i] = REGOCCUPY;//改状态
+						Tuser[i] =var;//改使用者（常数）
 					}
 					else {
 						Tstatus[i] = REGVAR;
@@ -244,21 +254,23 @@ vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 				find(conflictVar.begin(), conflictVar.end(), Tuser[i]) != conflictVar.end()) {
 				continue;//不分配相关的寄存器
 			}
-			else if (Tstatus[i] == REGOCCUPY &&
+			else if ((Tstatus[i] == REGOCCUPY || Tstatus[i] == REGTMP) &&
 				find(conflictReg.begin(), conflictReg.end(), Tregister[i]) != conflictReg.end()) {
 				continue;//不分配相关变量占用的寄存器
 			}
 			else {
 				//找到了一个T寄存器
-				if (Tstatus[i] == REGOCCUPY) {
-					//若是occupy状态无需写回
-					if (isImmediate || var == -1) {
-						//若是立即数/临时寄存器
-						Tstatus[i] = REGOCCUPY;//改状态
+				if (Tstatus[i] == REGOCCUPY||Tstatus[i]==REGTMP) {
+					//若是occupy状态或是临时占用无需写回
+					if (!isImmediate && var == -1) {
+						Tstatus[i] = REGTMP;//改状态
 						Tuser[i] = -1;//改使用者
 					}
+					else if (isImmediate) {
+						Tstatus[i] = REGOCCUPY;//改状态
+						Tuser[i] = var;//改使用者(常数)
+					}
 					else {
-						//若是变量
 						Tstatus[i] = REGVAR;
 						Tuser[i] = var;
 						varReg[var] = Tregister[i];//登记
@@ -268,9 +280,13 @@ vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 				else {
 					//需要写回
 					int old = Tuser[i];
-					if (isImmediate || var == -1) {
-						Tstatus[i] = REGOCCUPY;//改状态
+					if (!isImmediate && var == -1) {
+						Tstatus[i] = REGTMP;//改状态
 						Tuser[i] = -1;//改使用者
+					}
+					else if (isImmediate) {
+						Tstatus[i] = REGOCCUPY;//改状态
+						Tuser[i] = var;//改使用者
 					}
 					else {
 						Tstatus[i] = REGVAR;
@@ -300,6 +316,12 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 	}
 	else if (isImmediate) {
 		//是立即数
+		bool found = false;
+		for (int i = 0; i < TMPREG; i++) {
+			if (Tstatus[i] == REGOCCUPY && Tuser[i] == var) {
+				return Tregister[i];
+			}
+		}
 		vector<int>res = TregisterAlloc(var, isImmediate, conflictVar
 			, conflictReg, activeVariable);
 		if (res[1] != -1) { writeback(res[1], res[0]); }//写回

@@ -366,39 +366,38 @@ mul $t4,$t3,$t3##TMP71 = #TMP63 * #TMP63
 
 mul $t5,$t4,$t3##TMP72 = #TMP71 * #TMP63
 
-li $t7,10	# load immediate 10
-div $t0,$t7
+div $t0,$t1
 mflo $t6##TMP44 = #TMP50 / 10
 
-mul $t8,$t6,10##TMP45 = #TMP44 * 10
+mul $t7,$t6,10##TMP45 = #TMP44 * 10
 
-subu $t9,$t0,$t8##TMP64 = #TMP50 - #TMP45
+subu $t8,$t0,$t7##TMP64 = #TMP50 - #TMP45
 
-mul $t0,$t9,$t9##TMP68 = #TMP64 * #TMP64
+mul $t9,$t8,$t8##TMP68 = #TMP64 * #TMP64
 
-mul $t2,$t0,$t9##TMP69 = #TMP68 * #TMP64
+mul $t0,$t9,$t8##TMP69 = #TMP68 * #TMP64
 
 li $t4,100	# load immediate 100
 div $s0,$t4
-mflo $t0##TMP65 = i / 100
+mflo $t2##TMP65 = i / 100
 
-mul $t6,$t0,$t0##TMP66 = #TMP65 * #TMP65
+mul $t6,$t2,$t2##TMP66 = #TMP65 * #TMP65
 
-mul $t8,$t6,$t0##TMP67 = #TMP66 * #TMP65
+mul $t7,$t6,$t2##TMP67 = #TMP66 * #TMP65
 
-addu $t6,$t8,$t2##TMP70 = #TMP67 + #TMP69
+addu $t6,$t7,$t0##TMP70 = #TMP67 + #TMP69
 
-addu $t2,$t6,$t5##TMP73 = #TMP70 + #TMP72
+addu $t0,$t6,$t5##TMP73 = #TMP70 + #TMP72
 
-mul $t5,$t9,10##TMP58 = #TMP64 * 10
+mul $t5,$t8,10##TMP58 = #TMP64 * 10
 
-mul $t6,$t0,100##TMP57 = #TMP65 * 100
+mul $t6,$t2,100##TMP57 = #TMP65 * 100
 
-addu $t0,$t6,$t5##TMP59 = #TMP57 + #TMP58
+addu $t2,$t6,$t5##TMP59 = #TMP57 + #TMP58
 
-addu $t5,$t0,$t3##TMP60 = #TMP59 + #TMP63
+addu $t5,$t2,$t3##TMP60 = #TMP59 + #TMP63
 
-bne $t5,$t2,label$15
+bne $t5,$t0,label$15
 ##TMP74 = #TMP60 == #TMP73
 
 #BZ #TMP74 _label15

@@ -4,8 +4,11 @@
 #include<fstream>
 #define GLOBALREG 8
 #define TMPREG 10
+//是直接就是被临时分配的寄存器
+#define REGTMP 3
+//占用状态指里面存储着常数
 #define REGOCCUPY 2
-//占用状态指里面存储着常数或是直接就是被临时分配的寄存器
+
 #define REGVAR 1
 #define REGFREE 0
 using namespace std;
