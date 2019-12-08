@@ -29,6 +29,9 @@ private:
 	vector<int>Sstatus = { 0,0,0,0,0,0,0,0 };
 	map<int,set<int>>SregisterUser;//一个s寄存器可以分给多个变量，所以要如此使用
 	//临时寄存器分配
+	//当前策略:即使在基本块内全局变量会立刻被写回
+	//其他分配临时寄存器的变量会在基本块结束时根据活跃性写回；或是在被剥夺寄存器时写回
+	//参数寄存器可以被写语句剥夺，但是写语句结束之后立刻会恢复
 	vector<int>Tregister = { 8,9,10,11,12,13,14,15,24,25 };
 	vector<int>Tstatus = { 0,0,0,0,0,0,0,0,0,0,0 };
 	vector<int>Tuser = { -1,-1,-1,-1,-1,-1,-1,-1,-1,-1 };
@@ -37,7 +40,7 @@ private:
 	vector<int>Astatus = { 0,0,0,0 };
 	vector<int>Auser = { -1,-1,-1,-1 };
 	inline int getTmpRegIndex(int i);
-	//当前策略:全局变量，参数不得占用临时寄存器，必须立即写回
+	
 
 	//变量-寄存器
 	map<int, int>varReg;

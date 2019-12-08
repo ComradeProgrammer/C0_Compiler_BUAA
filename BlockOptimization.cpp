@@ -3,6 +3,7 @@ BlockOptimization::BlockOptimization(set<int>&_activeOut) {
 	activeOut = _activeOut;
 }
 
+/*实现的是变量传播*/
 vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 	map<int, Item>substitution;
 	vector<MidCode>res;

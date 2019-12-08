@@ -1,439 +1,39 @@
-int sort[10]
-int ret
-int judge1()
-para int a
-para int b
-para int c
-para int d
-ret=0
-#TMP2 = a < b
-BZ #TMP2 _label2
-#TMP3 = c >= d
-BZ #TMP3 _label2
-ret=1
-_label2: ret ret
-int ret
-int judge2()
-para int a
-para int b
-para int c
-para int d
-ret=0
-#TMP4 = a < b
-BZ #TMP4 _label4
-#TMP5 = c <= d
-BZ #TMP5 _label4
-ret=1
-_label4: ret ret
-int first
-int key
-int last
-void Qsort()
-para int low
-para int high
-first=low
-last=high
-key = sort [ first ] 
-#TMP7 = low >= high
-BZ #TMP7 _label7
-ret 
-_label7: #TMP8 = first < last
-BZ #TMP8 _label8
-_label9: #TMP9 = sort [ last ] 
-push first
-push last
-push #TMP9
-push key
-call judge1
-#TMP10=RET
-#TMP11 = #TMP10 == 1
-BZ #TMP11 _label10
-last = last - 1
-GOTO _label9
-_label10: #TMP13 = sort [ last ] 
-sort[first] =#TMP13
-_label11: #TMP14 = sort [ first ] 
-push first
-push last
-push #TMP14
-push key
-call judge2
-#TMP15=RET
-#TMP16 = #TMP15 == 1
-BZ #TMP16 _label12
-first = first + 1
-GOTO _label11
-_label12: #TMP18 = sort [ first ] 
-sort[last] =#TMP18
-GOTO _label7
-_label8: sort[first] =key
-#TMP19 = first - 1
-push low
-push #TMP19
-call Qsort
-#TMP20 = first + 1
-push #TMP20
-push high
-call Qsort
-ret 
-ret 
-int i
-void testRecursion()
-sort[0] =5
-sort[1] =8
-sort[2] =3
-sort[3] =6
-sort[4] =4
-sort[5] =1
-sort[6] =2
-sort[7] =7
-push 0
-push 7
-call Qsort
-i=0
-_label13: #TMP21 = i < 8
-BZ #TMP21 _label14
-#TMP22 = sort [ i ] 
-syscall-1 #TMP22
-syscall-11 10
-i = i + 1
-GOTO _label13
-_label14: ret 
+const int a
+const int b
+const int c
+const char d
+const char e
+const char f
+const char a
 void main()
-call testRecursion
-ret 
+syscall-11 112
+syscall-11 10
+syscall-1 28
+syscall-11 10
+syscall-1 20
+syscall-11 10
+syscall-11 97
+syscall-11 10
+syscall-11 98
+syscall-11 10
+syscall-11 99
+syscall-11 10
 
 ====Block0====
-int judge1()
-para int a
-para int b
-para int c
-para int d
-#TMP2 = a < b
-ret=0
-BZ #TMP2 _label2
-	prev:[]
-	next:[1,3,]
-	use:[a,b,]
-	def:[#TMP2,ret,]
-	activeIn:[a,b,c,d,]
-	activeOut:[c,d,ret,]
-==============
-====Block1====
-#TMP3 = c >= d
-BZ #TMP3 _label2
-	prev:[0,]
-	next:[2,3,]
-	use:[c,d,]
-	def:[#TMP3,]
-	activeIn:[c,d,ret,]
-	activeOut:[ret,]
-==============
-====Block2====
-ret=1
-	prev:[1,]
-	next:[3,]
-	use:[]
-	def:[ret,]
-	activeIn:[]
-	activeOut:[ret,]
-==============
-====Block3====
-_label2: ret ret
-	prev:[2,0,1,]
-	next:[]
-	use:[ret,]
-	def:[]
-	activeIn:[ret,]
-	activeOut:[]
-==============
-====Block4====
-int judge2()
-para int a
-para int b
-para int c
-para int d
-#TMP4 = a < b
-ret=0
-BZ #TMP4 _label4
-	prev:[]
-	next:[5,7,]
-	use:[a,b,]
-	def:[#TMP4,ret,]
-	activeIn:[a,b,c,d,]
-	activeOut:[c,d,ret,]
-==============
-====Block5====
-#TMP5 = c <= d
-BZ #TMP5 _label4
-	prev:[4,]
-	next:[6,7,]
-	use:[c,d,]
-	def:[#TMP5,]
-	activeIn:[c,d,ret,]
-	activeOut:[ret,]
-==============
-====Block6====
-ret=1
-	prev:[5,]
-	next:[7,]
-	use:[]
-	def:[ret,]
-	activeIn:[]
-	activeOut:[ret,]
-==============
-====Block7====
-_label4: ret ret
-	prev:[6,4,5,]
-	next:[]
-	use:[ret,]
-	def:[]
-	activeIn:[ret,]
-	activeOut:[]
-==============
-====Block8====
-void Qsort()
-para int low
-para int high
-key = sort [ low ] 
-#TMP7 = low >= high
-first=low
-last=high
-BZ #TMP7 _label7
-	prev:[]
-	next:[9,10,]
-	use:[sort,low,high,]
-	def:[#TMP7,first,last,key,]
-	activeIn:[sort,low,high,]
-	activeOut:[sort,low,high,first,last,key,]
-==============
-====Block9====
-ret 
-	prev:[8,]
-	next:[10,]
-	use:[]
-	def:[]
-	activeIn:[sort,low,high,first,last,key,]
-	activeOut:[sort,low,high,first,last,key,]
-==============
-====Block10====
-_label7: #TMP8 = first < last
-BZ #TMP8 _label8
-	prev:[9,8,18,]
-	next:[11,19,]
-	use:[first,last,]
-	def:[#TMP8,]
-	activeIn:[sort,low,high,first,last,key,]
-	activeOut:[sort,low,high,first,last,key,]
-==============
-====Block11====
-_label9: #TMP9 = sort [ last ] 
-push first
-push last
-push #TMP9
-push key
-call judge1
-	prev:[10,13,]
-	next:[12,]
-	use:[sort,first,last,key,]
-	def:[#TMP9,]
-	activeIn:[sort,low,high,first,last,key,]
-	activeOut:[sort,low,high,first,last,key,]
-==============
-====Block12====
-#TMP10=RET
-#TMP11 = #TMP10 == 1
-BZ #TMP11 _label10
-	prev:[11,]
-	next:[13,14,]
-	use:[]
-	def:[#TMP11,#TMP10,]
-	activeIn:[sort,low,high,first,last,key,]
-	activeOut:[sort,low,high,first,last,key,]
-==============
-====Block13====
-last = last - 1
-GOTO _label9
-	prev:[12,]
-	next:[14,11,]
-	use:[last,]
-	def:[]
-	activeIn:[sort,low,high,first,last,key,]
-	activeOut:[sort,low,high,first,last,key,]
-==============
-====Block14====
-_label10: #TMP13 = sort [ last ] 
-sort[first] =#TMP13
-	prev:[13,12,]
-	next:[15,]
-	use:[sort,first,last,]
-	def:[#TMP13,]
-	activeIn:[sort,low,high,first,last,key,]
-	activeOut:[sort,low,high,first,last,key,]
-==============
-====Block15====
-_label11: #TMP14 = sort [ first ] 
-push first
-push last
-push #TMP14
-push key
-call judge2
-	prev:[14,17,]
-	next:[16,]
-	use:[sort,first,last,key,]
-	def:[#TMP14,]
-	activeIn:[sort,low,high,first,last,key,]
-	activeOut:[sort,low,high,first,last,key,]
-==============
-====Block16====
-#TMP15=RET
-#TMP16 = #TMP15 == 1
-BZ #TMP16 _label12
-	prev:[15,]
-	next:[17,18,]
-	use:[]
-	def:[#TMP16,#TMP15,]
-	activeIn:[sort,low,high,first,last,key,]
-	activeOut:[sort,low,high,first,last,key,]
-==============
-====Block17====
-first = first + 1
-GOTO _label11
-	prev:[16,]
-	next:[18,15,]
-	use:[first,]
-	def:[]
-	activeIn:[sort,low,high,first,last,key,]
-	activeOut:[sort,low,high,first,last,key,]
-==============
-====Block18====
-_label12: #TMP18 = sort [ first ] 
-sort[last] =#TMP18
-GOTO _label7
-	prev:[17,16,]
-	next:[19,10,]
-	use:[sort,first,last,]
-	def:[#TMP18,]
-	activeIn:[sort,low,high,first,last,key,]
-	activeOut:[sort,low,high,first,last,key,]
-==============
-====Block19====
-_label8: sort[first] =key
-#TMP19 = first - 1
-push low
-push #TMP19
-call Qsort
-	prev:[18,10,]
-	next:[20,]
-	use:[low,first,key,]
-	def:[#TMP19,]
-	activeIn:[low,high,first,key,]
-	activeOut:[high,first,]
-==============
-====Block20====
-#TMP20 = first + 1
-push #TMP20
-push high
-call Qsort
-	prev:[19,]
-	next:[21,]
-	use:[high,first,]
-	def:[#TMP20,]
-	activeIn:[high,first,]
-	activeOut:[]
-==============
-====Block21====
-ret 
-	prev:[20,]
-	next:[]
-	use:[]
-	def:[]
-	activeIn:[]
-	activeOut:[]
-==============
-====Block22====
-ret 
-	prev:[]
-	next:[]
-	use:[]
-	def:[]
-	activeIn:[]
-	activeOut:[]
-==============
-====Block23====
-void testRecursion()
-sort[0] =5
-sort[1] =8
-sort[2] =3
-sort[3] =6
-sort[4] =4
-sort[5] =1
-sort[6] =2
-sort[7] =7
-push 0
-push 7
-call Qsort
-	prev:[]
-	next:[24,]
-	use:[]
-	def:[]
-	activeIn:[sort,]
-	activeOut:[sort,]
-==============
-====Block24====
-i=0
-	prev:[23,]
-	next:[25,]
-	use:[]
-	def:[i,]
-	activeIn:[sort,]
-	activeOut:[sort,i,]
-==============
-====Block25====
-_label13: #TMP21 = i < 8
-BZ #TMP21 _label14
-	prev:[24,26,]
-	next:[26,27,]
-	use:[i,]
-	def:[#TMP21,]
-	activeIn:[sort,i,]
-	activeOut:[sort,i,]
-==============
-====Block26====
-#TMP22 = sort [ i ] 
-syscall-1 #TMP22
-syscall-11 10
-i = i + 1
-GOTO _label13
-	prev:[25,]
-	next:[27,25,]
-	use:[sort,i,]
-	def:[#TMP22,]
-	activeIn:[sort,i,]
-	activeOut:[sort,i,]
-==============
-====Block27====
-_label14: ret 
-	prev:[26,25,]
-	next:[]
-	use:[]
-	def:[]
-	activeIn:[]
-	activeOut:[]
-==============
-====Block28====
 void main()
-call testRecursion
+syscall-11 112
+syscall-11 10
+syscall-1 28
+syscall-11 10
+syscall-1 20
+syscall-11 10
+syscall-11 97
+syscall-11 10
+syscall-11 98
+syscall-11 10
+syscall-11 99
+syscall-11 10
 	prev:[]
-	next:[29,]
-	use:[]
-	def:[]
-	activeIn:[]
-	activeOut:[]
-==============
-====Block29====
-ret 
-	prev:[28,]
 	next:[]
 	use:[]
 	def:[]
@@ -442,162 +42,38 @@ ret
 ==============
 
 
-int sort[10]
-int ret
-int judge1()
-para int a
-para int b
-para int c
-para int d
-#TMP2 = a < b
-ret=0
-BZ #TMP2 _label2
-#TMP3 = c >= d
-BZ #TMP3 _label2
-ret=1
-_label2: ret ret
-int ret
-int judge2()
-para int a
-para int b
-para int c
-para int d
-#TMP4 = a < b
-ret=0
-BZ #TMP4 _label4
-#TMP5 = c <= d
-BZ #TMP5 _label4
-ret=1
-_label4: ret ret
-int first
-int key
-int last
-void Qsort()
-para int low
-para int high
-key = sort [ low ] 
-#TMP7 = low >= high
-first=low
-last=high
-BZ #TMP7 _label7
-ret 
-_label7: #TMP8 = first < last
-BZ #TMP8 _label8
-_label9: #TMP9 = sort [ last ] 
-push first
-push last
-push #TMP9
-push key
-call judge1
-#TMP10=RET
-#TMP11 = #TMP10 == 1
-BZ #TMP11 _label10
-last = last - 1
-GOTO _label9
-_label10: #TMP13 = sort [ last ] 
-sort[first] =#TMP13
-_label11: #TMP14 = sort [ first ] 
-push first
-push last
-push #TMP14
-push key
-call judge2
-#TMP15=RET
-#TMP16 = #TMP15 == 1
-BZ #TMP16 _label12
-first = first + 1
-GOTO _label11
-_label12: #TMP18 = sort [ first ] 
-sort[last] =#TMP18
-GOTO _label7
-_label8: sort[first] =key
-#TMP19 = first - 1
-push low
-push #TMP19
-call Qsort
-#TMP20 = first + 1
-push #TMP20
-push high
-call Qsort
-ret 
-ret 
-int i
-void testRecursion()
-sort[0] =5
-sort[1] =8
-sort[2] =3
-sort[3] =6
-sort[4] =4
-sort[5] =1
-sort[6] =2
-sort[7] =7
-push 0
-push 7
-call Qsort
-i=0
-_label13: #TMP21 = i < 8
-BZ #TMP21 _label14
-#TMP22 = sort [ i ] 
-syscall-1 #TMP22
-syscall-11 10
-i = i + 1
-GOTO _label13
-_label14: ret 
+const int a
+const int b
+const int c
+const char d
+const char e
+const char f
+const char a
 void main()
-call testRecursion
-ret 
+syscall-11 112
+syscall-11 10
+syscall-1 28
+syscall-11 10
+syscall-1 20
+syscall-11 10
+syscall-11 97
+syscall-11 10
+syscall-11 98
+syscall-11 10
+syscall-11 99
+syscall-11 10
 
 
 global:
-name:Qsort	id:13	type:function	scope:	addr:-1	dimension:0
-link:		returnType:void	paraNum:2	paras:[14 15 ]
-name:judge1	id:1	type:function	scope:	addr:-1	dimension:0
-link:		returnType:int	paraNum:4	paras:[2 3 4 5 ]
-name:judge2	id:7	type:function	scope:	addr:-1	dimension:0
-link:		returnType:int	paraNum:4	paras:[8 9 10 11 ]
-name:main	id:21	type:function	scope:	addr:-1	dimension:0
+name:a	id:0	type:const int	scope:	addr:0	dimension:0link:NULL
+name:b	id:1	type:const int	scope:	addr:4	dimension:0link:NULL
+name:c	id:2	type:const int	scope:	addr:8	dimension:0link:NULL
+name:d	id:3	type:const char	scope:	addr:12	dimension:0link:NULL
+name:e	id:4	type:const char	scope:	addr:16	dimension:0link:NULL
+name:f	id:5	type:const char	scope:	addr:20	dimension:0link:NULL
+name:main	id:6	type:function	scope:	addr:-1	dimension:0
 link:		returnType:void	paraNum:0	paras:[]
-name:sort	id:0	type:int[]	scope:	addr:0	dimension:10link:NULL
-name:testRecursion	id:19	type:function	scope:	addr:-1	dimension:0
-link:		returnType:void	paraNum:0	paras:[]
-Qsort:
-name:first	id:16	type:int	scope:Qsort	addr:48	dimension:0link:NULL
-name:high	id:15	type:int	scope:Qsort	addr:100	dimension:0link:NULL
-name:key	id:18	type:int	scope:Qsort	addr:52	dimension:0link:NULL
-name:last	id:17	type:int	scope:Qsort	addr:56	dimension:0link:NULL
-name:low	id:14	type:int	scope:Qsort	addr:96	dimension:0link:NULL
-tmp20 addr:0
-tmp19 addr:4
-tmp18 addr:8
-tmp16 addr:12
-tmp15 addr:16
-tmp14 addr:20
-tmp13 addr:24
-tmp11 addr:28
-tmp10 addr:32
-tmp9 addr:36
-tmp8 addr:40
-tmp7 addr:44
-judge1:
-name:a	id:2	type:int	scope:judge1	addr:48	dimension:0link:NULL
-name:b	id:3	type:int	scope:judge1	addr:52	dimension:0link:NULL
-name:c	id:4	type:int	scope:judge1	addr:56	dimension:0link:NULL
-name:d	id:5	type:int	scope:judge1	addr:60	dimension:0link:NULL
-name:ret	id:6	type:int	scope:judge1	addr:8	dimension:0link:NULL
-tmp3 addr:0
-tmp2 addr:4
-judge2:
-name:a	id:8	type:int	scope:judge2	addr:48	dimension:0link:NULL
-name:b	id:9	type:int	scope:judge2	addr:52	dimension:0link:NULL
-name:c	id:10	type:int	scope:judge2	addr:56	dimension:0link:NULL
-name:d	id:11	type:int	scope:judge2	addr:60	dimension:0link:NULL
-name:ret	id:12	type:int	scope:judge2	addr:8	dimension:0link:NULL
-tmp5 addr:0
-tmp4 addr:4
 main:
-testRecursion:
-name:i	id:20	type:int	scope:testRecursion	addr:8	dimension:0link:NULL
-tmp22 addr:0
-tmp21 addr:4
+name:a	id:7	type:const char	scope:main	addr:0	dimension:0link:NULL
 
 

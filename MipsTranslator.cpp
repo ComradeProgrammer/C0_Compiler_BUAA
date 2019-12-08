@@ -160,6 +160,8 @@ vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 	isImmediate：是否是立即数
 	conflictVar：与之有冲突的变量：不能把同一指令里使用的其他寄存器分出去
 	conflictReg:与之有冲突的寄存器编号：也不能把在同一指令里使用的立即数寄存器分出去
+	activeVariable:输入此时此句的活跃变量（未处理当前句，不过没有影响）
+	activeVariable为nullptr时是不按照这个活跃变量进行分析
 	@return
 	返回值：第一个数是返回的寄存器编号，第二个数是需要写回的变量，如果没有就是-1
 	在返回时寄存器将已被进行所有注册，只有写回操作需要完成（？？为啥这么干来着我忘了）
@@ -187,6 +189,7 @@ vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 				return { Tregister[i],-1 };
 			}
 		}
+		//此处是，根据活跃变量分析结果寻找一个有变量占用但占用者不活跃的变量
 		if (nullptr != activeVariable) {
 			for (int i = 0; i < TMPREG; i++) {
 				if (Tstatus[i] == REGVAR &&
@@ -197,9 +200,9 @@ vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 					find(conflictReg.begin(), conflictReg.end(), Tregister[i]) != conflictReg.end()) {
 					continue;//不分配相关变量占用的寄存器
 				}
-				if (Tstatus[i] == REGVAR &&/*Tuser[i]<-1&&*/
+				if (Tstatus[i] == REGVAR &&
 					activeVariable->find(Tuser[i]) == activeVariable->end()) {
-					//这是不活跃的变量
+					//这是不活跃的变量,不寻找全局变量，因为全局即使不活跃还是需要写回的
 					SymbolEntry* entry = MidCode::table->getSymbolById(Tuser[i]);
 					if (entry->scope == "") {
 						continue;
@@ -217,7 +220,7 @@ vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 				}
 			}
 		}
-		//此处分配策略可选择进行优化
+		//此处可以考虑分配策略可选择进行优化
 		for (int i = 0; i < TMPREG; i++) {
 			if (Tstatus[i]==REGVAR&&
 				find(conflictVar.begin(), conflictVar.end(), Tuser[i]) != conflictVar.end()) {
@@ -274,7 +277,7 @@ void MipsTranslator::setReport(map<int, vector<int>>_report) {
 int MipsTranslator::loadOperand(int var, int isImmediate
 	, vector<int>conflictVar, vector<int> conflictReg, set<int>* activeVariable) {
 	if (var!=-1&&!isImmediate && varReg[var] >0) {
-		//已分配寄存器
+		//是变量且已分配寄存器,直接返回已经分配的结果
 		return varReg[var];
 	}
 	else if (isImmediate) {
@@ -288,6 +291,7 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 		return res[0];
 	}
 	else {
+		//申请了一个临时寄存器
 		if (var == -1) { 
 			vector<int>res = TregisterAlloc(var, isImmediate, conflictVar
 				, conflictReg,activeVariable);
@@ -297,6 +301,7 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 		SymbolEntry* entry = MidCode::table->getSymbolById(var);
 		vector<int>res;
 		if (entry->isParameter) {
+			//如果待分配的变量是参数之一的话只会为他分配本应属于他的a寄存器，如果有的话
 			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
 			int order = -1;
 			for (int i = 0; i < 4 && i < func->link->paraNum; i++) {
@@ -315,6 +320,7 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 				return order+4;
 			}
 		}
+		//分配寄存器
 		res = TregisterAlloc(var, isImmediate, conflictVar, conflictReg, activeVariable);
 		if (res[1] != -1) { writeback( res[1],res[0] ); }
 		
@@ -323,7 +329,7 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 			//是局部变量
 			if (entry->type == TYPEINT || entry->type == TYPECHAR || entry->type == TYPETMP
 				||entry->type==TYPEINTCONST||entry->type==TYPECHARCONST) {
-				//此处可以建立机制防止未初始化的内存被加载进入寄存器，可以节省访存
+				//此处建立了机制防止未初始化的内存被加载进入寄存器，可以节省访存
 				if (!(var < 0 && globalVariable.find(var) == globalVariable.end()
 					&&loaded.find(var)==loaded.end())) {
 					int bias = entry->addr;
@@ -361,6 +367,7 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 	}
 }
 
+/*通用的写回函数*/
 void MipsTranslator::writeback(int var,int reg) {
 	SymbolEntry* entry = MidCode::table->getSymbolById(var);
 	if ((entry->type == TYPEINT || entry->type == TYPECHAR||entry->type==TYPETMP) 
@@ -368,7 +375,7 @@ void MipsTranslator::writeback(int var,int reg) {
 		//int char类型的局部变量
 		int bias = entry->addr;
 		out << "sw " << name[reg] << "," << bias << "($sp)";
-		out << "#write back temporary variable " << MidCode::getOperandName(var,false);
+		out << "#write back local variable " << MidCode::getOperandName(var,false);
 		out << endl;
 	}
 
@@ -422,31 +429,15 @@ void MipsTranslator::translate(MidCode c) {
 		case MIDCALL:
 		{
 			SymbolEntry* s = MidCode::table->getSymbolById(c.operand1);
-			writeBackAfterBlock();//每一个基本块的结束都要进行写回操作
+			writeBackAfterBlock();//每一个基本块的结束都要进行基本块外的写回操作
 			for (int i =s->link->paraNum ; i < 4; i++) {
 				if (Astatus[i] == REGVAR) {
 					SymbolEntry* tmp = MidCode::table->getSymbolById(Auser[i]);
 					out << "sw " << name[Aregister[i]] << "," << tmp->addr << "($sp)" << endl;
 				}
 			}
-
-			/*if (!s->link->inlineable) {
-				for (int i = 0; i < GLOBALREG; i++) {
-					if (Sstatus[i] != REGFREE) {
-						out << "sw " << name[i + 16] << "," << -report[s->id][1] - 32 + i * 4 << "($sp)" << endl;
-					}
-				}
-			}*/
-
 			out << "addiu $sp,$sp," << -(report[s->id][0] + 36) << endl;
 			out << "jal " << s->name<<endl;
-			/*if (!s->link->inlineable) {
-				for (int i = 0; i < GLOBALREG; i++) {
-					if (Sstatus[i] != REGFREE) {
-						out << "lw " << name[i + 16] << "," << -report[s->id][1] - 32 + i * 4 << "($sp)" << endl;
-					}
-				}
-			}*/
 			for (int i = 0; i < 4; i++) {
 				if (Astatus[i] == REGVAR) {
 					SymbolEntry* tmp = MidCode::table->getSymbolById(Auser[i]);
@@ -458,7 +449,6 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDRET:
 		{
-
 			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
 			writeBackAfterBlock();
 			if (func->name != "main") {
@@ -499,6 +489,7 @@ void MipsTranslator::translate(MidCode c) {
 		case MIDADD:
 		{
 			if (c.isImmediate2) {
+				//这一段是在第二操作数是立即数时换用对应指令
 				vector<int>conflictVar;
 				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 				int target = loadOperand(c.target, false, conflictVar, {},&(c.activeVariable));
@@ -510,7 +501,7 @@ void MipsTranslator::translate(MidCode c) {
 
 				out << "addiu " << name[target] << "," << name[operand1] << "," << c.operand2;
 				out << "#" << c << endl;
-				specialVarwriteback(c.target, false);
+				specialVarwriteback(c.target, false);//全局变量会无条件立即写回
 				break;
 				
 			}
@@ -642,7 +633,6 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDLSS:
 		{
-
 			if (c.isImmediate2&&c.operand2>=0&&c.operand2<=32767) {
 				vector<int>conflictVar;
 				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
@@ -997,7 +987,7 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDGOTO:
 		{
-			writeBackAfterBlock();
+			writeBackAfterBlock();//对于跳转指令来说，基本块的写回必须发生在跳转之前
 			out << "j label$" << -c.operand1;
 			out << "#" << c << endl;
 			break;
@@ -1050,7 +1040,7 @@ void MipsTranslator::translate(MidCode c) {
 			out << "syscall #printint" << endl;
 			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
 			if (func->link->paraNum > 0) {
-				//restore a0
+				//立刻恢复a0寄存器
 				loadOperand(func->link->paraIds[0], false, {}, {}, & (c.activeVariable));
 			}
 			break;
@@ -1147,6 +1137,7 @@ void MipsTranslator::translate(vector<MidCode>c) {
 		
 		if (i >= 0 && i <= 3) {
 			if (Astatus[i] == REGVAR) {
+				//需要写回a寄存器
 				SymbolEntry* tmp = MidCode::table->getSymbolById(Auser[i]);
 				out << "sw " << name[Aregister[i]] << "," << tmp->addr << "($sp)" << endl;
 			}
@@ -1156,6 +1147,7 @@ void MipsTranslator::translate(vector<MidCode>c) {
 	}
 }
 
+/*用于在每次给全局变量的写回*/
 void MipsTranslator::specialVarwriteback(int var, bool isImmediate) {
 	if (isImmediate||var==-1) {
 		return;
@@ -1170,6 +1162,7 @@ void MipsTranslator::specialVarwriteback(int var, bool isImmediate) {
 	}
 }
 
+/*收回对应的a寄存器*/
 void MipsTranslator::revokeAregister(int reg) {
 	int i = reg - 4;
 	if (Auser[i] != -1) {
@@ -1194,19 +1187,9 @@ inline int MipsTranslator::getTmpRegIndex(int i) {
 	}
 }
 
+/*在基本块结尾时会收回寄存器根据活跃性写回*/
 void MipsTranslator::writeBackAfterBlock() {
 	for (int i = 0; i < TMPREG; i++) {
-		/*if (Tstatus[i] == REGVAR && Tuser[i] != -1) {
-			SymbolEntry* e = MidCode::table->getSymbolById(Tuser[i]);
-			if (e->scope == "" || e->isParameter) {
-				writeback(Tuser[i], Tregister[i]);
-				varReg[Tuser[i]] = -1;
-				Tstatus[i] = REGFREE;
-				Tuser[i] = -1;
-				continue;
-			}
-		}
-		*/
 		if (Tstatus[i] == REGVAR && Tuser[i] != -1&&
 			currentBlock->activeOut.find(Tuser[i])!=currentBlock->activeOut.end()) {
 			writeback(Tuser[i], Tregister[i]);
