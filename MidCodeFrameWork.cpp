@@ -131,9 +131,6 @@ vector<MidCode>MidCodeFramework::inlinedSimpleFunction(string functionName
 			case MIDGOTO:
 			case MIDBNZ:
 			case MIDBZ:
-			case MIDPRINTCHAR:
-			case MIDPRINTINT:
-			case MIDPRINTSTRING:
 			case MIDREADCHAR:
 			case MIDREADINTEGER:
 				cout << "bug @ inlinedFunction" << endl;
@@ -207,6 +204,8 @@ vector<MidCode>MidCodeFramework::inlinedSimpleFunction(string functionName
 			}
 			case MIDNEGATE:
 			case MIDASSIGN:
+			case MIDPRINTCHAR:
+			case MIDPRINTINT:
 			{
 				SymbolEntry* targetEntry = MidCode::table->getSymbolById(c.target);
 				if (c.target < 0 || targetEntry->scope != "") {
@@ -229,6 +228,8 @@ vector<MidCode>MidCodeFramework::inlinedSimpleFunction(string functionName
 				res.push_back(newMidCode);
 				break;
 			}
+			
+			case MIDPRINTSTRING: 
 			case MIDNOP:
 				res.push_back(newMidCode);
 				break;			

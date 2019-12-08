@@ -111,7 +111,6 @@ syscall #printchar
 move $a0,$3
 # syscall-11 10
 
-lw $t0,0($sp)	#load variabletemp
 move $t0,$a0#temp=x
 
 move $a0,$a1#x=y
@@ -525,7 +524,6 @@ li $t1,10	# load immediate 10
 div $s3,$t1
 mflo $t0##TMP91 = h / 10
 
-lw $t2,716($sp)	#load variablex2
 mul $t2,$t0,10#x2 = #TMP91 * 10
 
 bne $t2,$s3,label$23
@@ -584,7 +582,6 @@ addiu $sp,$sp,-56
 jal factorial
 #call factorial
 
-lw $t0,0($sp)	#load variablen
 move $t0,$v0#n=RET
 
 la $a0,string$16
@@ -602,15 +599,65 @@ li $v0,11
 syscall #printchar
 # syscall-11 10
 
-li $t1,5	# load immediate 5
-move $a0,$t1
-sw $t1,-8($sp)
-li $t2,10	# load immediate 10
-move $a1,$t2
-sw $t2,-4($sp)
-addiu $sp,$sp,-48
-jal swap
-#call swap
+la $a0,string$0
+li $v0,4
+syscall #printstring
+# syscall-4 x = 
+
+li $a0,5
+li $v0,1
+syscall #printint
+# syscall-1 5
+
+li $a0,10
+li $v0,11
+syscall #printchar
+# syscall-11 10
+
+la $a0,string$1
+li $v0,4
+syscall #printstring
+# syscall-4 y = 
+
+li $a0,10
+li $v0,1
+syscall #printint
+# syscall-1 10
+
+li $a0,10
+li $v0,11
+syscall #printchar
+# syscall-11 10
+
+la $a0,string$2
+li $v0,4
+syscall #printstring
+# syscall-4 SWAP x = 
+
+li $a0,10
+li $v0,1
+syscall #printint
+# syscall-1 10
+
+li $a0,10
+li $v0,11
+syscall #printchar
+# syscall-11 10
+
+la $a0,string$3
+li $v0,4
+syscall #printstring
+# syscall-4 SWAP y = 
+
+li $a0,5
+li $v0,1
+syscall #printint
+# syscall-1 5
+
+li $a0,10
+li $v0,11
+syscall #printchar
+# syscall-11 10
 
 addiu $sp,$sp,-760
 jal complete_flower_num

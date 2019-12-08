@@ -235,9 +235,24 @@ n=RET
 syscall-4 5 != 
 syscall-1 n
 syscall-11 10
-push 5
-push 10
-call swap
+#TMP98=5
+#TMP99=10
+syscall-4 x = 
+syscall-1 #TMP98
+syscall-11 10
+syscall-4 y = 
+syscall-1 #TMP99
+syscall-11 10
+#TMP97=#TMP98
+#TMP98=#TMP99
+#TMP99=#TMP97
+syscall-4 SWAP x = 
+syscall-1 #TMP98
+syscall-11 10
+syscall-4 SWAP y = 
+syscall-1 #TMP99
+syscall-11 10
+#TMP95=#TMP96
 call complete_flower_num
 
 ====Block0====
@@ -779,22 +794,23 @@ n=RET
 syscall-4 5 != 
 syscall-1 n
 syscall-11 10
-push 5
-push 10
-call swap
-	prev:[43,]
-	next:[45,]
-	use:[]
-	def:[n,]
-	activeIn:[]
-	activeOut:[]
-==============
-====Block45====
+syscall-4 x = 
+syscall-1 5
+syscall-11 10
+syscall-4 y = 
+syscall-1 10
+syscall-11 10
+syscall-4 SWAP x = 
+syscall-1 10
+syscall-11 10
+syscall-4 SWAP y = 
+syscall-1 5
+syscall-11 10
 call complete_flower_num
-	prev:[44,]
+	prev:[43,]
 	next:[]
 	use:[]
-	def:[]
+	def:[n,]
 	activeIn:[]
 	activeOut:[]
 ==============
@@ -1004,9 +1020,18 @@ n=RET
 syscall-4 5 != 
 syscall-1 n
 syscall-11 10
-push 5
-push 10
-call swap
+syscall-4 x = 
+syscall-1 5
+syscall-11 10
+syscall-4 y = 
+syscall-1 10
+syscall-11 10
+syscall-4 SWAP x = 
+syscall-1 10
+syscall-11 10
+syscall-4 SWAP y = 
+syscall-1 5
+syscall-11 10
 call complete_flower_num
 
 

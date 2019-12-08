@@ -370,7 +370,7 @@ int MipsTranslator::loadOperand(int var, int isImmediate
 			if (entry->type == TYPEINT || entry->type == TYPECHAR || entry->type == TYPETMP
 				||entry->type==TYPEINTCONST||entry->type==TYPECHARCONST) {
 				//此处建立了机制防止未初始化的内存被加载进入寄存器，可以节省访存
-				if (!(var < 0 && globalVariable.find(var) == globalVariable.end()
+				if (!(/*var < 0 &&*/ globalVariable.find(var) == globalVariable.end()
 					&&loaded.find(var)==loaded.end())) {
 					int bias = entry->addr;
 					out << "lw " << name[res[0]] << "," << bias << "($sp)";
@@ -648,6 +648,7 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDDIV:
 		{
+			
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }

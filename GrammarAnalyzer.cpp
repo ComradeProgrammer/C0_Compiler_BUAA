@@ -1314,7 +1314,7 @@ void GrammarAnalyzer::scanSentence() {
 }
 
 void GrammarAnalyzer::printSentence() {
-	inlineable = false;
+	//inlineable = false;
 	if (lex.sym().type != PRINTFTK) {
 		f.handleFault(lex.lineNumber(), "缺少printf标识符");
 		throw 0;
