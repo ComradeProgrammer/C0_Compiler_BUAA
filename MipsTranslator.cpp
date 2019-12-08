@@ -1010,18 +1010,21 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDPRINTINT:
 		{
+			if (Astatus[0] == REGVAR) {
+				out << "move $v1,$a0" << endl;
+			}
 			if (!c.isImmediate1) {
 				//不是立即数
 				if (varReg[c.operand1] >0) {
 					if (varReg[c.operand1] != 4) {
-						revokeAregister(4);//若当前寄存器不是a0就收回a0
+						//revokeAregister(4);//若当前寄存器不是a0就收回a0
 						out << "move $a0," << name[varReg[c.operand1]] << endl;
 						//已经保存在寄存器中
 					}
 					
 				}
 				else {
-					revokeAregister(4);
+					//revokeAregister(4);
 					//返回的肯定不能是数组名；
 					SymbolEntry* s = MidCode::table->getSymbolById(c.operand1);
 					if (s->scope == "") {
@@ -1033,7 +1036,7 @@ void MipsTranslator::translate(MidCode c) {
 				}
 			}
 			else if (c.isImmediate1) {
-				revokeAregister(4);
+				//revokeAregister(4);
 				out << "li $a0," << c.operand1 << endl;
 			}
 			out << "li $v0,1" << endl;
@@ -1041,23 +1044,28 @@ void MipsTranslator::translate(MidCode c) {
 			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
 			if (func->link->paraNum > 0) {
 				//立刻恢复a0寄存器
-				loadOperand(func->link->paraIds[0], false, {}, {}, & (c.activeVariable));
+				//loadOperand(func->link->paraIds[0], false, {}, {}, & (c.activeVariable));
+				out << "move $a0,$v1"<<endl;
 			}
+			out << "# " << c << endl;
 			break;
 		}
 		case MIDPRINTCHAR:
 		{
+			if (Astatus[0] == REGVAR) {
+				out << "move $v1,$a0" << endl;
+			}
 			if (!c.isImmediate1) {
 				//不是立即数
 				if (varReg[c.operand1]>0) {
 					if (varReg[c.operand1] != 4) {
-						revokeAregister(4);//若当前寄存器不是a0就收回a0
+						//revokeAregister(4);//若当前寄存器不是a0就收回a0
 						out << "move $a0," << name[varReg[c.operand1]] << endl;
 						//已经保存在寄存器中
 					}
 				}
 				else {
-					revokeAregister(4);
+					//revokeAregister(4);
 					//返回的肯定不能是数组名；
 					SymbolEntry* s = MidCode::table->getSymbolById(c.operand1);
 					if (s->scope == "") {
@@ -1069,7 +1077,7 @@ void MipsTranslator::translate(MidCode c) {
 				}
 			}
 			else if (c.isImmediate1) {
-				revokeAregister(4);
+				//revokeAregister(4);
 				out << "li $a0," << c.operand1 << endl;
 			}
 			out << "li $v0,11" << endl;
@@ -1077,21 +1085,28 @@ void MipsTranslator::translate(MidCode c) {
 			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
 			if (func->link->paraNum > 0) {
 				//restore a0
-				loadOperand(func->link->paraIds[0], false, {}, {}, & (c.activeVariable));
+				//loadOperand(func->link->paraIds[0], false, {}, {}, & (c.activeVariable));
+				out << "move $a0,$v1" << endl;
 			}
+			out << "# " << c << endl;
 			break;
 		}
 		case MIDPRINTSTRING:
 		{
-			revokeAregister(4);
+			if (Astatus[0] == REGVAR) {
+				out << "move $v1,$a0" << endl;
+			}
+			//revokeAregister(4);
 			out << "la $a0,string$" << c.operand1 << endl;
 			out << "li $v0,4" << endl;
 			out << "syscall #printstring" << endl;
 			SymbolEntry* func = MidCode::table->getSymbolById(currentFunction);
 			if (func->link->paraNum > 0) {
 				//restore a0
-				loadOperand(func->link->paraIds[0], false, {}, {}, & (c.activeVariable));
+				//loadOperand(func->link->paraIds[0], false, {}, {}, & (c.activeVariable));
+				out << "move $a0,$v1" << endl;
 			}
+			out << "# " << c << endl;
 			break;
 		}
 		case MIDREADCHAR:

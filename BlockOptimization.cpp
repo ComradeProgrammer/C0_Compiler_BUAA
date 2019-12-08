@@ -58,6 +58,48 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 			case MIDNEQ:
 			{
 				MidCode tmp = c;
+				//如果两个立即数都是常量的话
+				if (c.isImmediate1 && c.isImmediate2) {
+					int res = 0;
+					switch (c.op) {
+						case MIDADD:
+							res = c.operand1 + c.operand2;
+							break;
+						case MIDSUB:
+							res = c.operand1 - c.operand2;
+							break;
+						case MIDMULT:
+							res = c.operand1 * c.operand2;
+							break;
+						case MIDDIV:
+							res = c.operand1 / c.operand2;
+							break;
+						case MIDLEQ:
+							res = c.operand1 <= c.operand2;
+							break;
+						case MIDLSS:
+							res = c.operand1 < c.operand2;
+							break;
+						case MIDGRE:
+							res = c.operand1 > c.operand2;
+							break;
+						case MIDGEQ:
+							res = c.operand1 >= c.operand2;
+							break;
+						case MIDEQL:
+							res = c.operand1 == c.operand2;
+							break;
+						case MIDNEQ:
+							res = c.operand1 != c.operand2;
+							break;
+					}
+					Item item;
+					item.isImmediate = true;
+					item.id = res;
+					substitution[c.target] = item;
+					break;
+
+				}
 				if (c.operand1 != -1 && !c.isImmediate1 &&
 					substitution.find(c.operand1) != substitution.end()) {
 					tmp.operand1 = substitution[c.operand1].id;
@@ -145,7 +187,7 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 				Item tmp;
 				tmp.id=  c.operand1;
 				tmp.isImmediate = c.isImmediate1;
-				//a=b,若是此前已经记录a=c那么此时也应记录a=c
+				//a=b,若是此前已经记录b=c那么此时也应记录a=c
 				if (!c.isImmediate1&&substitution.find(c.operand1) != substitution.end()) {
 					tmp.id = substitution[c.operand1].id;
 					tmp.isImmediate = substitution[c.operand1].isImmediate;

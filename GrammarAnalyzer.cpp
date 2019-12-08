@@ -1535,6 +1535,60 @@ ReturnBundle GrammarAnalyzer::condition() {
 	return res;
 }
 
+ReturnBundle GrammarAnalyzer::condition() {
+	
+	ReturnBundle res1=expression();
+
+	ReturnBundle res;
+	res.isChar = false;
+	res.isImmediate = res1.isImmediate;
+	res.id = res1.id;
+	if (res1.isChar) {
+		f.handleCourseFault(lex.lineNumber(), ILLEGALTYPEINCONDITION);
+		f.handleFault(lex.lineNumber(), "条件中必须使用整型");
+	}
+	//表达式
+	if (lex.sym().type == LSS || lex.sym().type == LEQ
+		|| lex.sym().type == GRE || lex.sym().type == GEQ
+		|| lex.sym().type == EQL || lex.sym().type == NEQ) {
+		MidCodeOp op;
+		switch (lex.sym().type) {
+		case LSS:
+			op = MIDLSS;
+			break;
+		case LEQ:
+			op = MIDLEQ;
+			break;
+		case GRE:
+			op = MIDGRE;
+			break;
+		case GEQ:
+			op = MIDGEQ;
+			break;
+		case EQL:
+			op = MIDEQL;
+			break;
+		case NEQ:
+			op = MIDNEQ;
+			break;
+		}
+		getNextSym();
+		//读取关系运算符完成
+		ReturnBundle res2=expression();
+		if (res2.isChar) {
+			f.handleCourseFault(lex.lineNumber(), ILLEGALTYPEINCONDITION);
+			f.handleFault(lex.lineNumber(), "条件中必须使用整型");
+		}
+		int tmpVar = MidCode::tmpVarAlloc();
+		raw.midCodeInsert(op, tmpVar,
+			res.id, res.isImmediate,
+			res2.id, res2.isImmediate, MIDNOLABEL);
+		res.id = tmpVar;
+		res.isImmediate = false;
+	}
+	if (course) { out << "<条件>" << endl; }
+	return res;
+}
 void GrammarAnalyzer::loopSentence() {
 	inlineable = false;
 	bool error = false;

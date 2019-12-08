@@ -52,8 +52,8 @@ void FlowGraph::addLink(Block* from, Block* to) {
 }
 
 void FlowGraph::optimize() {
-	/*activeVariableAnalyze();
-	DAGoptimize();*/
+	activeVariableAnalyze();
+	DAGoptimize();
 	activeVariableAnalyze();
 	blockOptimize();
 	activeVariableAnalyze();
