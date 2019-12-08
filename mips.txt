@@ -24,7 +24,7 @@ factorial:
 sw $ra,48($sp)#save the return value
 sle $t0,$a0,1##TMP2 = n <= 1
 
-blez $t0,label$2#BZ #TMP2 _label2
+beq $t0,$0,label$2#BZ #TMP2 _label2
 
 li $v0,1
 lw $ra,48($sp)
@@ -70,86 +70,91 @@ jr $ra
 
 swap:
 sw $ra,36($sp)#save the return value
-move $v1,$a0
+move $3,$a0
 la $a0,string$0
 li $v0,4
 syscall #printstring
-move $a0,$v1
+move $a0,$3
 # syscall-4 x = 
 
-move $v1,$a0
+move $3,$a0
 li $v0,1
 syscall #printint
-move $a0,$v1
+move $a0,$3
 # syscall-1 x
 
-move $v1,$a0
+move $3,$a0
 li $a0,10
 li $v0,11
 syscall #printchar
-move $a0,$v1
+move $a0,$3
 # syscall-11 10
 
-move $v1,$a0
+move $3,$a0
 la $a0,string$1
 li $v0,4
 syscall #printstring
-move $a0,$v1
+move $a0,$3
 # syscall-4 y = 
 
-move $v1,$a0
+move $3,$a0
 move $a0,$a1
 li $v0,1
 syscall #printint
-move $a0,$v1
+move $a0,$3
 # syscall-1 y
 
-move $v1,$a0
+move $3,$a0
 li $a0,10
 li $v0,11
 syscall #printchar
-move $a0,$v1
+move $a0,$3
 # syscall-11 10
 
-move $v1,$a0
+lw $t0,0($sp)	#load variabletemp
+move $t0,$a0#temp=x
+
+move $a0,$a1#x=y
+
+move $3,$a0
 la $a0,string$2
 li $v0,4
 syscall #printstring
-move $a0,$v1
+move $a0,$3
 # syscall-4 SWAP x = 
 
-move $v1,$a0
-move $a0,$a1
+move $3,$a0
 li $v0,1
 syscall #printint
-move $a0,$v1
-# syscall-1 y
+move $a0,$3
+# syscall-1 x
 
-move $v1,$a0
+move $3,$a0
 li $a0,10
 li $v0,11
 syscall #printchar
-move $a0,$v1
+move $a0,$3
 # syscall-11 10
 
-move $v1,$a0
+move $3,$a0
 la $a0,string$3
 li $v0,4
 syscall #printstring
-move $a0,$v1
+move $a0,$3
 # syscall-4 SWAP y = 
 
-move $v1,$a0
+move $3,$a0
+move $a0,$t0
 li $v0,1
 syscall #printint
-move $a0,$v1
-# syscall-1 x
+move $a0,$3
+# syscall-1 temp
 
-move $v1,$a0
+move $3,$a0
 li $a0,10
 li $v0,11
 syscall #printchar
-move $a0,$v1
+move $a0,$3
 # syscall-11 10
 
 lw $ra,36($sp)
@@ -198,17 +203,17 @@ jr $ra
 #ret #TMP20
 
 complete_flower_num:
-sw $ra,768($sp)#save the return value
-sw $s0,736($sp)
-sw $s1,740($sp)
-sw $s2,744($sp)
-sw $s3,748($sp)
-sw $s4,752($sp)
+sw $ra,756($sp)#save the return value
+sw $s0,724($sp)
+sw $s1,728($sp)
+sw $s2,732($sp)
+sw $s3,736($sp)
+sw $s4,740($sp)
 li $s1,2
 label$3:
 slti $t0,$s1,128#_label3: #TMP21 = j < 128
 
-blez $t0,label$4#BZ #TMP21 _label4
+beq $t0,$0,label$4#BZ #TMP21 _label4
 
 li $s0,1
 li $s2,-1
@@ -217,26 +222,24 @@ move $s3,$s1#s=j
 label$5:
 slt $t0,$s0,$s1#_label5: #TMP22 = i < j
 
-blez $t0,label$6#BZ #TMP22 _label6
+beq $t0,$0,label$6#BZ #TMP22 _label6
 
 div $s1,$s0
 mflo $t0##TMP29 = j / i
 
 mul $t1,$t0,$s0##TMP30 = #TMP29 * i
 
-subu $t2,$s1,$t1##TMP27 = j - #TMP30
+subu $t2,$s1,$t1##TMP25 = j - #TMP30
 
-seq $t3,$t2,0##TMP31 = #TMP27 == 0
-
-blez $t3,label$7#BZ #TMP31 _label7
+bne $t2,$0,label$7#BNZ #TMP25 _label7
 
 addiu $s2,$s2,1#n = n + 1
 
 subu $s3,$s3,$s0#s = s - i
 
-sge $t0,$s2,128##TMP34 = n >= 128
+sge $t0,$s2,128##TMP33 = n >= 128
 
-blez $t0,label$8#BZ #TMP34 _label8
+beq $t0,$0,label$8#BZ #TMP33 _label8
 
 la $a0,string$4
 li $v0,4
@@ -253,7 +256,7 @@ j label$7#GOTO _label7
 label$8:
 sll $t0,$s2,2
 addu $t0,$t0,$sp
-sw $s0,168($t0)#_label8: k[n] =i
+sw $s0,156($t0)#_label8: k[n] =i
 
 label$7:
 addiu $s0,$s0,1#_label7: i = i + 1
@@ -261,9 +264,7 @@ addiu $s0,$s0,1#_label7: i = i + 1
 j label$5#GOTO _label5
 
 label$6:
-seq $t0,$s3,0#_label6: #TMP35 = s == 0
-
-blez $t0,label$10#BZ #TMP35 _label10
+bne $s3,$0,label$10#_label6: BNZ s _label10
 
 la $a0,string$5
 li $v0,4
@@ -282,9 +283,9 @@ syscall #printchar
 
 li $s0,0
 label$11:
-sle $t0,$s0,$s2#_label11: #TMP36 = i <= n
+sle $t0,$s0,$s2#_label11: #TMP34 = i <= n
 
-blez $t0,label$12#BZ #TMP36 _label12
+beq $t0,$0,label$12#BZ #TMP34 _label12
 
 la $a0,string$6
 li $v0,4
@@ -293,12 +294,12 @@ syscall #printstring
 
 sll $t1,$s0,2
 addu $t1,$t1,$sp
-lw $t0,168($t1)##TMP37 = k [ i ] 
+lw $t0,156($t1)##TMP35 = k [ i ] 
 
 move $a0,$t0
 li $v0,1
 syscall #printint
-# syscall-1 #TMP37
+# syscall-1 #TMP35
 
 li $a0,10
 li $v0,11
@@ -349,61 +350,62 @@ syscall #printchar
 li $s0,100
 li $s1,0
 label$13:
-slti $t0,$s0,228#_label13: #TMP39 = i < 228
+slti $t0,$s0,228#_label13: #TMP37 = i < 228
 
-blez $t0,label$14#BZ #TMP39 _label14
+beq $t0,$0,label$14#BZ #TMP37 _label14
 
 li $t1,10	# load immediate 10
 div $s0,$t1
-mflo $t0##TMP52 = i / 10
+mflo $t0##TMP50 = i / 10
 
-mul $t2,$t0,10##TMP53 = #TMP52 * 10
+mul $t2,$t0,10##TMP51 = #TMP50 * 10
 
-subu $t3,$s0,$t2##TMP65 = i - #TMP53
+subu $t3,$s0,$t2##TMP63 = i - #TMP51
 
-mul $t4,$t3,$t3##TMP73 = #TMP65 * #TMP65
+mul $t4,$t3,$t3##TMP71 = #TMP63 * #TMP63
 
-mul $t5,$t4,$t3##TMP74 = #TMP73 * #TMP65
+mul $t5,$t4,$t3##TMP72 = #TMP71 * #TMP63
 
 li $t7,10	# load immediate 10
 div $t0,$t7
-mflo $t6##TMP46 = #TMP52 / 10
+mflo $t6##TMP44 = #TMP50 / 10
 
-mul $t8,$t6,10##TMP47 = #TMP46 * 10
+mul $t8,$t6,10##TMP45 = #TMP44 * 10
 
-subu $t9,$t0,$t8##TMP66 = #TMP52 - #TMP47
+subu $t9,$t0,$t8##TMP64 = #TMP50 - #TMP45
 
-mul $t0,$t9,$t9##TMP70 = #TMP66 * #TMP66
+mul $t0,$t9,$t9##TMP68 = #TMP64 * #TMP64
 
-mul $t2,$t0,$t9##TMP71 = #TMP70 * #TMP66
+mul $t2,$t0,$t9##TMP69 = #TMP68 * #TMP64
 
 li $t4,100	# load immediate 100
 div $s0,$t4
-mflo $t0##TMP67 = i / 100
+mflo $t0##TMP65 = i / 100
 
-mul $t6,$t0,$t0##TMP68 = #TMP67 * #TMP67
+mul $t6,$t0,$t0##TMP66 = #TMP65 * #TMP65
 
-mul $t8,$t6,$t0##TMP69 = #TMP68 * #TMP67
+mul $t8,$t6,$t0##TMP67 = #TMP66 * #TMP65
 
-addu $t6,$t8,$t2##TMP72 = #TMP69 + #TMP71
+addu $t6,$t8,$t2##TMP70 = #TMP67 + #TMP69
 
-addu $t2,$t6,$t5##TMP75 = #TMP72 + #TMP74
+addu $t2,$t6,$t5##TMP73 = #TMP70 + #TMP72
 
-mul $t5,$t9,10##TMP60 = #TMP66 * 10
+mul $t5,$t9,10##TMP58 = #TMP64 * 10
 
-mul $t6,$t0,100##TMP59 = #TMP67 * 100
+mul $t6,$t0,100##TMP57 = #TMP65 * 100
 
-addu $t0,$t6,$t5##TMP61 = #TMP59 + #TMP60
+addu $t0,$t6,$t5##TMP59 = #TMP57 + #TMP58
 
-addu $t5,$t0,$t3##TMP62 = #TMP61 + #TMP65
+addu $t5,$t0,$t3##TMP60 = #TMP59 + #TMP63
 
-seq $t0,$t5,$t2##TMP76 = #TMP62 == #TMP75
+bne $t5,$t2,label$15
+##TMP74 = #TMP60 == #TMP73
 
-blez $t0,label$15#BZ #TMP76 _label15
+#BZ #TMP74 _label15
 
 sll $t0,$s1,2
 addu $t0,$t0,$sp
-sw $s0,168($t0)#k[y] =i
+sw $s0,156($t0)#k[y] =i
 
 addiu $s1,$s1,1#y = y + 1
 
@@ -415,9 +417,9 @@ j label$13#GOTO _label13
 label$14:
 li $s0,0
 label$16:
-slt $t0,$s0,$s1#_label16: #TMP78 = i < y
+slt $t0,$s0,$s1#_label16: #TMP76 = i < y
 
-blez $t0,label$17#BZ #TMP78 _label17
+beq $t0,$0,label$17#BZ #TMP76 _label17
 
 la $a0,string$10
 li $v0,4
@@ -426,12 +428,12 @@ syscall #printstring
 
 sll $t1,$s0,2
 addu $t1,$t1,$sp
-lw $t0,168($t1)##TMP79 = k [ i ] 
+lw $t0,156($t1)##TMP77 = k [ i ] 
 
 move $a0,$t0
 li $v0,1
 syscall #printint
-# syscall-1 #TMP79
+# syscall-1 #TMP77
 
 li $a0,10
 li $v0,11
@@ -467,9 +469,9 @@ li $s1,2
 li $s3,0
 li $s4,1
 label$18:
-sle $t0,$s1,128#_label18: #TMP80 = m <= 128
+sle $t0,$s1,128#_label18: #TMP78 = m <= 128
 
-blez $t0,label$19#BZ #TMP80 _label19
+beq $t0,$0,label$19#BZ #TMP78 _label19
 
 li $t0,2	# load immediate 2
 div $s1,$t0
@@ -477,20 +479,18 @@ mflo $s2#k2 = m / 2
 
 li $s0,2
 label$20:
-sle $t0,$s0,$s2#_label20: #TMP82 = i <= k2
+sle $t0,$s0,$s2#_label20: #TMP80 = i <= k2
 
-blez $t0,label$21#BZ #TMP82 _label21
+beq $t0,$0,label$21#BZ #TMP80 _label21
 
 div $s1,$s0
-mflo $t0##TMP89 = m / i
+mflo $t0##TMP87 = m / i
 
-mul $t1,$t0,$s0##TMP90 = #TMP89 * i
+mul $t1,$t0,$s0##TMP88 = #TMP87 * i
 
-subu $t2,$s1,$t1##TMP87 = m - #TMP90
+subu $t2,$s1,$t1##TMP83 = m - #TMP88
 
-seq $t3,$t2,0##TMP91 = #TMP87 == 0
-
-blez $t3,label$22#BZ #TMP91 _label22
+bne $t2,$0,label$22#BNZ #TMP83 _label22
 
 li $s4,0
 label$22:
@@ -499,9 +499,11 @@ addiu $s0,$s0,1#_label22: i = i + 1
 j label$20#GOTO _label20
 
 label$21:
-seq $t0,$s4,1#_label21: #TMP92 = leap == 1
+li $t0,1	# load immediate 1
+bne $s4,$t0,label$23
+#_label21: #TMP89 = leap == 1
 
-blez $t0,label$23#BZ #TMP92 _label23
+#BZ #TMP89 _label23
 
 la $a0,string$13
 li $v0,4
@@ -522,14 +524,15 @@ addiu $s3,$s3,1#h = h + 1
 
 li $t1,10	# load immediate 10
 div $s3,$t1
-mflo $t0##TMP94 = h / 10
+mflo $t0##TMP91 = h / 10
 
-lw $t2,728($sp)	#load variablex2
-mul $t2,$t0,10#x2 = #TMP94 * 10
+lw $t2,716($sp)	#load variablex2
+mul $t2,$t0,10#x2 = #TMP91 * 10
 
-seq $t3,$t2,$s3##TMP96 = x2 == h
+bne $t2,$s3,label$23
+##TMP93 = x2 == h
 
-blez $t3,label$23#BZ #TMP96 _label23
+#BZ #TMP93 _label23
 
 la $a0,string$14
 li $v0,4
@@ -563,13 +566,13 @@ li $v0,11
 syscall #printchar
 # syscall-11 10
 
-lw $s0,736($sp)
-lw $s1,740($sp)
-lw $s2,744($sp)
-lw $s3,748($sp)
-lw $s4,752($sp)
-lw $ra,768($sp)
-addiu $sp,$sp,772
+lw $s0,724($sp)
+lw $s1,728($sp)
+lw $s2,732($sp)
+lw $s3,736($sp)
+lw $s4,740($sp)
+lw $ra,756($sp)
+addiu $sp,$sp,760
 jr $ra
 #ret 
 
@@ -610,7 +613,7 @@ addiu $sp,$sp,-48
 jal swap
 #call swap
 
-addiu $sp,$sp,-772
+addiu $sp,$sp,-760
 jal complete_flower_num
 #call complete_flower_num
 

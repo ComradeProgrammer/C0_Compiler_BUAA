@@ -61,13 +61,11 @@ private:
 		, vector<int>conflictVar, vector<int> conflictReg);
 	vector<int> TregisterAlloc(int var, int isImmediate
 		, vector<int>conflictVar, vector<int> conflictReg, set<int>*activeVariable);
-	/*int loadOperand(int var, int isImmediate
-		, vector<int>conflictVar, vector<int> conflictReg);*/
 	int loadOperand(int var, int isImmediate
 		, vector<int>conflictVar, vector<int> conflictReg, set<int>* activeVariable);
 	void writeback(int var,int reg);
 	void translate(MidCode c);
-	void translate(vector<MidCode>c);
+	void translate(vector<MidCode>c,int type);
 	void specialVarwriteback(int var,bool isImmediate);
 	void revokeAregister(int reg);
 	void writeBackAfterBlock();

@@ -55,8 +55,26 @@ void MipsTranslator::translateBlock(Block* b) {
 		Tuser[i] = -1;
 	}
 	for (int i = 0; i < b->v.size(); i++) {
-		
-		if (b->v[i].op != MIDPUSH) {
+		if (i+1<b->v.size()
+			&&(b->v[i].op==MIDEQL||b->v[i].op==MIDNEQ)
+			&&(b->v[i+1].op==MIDBZ||b->v[i+1].op==MIDBNZ)) {
+			//针对跳转语句的beq bne优化
+			MidCode c1 = b->v[i];
+			MidCode c2 = b->v[i + 1];
+			if (c2.operand1 == c1.target && !c2.isImmediate1//保证是同一个变量
+				&& c2.activeVariable.find(c1.target) == c2.activeVariable.end()
+				//保证这个条件变量以后再也没用过
+				) {
+				i++;
+				vector<MidCode> res = { c1,c2 };
+				translate(res,1);
+			}
+			else {
+				translate(b->v[i]);
+			}
+
+		}
+		else if (b->v[i].op != MIDPUSH) {
 			translate(b->v[i]);
 		}
 		else {
@@ -67,7 +85,7 @@ void MipsTranslator::translateBlock(Block* b) {
 				i++;
 			}
 			i--;
-			translate(res);
+			translate(res,0);
 		}
 	}
 	//这里：暂时是把所有临时变量全部写回了，但是其实没这个必要，稍后可以加以改进
@@ -416,14 +434,14 @@ void MipsTranslator::translate(MidCode c) {
 			}
 			SubSymbolTable* tmp = MidCode::table->getSubSymbolTableByName(s->name);
 			//此处在语法分析实现了常量替换的情况下应该可以删掉
-			for (auto& i : tmp->symbolMap) {
+			/*for (auto& i : tmp->symbolMap) {
 				if (i.second->type == TYPEINTCONST || i.second->type == TYPECHARCONST) {
 					//需要为常量进行赋值
 					out << "li $v1," << i.second->initValue << endl;
 					out << "sw $v1," << i.second->addr << "($sp)" << endl;
 				}
 			}
-			
+			*/
 			break;
 		}
 		case MIDCALL:
@@ -996,7 +1014,7 @@ void MipsTranslator::translate(MidCode c) {
 		{
 			writeBackAfterBlock();
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, {}, {}, &(c.activeVariable));
-			out << "bgtz " << name[operand1] << ",label$" << -c.operand2;
+			out << "bne " << name[operand1] << ",$0,label$" << -c.operand2;
 			out << "#" << c << endl;
 			break;
 		}
@@ -1004,14 +1022,14 @@ void MipsTranslator::translate(MidCode c) {
 		{
 			writeBackAfterBlock();
 			int operand1 = loadOperand(c.operand1, c.isImmediate1, {}, {}, &(c.activeVariable));
-			out << "blez " << name[operand1] << ",label$" << -c.operand2;
+			out << "beq " << name[operand1] << ",$0,label$" << -c.operand2;
 			out << "#" << c << endl;
 			break;
 		}
 		case MIDPRINTINT:
 		{
 			if (Astatus[0] == REGVAR) {
-				out << "move $v1,$a0" << endl;
+				out << "move $3,$a0" << endl;
 			}
 			if (!c.isImmediate1) {
 				//不是立即数
@@ -1045,7 +1063,7 @@ void MipsTranslator::translate(MidCode c) {
 			if (func->link->paraNum > 0) {
 				//立刻恢复a0寄存器
 				//loadOperand(func->link->paraIds[0], false, {}, {}, & (c.activeVariable));
-				out << "move $a0,$v1"<<endl;
+				out << "move $a0,$3"<<endl;
 			}
 			out << "# " << c << endl;
 			break;
@@ -1053,7 +1071,7 @@ void MipsTranslator::translate(MidCode c) {
 		case MIDPRINTCHAR:
 		{
 			if (Astatus[0] == REGVAR) {
-				out << "move $v1,$a0" << endl;
+				out << "move $3,$a0" << endl;
 			}
 			if (!c.isImmediate1) {
 				//不是立即数
@@ -1086,7 +1104,7 @@ void MipsTranslator::translate(MidCode c) {
 			if (func->link->paraNum > 0) {
 				//restore a0
 				//loadOperand(func->link->paraIds[0], false, {}, {}, & (c.activeVariable));
-				out << "move $a0,$v1" << endl;
+				out << "move $a0,$3" << endl;
 			}
 			out << "# " << c << endl;
 			break;
@@ -1094,7 +1112,7 @@ void MipsTranslator::translate(MidCode c) {
 		case MIDPRINTSTRING:
 		{
 			if (Astatus[0] == REGVAR) {
-				out << "move $v1,$a0" << endl;
+				out << "move $3,$a0" << endl;
 			}
 			//revokeAregister(4);
 			out << "la $a0,string$" << c.operand1 << endl;
@@ -1104,7 +1122,7 @@ void MipsTranslator::translate(MidCode c) {
 			if (func->link->paraNum > 0) {
 				//restore a0
 				//loadOperand(func->link->paraIds[0], false, {}, {}, & (c.activeVariable));
-				out << "move $a0,$v1" << endl;
+				out << "move $a0,$3" << endl;
 			}
 			out << "# " << c << endl;
 			break;
@@ -1142,23 +1160,50 @@ void MipsTranslator::translate(MidCode c) {
 	//out << endl;
 }
 
-void MipsTranslator::translate(vector<MidCode>c) {
-	int n = c.size();
-	for (int i = 0; i < n; i++) {
-		if (c[i].labelNo != MIDNOLABEL) {
-			out << "label$" << -c[i].labelNo << ":" << endl;
-		}
-		int tmpreg = loadOperand(c[i].operand1, c[i].isImmediate1, {}, {}, nullptr);
-		
-		if (i >= 0 && i <= 3) {
-			if (Astatus[i] == REGVAR) {
-				//需要写回a寄存器
-				SymbolEntry* tmp = MidCode::table->getSymbolById(Auser[i]);
-				out << "sw " << name[Aregister[i]] << "," << tmp->addr << "($sp)" << endl;
+/*@para c:需要合并处理的中间代码合集
+@para type:合并处理的类型
+type==0:是push语句合并处理，这是因为push语句一定连在一起且push结束肯定是跳转
+type==1:是跳转语句的合并处理*/
+void MipsTranslator::translate(vector<MidCode>c,int type) {
+	if (type == 0) {
+		int n = c.size();
+		for (int i = 0; i < n; i++) {
+			if (c[i].labelNo != MIDNOLABEL) {
+				out << "label$" << -c[i].labelNo << ":" << endl;
 			}
-			out << "move $a" << i << "," << name[tmpreg] << endl;
+			int tmpreg = loadOperand(c[i].operand1, c[i].isImmediate1, {}, {}, nullptr);
+
+			if (i >= 0 && i <= 3) {
+				if (Astatus[i] == REGVAR) {
+					//需要写回a寄存器
+					SymbolEntry* tmp = MidCode::table->getSymbolById(Auser[i]);
+					out << "sw " << name[Aregister[i]] << "," << tmp->addr << "($sp)" << endl;
+				}
+				out << "move $a" << i << "," << name[tmpreg] << endl;
+			}
+			out << "sw " << name[tmpreg] << "," << (-n + i) * 4 << "($sp)" << endl;
 		}
-		out << "sw " << name[tmpreg] << "," << (-n + i) * 4 << "($sp)" << endl;
+	}
+	else if (type == 1) {
+		if (c[0].labelNo != -1) {
+			out << "label$" << -c[0].labelNo<<":\n";
+		}
+		if (c[1].labelNo != -1) {
+			out << "label$" << -c[1].labelNo << ":\n";
+		}
+		int operand1 = loadOperand(c[0].operand1, c[0].isImmediate1,
+			{ c[0].operand2 }, {}, &(c[0].activeVariable));
+		int operand2 = loadOperand(c[0].operand2, c[0].isImmediate2,
+			{ c[0].operand1 }, {operand1}, &(c[0].activeVariable));
+		if ((c[0].op == MIDEQL && c[1].op == MIDBZ)
+			|| (c[0].op == MIDNEQ && c[1].op == MIDBNZ)) {
+			out << "bne " << name[operand1] << "," << name[operand2] << ",label$" << -c[1].operand2 << endl;
+		}
+		else {
+			out << "beq " << name[operand1] << "," << name[operand2] << ",label$" << -c[1].operand2 << endl;
+		}
+		out << "#" << c[0] << endl;
+		out << "#" << c[1] << endl;
 	}
 }
 

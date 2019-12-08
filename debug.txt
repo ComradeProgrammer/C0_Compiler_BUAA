@@ -92,29 +92,27 @@ x1 = #TMP23 * i
 #TMP27 = #TMP27 - #TMP30
 #TMP26=#TMP27
 #TMP25=#TMP26
-#TMP31 = #TMP25 == 0
-BZ #TMP31 _label7
+BNZ #TMP25 _label7
 n = n + 1
 s = s - i
-#TMP34 = n >= 128
-BZ #TMP34 _label8
+#TMP33 = n >= 128
+BZ #TMP33 _label8
 syscall-4 OVERFLOW!
 syscall-11 10
 GOTO _label7
 _label8: k[n] =i
 _label7: i = i + 1
 GOTO _label5
-_label6: #TMP35 = s == 0
-BZ #TMP35 _label10
+_label6: BNZ s _label10
 syscall-4 complete number: 
 syscall-1 j
 syscall-11 10
 i=0
-_label11: #TMP36 = i <= n
-BZ #TMP36 _label12
+_label11: #TMP34 = i <= n
+BZ #TMP34 _label12
 syscall-4   
-#TMP37 = k [ i ] 
-syscall-1 #TMP37
+#TMP35 = k [ i ] 
+syscall-1 #TMP35
 syscall-11 10
 i = i + 1
 GOTO _label11
@@ -128,59 +126,59 @@ syscall-4 'water flower'number is:
 syscall-11 10
 y=0
 i=100
-_label13: #TMP38 = 100 + 128
-#TMP39 = i < #TMP38
-BZ #TMP39 _label14
+_label13: #TMP36 = 100 + 128
+#TMP37 = i < #TMP36
+BZ #TMP37 _label14
 n = i / 100
-#TMP41 = i / 10
-#TMP44=#TMP41
-#TMP45=10
-#TMP46 = #TMP44 / #TMP45
-#TMP47 = #TMP46 * #TMP45
-#TMP44 = #TMP44 - #TMP47
-#TMP43=#TMP44
-j=#TMP43
-#TMP50=i
-#TMP51=10
-#TMP52 = #TMP50 / #TMP51
-#TMP53 = #TMP52 * #TMP51
-#TMP50 = #TMP50 - #TMP53
-#TMP49=#TMP50
-a=#TMP49
-#TMP58=n
-#TMP57=j
-#TMP56=a
-#TMP59 = #TMP58 * 100
-#TMP60 = #TMP57 * 10
-#TMP61 = #TMP59 + #TMP60
-#TMP62 = #TMP61 + #TMP56
-#TMP55=#TMP62
-#TMP54=#TMP55
-#TMP67=n
-#TMP66=j
-#TMP65=a
-#TMP68 = #TMP67 * #TMP67
-#TMP69 = #TMP68 * #TMP67
-#TMP70 = #TMP66 * #TMP66
-#TMP71 = #TMP70 * #TMP66
-#TMP72 = #TMP69 + #TMP71
-#TMP73 = #TMP65 * #TMP65
-#TMP74 = #TMP73 * #TMP65
-#TMP75 = #TMP72 + #TMP74
-#TMP64=#TMP75
-#TMP63=#TMP64
-#TMP76 = #TMP54 == #TMP63
-BZ #TMP76 _label15
+#TMP39 = i / 10
+#TMP42=#TMP39
+#TMP43=10
+#TMP44 = #TMP42 / #TMP43
+#TMP45 = #TMP44 * #TMP43
+#TMP42 = #TMP42 - #TMP45
+#TMP41=#TMP42
+j=#TMP41
+#TMP48=i
+#TMP49=10
+#TMP50 = #TMP48 / #TMP49
+#TMP51 = #TMP50 * #TMP49
+#TMP48 = #TMP48 - #TMP51
+#TMP47=#TMP48
+a=#TMP47
+#TMP56=n
+#TMP55=j
+#TMP54=a
+#TMP57 = #TMP56 * 100
+#TMP58 = #TMP55 * 10
+#TMP59 = #TMP57 + #TMP58
+#TMP60 = #TMP59 + #TMP54
+#TMP53=#TMP60
+#TMP52=#TMP53
+#TMP65=n
+#TMP64=j
+#TMP63=a
+#TMP66 = #TMP65 * #TMP65
+#TMP67 = #TMP66 * #TMP65
+#TMP68 = #TMP64 * #TMP64
+#TMP69 = #TMP68 * #TMP64
+#TMP70 = #TMP67 + #TMP69
+#TMP71 = #TMP63 * #TMP63
+#TMP72 = #TMP71 * #TMP63
+#TMP73 = #TMP70 + #TMP72
+#TMP62=#TMP73
+#TMP61=#TMP62
+#TMP74 = #TMP52 == #TMP61
+BZ #TMP74 _label15
 k[y] =i
 y = y + 1
 _label15: i = i + 1
 GOTO _label13
 _label14: i=0
-_label16: #TMP78 = i < y
-BZ #TMP78 _label17
+_label16: #TMP76 = i < y
+BZ #TMP76 _label17
 syscall-4   
-#TMP79 = k [ i ] 
-syscall-1 #TMP79
+#TMP77 = k [ i ] 
+syscall-1 #TMP77
 syscall-11 10
 i = i + 1
 GOTO _label16
@@ -191,36 +189,35 @@ syscall-11 10
 h=0
 leap=1
 m=2
-_label18: #TMP80 = m <= 128
-BZ #TMP80 _label19
+_label18: #TMP78 = m <= 128
+BZ #TMP78 _label19
 k2 = m / 2
 i=2
-_label20: #TMP82 = i <= k2
-BZ #TMP82 _label21
-#TMP83 = m / i
-x2 = #TMP83 * i
-#TMP87=m
-#TMP88=i
-#TMP89 = #TMP87 / #TMP88
-#TMP90 = #TMP89 * #TMP88
-#TMP87 = #TMP87 - #TMP90
-#TMP86=#TMP87
-#TMP85=#TMP86
-#TMP91 = #TMP85 == 0
-BZ #TMP91 _label22
+_label20: #TMP80 = i <= k2
+BZ #TMP80 _label21
+#TMP81 = m / i
+x2 = #TMP81 * i
+#TMP85=m
+#TMP86=i
+#TMP87 = #TMP85 / #TMP86
+#TMP88 = #TMP87 * #TMP86
+#TMP85 = #TMP85 - #TMP88
+#TMP84=#TMP85
+#TMP83=#TMP84
+BNZ #TMP83 _label22
 leap=0
 _label22: i = i + 1
 GOTO _label20
-_label21: #TMP92 = leap == 1
-BZ #TMP92 _label23
+_label21: #TMP89 = leap == 1
+BZ #TMP89 _label23
 syscall-4  
 syscall-1 m
 syscall-11 10
 h = h + 1
-#TMP94 = h / 10
-x2 = #TMP94 * 10
-#TMP96 = x2 == h
-BZ #TMP96 _label23
+#TMP91 = h / 10
+x2 = #TMP91 * 10
+#TMP93 = x2 == h
+BZ #TMP93 _label23
 syscall-4  
 syscall-11 10
 _label23: leap=1
@@ -311,17 +308,19 @@ syscall-11 10
 syscall-4 y = 
 syscall-1 y
 syscall-11 10
+temp=x
+x=y
 syscall-4 SWAP x = 
-syscall-1 y
+syscall-1 x
 syscall-11 10
 syscall-4 SWAP y = 
-syscall-1 x
+syscall-1 temp
 syscall-11 10
 ret 
 	prev:[]
 	next:[]
 	use:[x,y,]
-	def:[]
+	def:[temp,]
 	activeIn:[x,y,]
 	activeOut:[]
 ==============
@@ -407,25 +406,24 @@ BZ #TMP22 _label6
 ====Block12====
 #TMP29 = j / i
 #TMP30 = #TMP29 * i
-#TMP27 = j - #TMP30
-#TMP31 = #TMP27 == 0
-BZ #TMP31 _label7
+#TMP25 = j - #TMP30
+BNZ #TMP25 _label7
 	prev:[11,]
 	next:[13,16,]
 	use:[i,j,]
-	def:[#TMP31,#TMP30,#TMP29,#TMP27,]
+	def:[#TMP30,#TMP29,#TMP25,]
 	activeIn:[k,i,j,n,s,]
 	activeOut:[k,i,j,n,s,]
 ==============
 ====Block13====
 n = n + 1
 s = s - i
-#TMP34 = n >= 128
-BZ #TMP34 _label8
+#TMP33 = n >= 128
+BZ #TMP33 _label8
 	prev:[12,]
 	next:[14,15,]
 	use:[i,n,s,]
-	def:[#TMP34,]
+	def:[#TMP33,]
 	activeIn:[k,i,j,n,s,]
 	activeOut:[k,i,j,n,s,]
 ==============
@@ -460,12 +458,11 @@ GOTO _label5
 	activeOut:[k,i,j,n,s,]
 ==============
 ====Block17====
-_label6: #TMP35 = s == 0
-BZ #TMP35 _label10
+_label6: BNZ s _label10
 	prev:[16,11,]
 	next:[18,22,]
 	use:[s,]
-	def:[#TMP35,]
+	def:[]
 	activeIn:[k,j,n,s,]
 	activeOut:[k,j,n,]
 ==============
@@ -482,26 +479,26 @@ i=0
 	activeOut:[k,i,j,n,]
 ==============
 ====Block19====
-_label11: #TMP36 = i <= n
-BZ #TMP36 _label12
+_label11: #TMP34 = i <= n
+BZ #TMP34 _label12
 	prev:[18,20,]
 	next:[20,21,]
 	use:[i,n,]
-	def:[#TMP36,]
+	def:[#TMP34,]
 	activeIn:[k,i,j,n,]
 	activeOut:[k,i,j,n,]
 ==============
 ====Block20====
 syscall-4   
-#TMP37 = k [ i ] 
-syscall-1 #TMP37
+#TMP35 = k [ i ] 
+syscall-1 #TMP35
 syscall-11 10
 i = i + 1
 GOTO _label11
 	prev:[19,]
 	next:[21,19,]
 	use:[k,i,]
-	def:[#TMP37,]
+	def:[#TMP35,]
 	activeIn:[k,i,j,n,]
 	activeOut:[k,i,j,n,]
 ==============
@@ -540,41 +537,41 @@ y=0
 	activeOut:[k,i,y,]
 ==============
 ====Block24====
-_label13: #TMP39 = i < 228
-BZ #TMP39 _label14
+_label13: #TMP37 = i < 228
+BZ #TMP37 _label14
 	prev:[23,27,]
 	next:[25,28,]
 	use:[i,]
-	def:[#TMP39,]
+	def:[#TMP37,]
 	activeIn:[k,i,y,]
 	activeOut:[k,i,y,]
 ==============
 ====Block25====
-#TMP52 = i / 10
-#TMP53 = #TMP52 * 10
-#TMP65 = i - #TMP53
-#TMP73 = #TMP65 * #TMP65
-#TMP74 = #TMP73 * #TMP65
-#TMP46 = #TMP52 / 10
-#TMP47 = #TMP46 * 10
-#TMP66 = #TMP52 - #TMP47
-#TMP70 = #TMP66 * #TMP66
-#TMP71 = #TMP70 * #TMP66
-#TMP67 = i / 100
-#TMP68 = #TMP67 * #TMP67
-#TMP69 = #TMP68 * #TMP67
-#TMP72 = #TMP69 + #TMP71
-#TMP75 = #TMP72 + #TMP74
-#TMP60 = #TMP66 * 10
-#TMP59 = #TMP67 * 100
-#TMP61 = #TMP59 + #TMP60
-#TMP62 = #TMP61 + #TMP65
-#TMP76 = #TMP62 == #TMP75
-BZ #TMP76 _label15
+#TMP50 = i / 10
+#TMP51 = #TMP50 * 10
+#TMP63 = i - #TMP51
+#TMP71 = #TMP63 * #TMP63
+#TMP72 = #TMP71 * #TMP63
+#TMP44 = #TMP50 / 10
+#TMP45 = #TMP44 * 10
+#TMP64 = #TMP50 - #TMP45
+#TMP68 = #TMP64 * #TMP64
+#TMP69 = #TMP68 * #TMP64
+#TMP65 = i / 100
+#TMP66 = #TMP65 * #TMP65
+#TMP67 = #TMP66 * #TMP65
+#TMP70 = #TMP67 + #TMP69
+#TMP73 = #TMP70 + #TMP72
+#TMP58 = #TMP64 * 10
+#TMP57 = #TMP65 * 100
+#TMP59 = #TMP57 + #TMP58
+#TMP60 = #TMP59 + #TMP63
+#TMP74 = #TMP60 == #TMP73
+BZ #TMP74 _label15
 	prev:[24,]
 	next:[26,27,]
 	use:[i,]
-	def:[#TMP76,#TMP75,#TMP74,#TMP73,#TMP72,#TMP71,#TMP70,#TMP69,#TMP68,#TMP67,#TMP66,#TMP65,#TMP62,#TMP61,#TMP60,#TMP59,#TMP53,#TMP52,#TMP47,#TMP46,]
+	def:[#TMP74,#TMP73,#TMP72,#TMP71,#TMP70,#TMP69,#TMP68,#TMP67,#TMP66,#TMP65,#TMP64,#TMP63,#TMP60,#TMP59,#TMP58,#TMP57,#TMP51,#TMP50,#TMP45,#TMP44,]
 	activeIn:[k,i,y,]
 	activeOut:[k,i,y,]
 ==============
@@ -608,26 +605,26 @@ _label14: i=0
 	activeOut:[k,i,y,]
 ==============
 ====Block29====
-_label16: #TMP78 = i < y
-BZ #TMP78 _label17
+_label16: #TMP76 = i < y
+BZ #TMP76 _label17
 	prev:[28,30,]
 	next:[30,31,]
 	use:[i,y,]
-	def:[#TMP78,]
+	def:[#TMP76,]
 	activeIn:[k,i,y,]
 	activeOut:[k,i,y,]
 ==============
 ====Block30====
 syscall-4   
-#TMP79 = k [ i ] 
-syscall-1 #TMP79
+#TMP77 = k [ i ] 
+syscall-1 #TMP77
 syscall-11 10
 i = i + 1
 GOTO _label16
 	prev:[29,]
 	next:[31,29,]
 	use:[k,i,]
-	def:[#TMP79,]
+	def:[#TMP77,]
 	activeIn:[k,i,y,]
 	activeOut:[k,i,y,]
 ==============
@@ -647,12 +644,12 @@ leap=1
 	activeOut:[m,h,leap,]
 ==============
 ====Block32====
-_label18: #TMP80 = m <= 128
-BZ #TMP80 _label19
+_label18: #TMP78 = m <= 128
+BZ #TMP78 _label19
 	prev:[31,41,]
 	next:[33,42,]
 	use:[m,]
-	def:[#TMP80,]
+	def:[#TMP78,]
 	activeIn:[m,h,leap,]
 	activeOut:[m,h,leap,]
 ==============
@@ -667,25 +664,24 @@ i=2
 	activeOut:[i,m,k2,h,leap,]
 ==============
 ====Block34====
-_label20: #TMP82 = i <= k2
-BZ #TMP82 _label21
+_label20: #TMP80 = i <= k2
+BZ #TMP80 _label21
 	prev:[33,37,]
 	next:[35,38,]
 	use:[i,k2,]
-	def:[#TMP82,]
+	def:[#TMP80,]
 	activeIn:[i,m,k2,h,leap,]
 	activeOut:[i,m,k2,h,leap,]
 ==============
 ====Block35====
-#TMP89 = m / i
-#TMP90 = #TMP89 * i
-#TMP87 = m - #TMP90
-#TMP91 = #TMP87 == 0
-BZ #TMP91 _label22
+#TMP87 = m / i
+#TMP88 = #TMP87 * i
+#TMP83 = m - #TMP88
+BNZ #TMP83 _label22
 	prev:[34,]
 	next:[36,37,]
 	use:[i,m,]
-	def:[#TMP91,#TMP90,#TMP89,#TMP87,]
+	def:[#TMP88,#TMP87,#TMP83,]
 	activeIn:[i,m,k2,h,leap,]
 	activeOut:[i,m,k2,h,leap,]
 ==============
@@ -709,12 +705,12 @@ GOTO _label20
 	activeOut:[i,m,k2,h,leap,]
 ==============
 ====Block38====
-_label21: #TMP92 = leap == 1
-BZ #TMP92 _label23
+_label21: #TMP89 = leap == 1
+BZ #TMP89 _label23
 	prev:[37,34,]
 	next:[39,41,]
 	use:[leap,]
-	def:[#TMP92,]
+	def:[#TMP89,]
 	activeIn:[m,h,leap,]
 	activeOut:[m,h,]
 ==============
@@ -723,14 +719,14 @@ syscall-4
 syscall-1 m
 syscall-11 10
 h = h + 1
-#TMP94 = h / 10
-x2 = #TMP94 * 10
-#TMP96 = x2 == h
-BZ #TMP96 _label23
+#TMP91 = h / 10
+x2 = #TMP91 * 10
+#TMP93 = x2 == h
+BZ #TMP93 _label23
 	prev:[38,]
 	next:[40,41,]
 	use:[m,h,]
-	def:[#TMP96,#TMP94,x2,]
+	def:[#TMP93,#TMP91,x2,]
 	activeIn:[m,h,]
 	activeOut:[m,h,]
 ==============
@@ -833,11 +829,13 @@ syscall-11 10
 syscall-4 y = 
 syscall-1 y
 syscall-11 10
+temp=x
+x=y
 syscall-4 SWAP x = 
-syscall-1 y
+syscall-1 x
 syscall-11 10
 syscall-4 SWAP y = 
-syscall-1 x
+syscall-1 temp
 syscall-11 10
 ret 
 int full_num()
@@ -888,30 +886,28 @@ _label5: #TMP22 = i < j
 BZ #TMP22 _label6
 #TMP29 = j / i
 #TMP30 = #TMP29 * i
-#TMP27 = j - #TMP30
-#TMP31 = #TMP27 == 0
-BZ #TMP31 _label7
+#TMP25 = j - #TMP30
+BNZ #TMP25 _label7
 n = n + 1
 s = s - i
-#TMP34 = n >= 128
-BZ #TMP34 _label8
+#TMP33 = n >= 128
+BZ #TMP33 _label8
 syscall-4 OVERFLOW!
 syscall-11 10
 GOTO _label7
 _label8: k[n] =i
 _label7: i = i + 1
 GOTO _label5
-_label6: #TMP35 = s == 0
-BZ #TMP35 _label10
+_label6: BNZ s _label10
 syscall-4 complete number: 
 syscall-1 j
 syscall-11 10
 i=0
-_label11: #TMP36 = i <= n
-BZ #TMP36 _label12
+_label11: #TMP34 = i <= n
+BZ #TMP34 _label12
 syscall-4   
-#TMP37 = k [ i ] 
-syscall-1 #TMP37
+#TMP35 = k [ i ] 
+syscall-1 #TMP35
 syscall-11 10
 i = i + 1
 GOTO _label11
@@ -925,39 +921,39 @@ syscall-4 'water flower'number is:
 syscall-11 10
 i=100
 y=0
-_label13: #TMP39 = i < 228
-BZ #TMP39 _label14
-#TMP52 = i / 10
-#TMP53 = #TMP52 * 10
-#TMP65 = i - #TMP53
-#TMP73 = #TMP65 * #TMP65
-#TMP74 = #TMP73 * #TMP65
-#TMP46 = #TMP52 / 10
-#TMP47 = #TMP46 * 10
-#TMP66 = #TMP52 - #TMP47
-#TMP70 = #TMP66 * #TMP66
-#TMP71 = #TMP70 * #TMP66
-#TMP67 = i / 100
-#TMP68 = #TMP67 * #TMP67
-#TMP69 = #TMP68 * #TMP67
-#TMP72 = #TMP69 + #TMP71
-#TMP75 = #TMP72 + #TMP74
-#TMP60 = #TMP66 * 10
-#TMP59 = #TMP67 * 100
-#TMP61 = #TMP59 + #TMP60
-#TMP62 = #TMP61 + #TMP65
-#TMP76 = #TMP62 == #TMP75
-BZ #TMP76 _label15
+_label13: #TMP37 = i < 228
+BZ #TMP37 _label14
+#TMP50 = i / 10
+#TMP51 = #TMP50 * 10
+#TMP63 = i - #TMP51
+#TMP71 = #TMP63 * #TMP63
+#TMP72 = #TMP71 * #TMP63
+#TMP44 = #TMP50 / 10
+#TMP45 = #TMP44 * 10
+#TMP64 = #TMP50 - #TMP45
+#TMP68 = #TMP64 * #TMP64
+#TMP69 = #TMP68 * #TMP64
+#TMP65 = i / 100
+#TMP66 = #TMP65 * #TMP65
+#TMP67 = #TMP66 * #TMP65
+#TMP70 = #TMP67 + #TMP69
+#TMP73 = #TMP70 + #TMP72
+#TMP58 = #TMP64 * 10
+#TMP57 = #TMP65 * 100
+#TMP59 = #TMP57 + #TMP58
+#TMP60 = #TMP59 + #TMP63
+#TMP74 = #TMP60 == #TMP73
+BZ #TMP74 _label15
 k[y] =i
 y = y + 1
 _label15: i = i + 1
 GOTO _label13
 _label14: i=0
-_label16: #TMP78 = i < y
-BZ #TMP78 _label17
+_label16: #TMP76 = i < y
+BZ #TMP76 _label17
 syscall-4   
-#TMP79 = k [ i ] 
-syscall-1 #TMP79
+#TMP77 = k [ i ] 
+syscall-1 #TMP77
 syscall-11 10
 i = i + 1
 GOTO _label16
@@ -968,30 +964,29 @@ syscall-11 10
 m=2
 h=0
 leap=1
-_label18: #TMP80 = m <= 128
-BZ #TMP80 _label19
+_label18: #TMP78 = m <= 128
+BZ #TMP78 _label19
 k2 = m / 2
 i=2
-_label20: #TMP82 = i <= k2
-BZ #TMP82 _label21
-#TMP89 = m / i
-#TMP90 = #TMP89 * i
-#TMP87 = m - #TMP90
-#TMP91 = #TMP87 == 0
-BZ #TMP91 _label22
+_label20: #TMP80 = i <= k2
+BZ #TMP80 _label21
+#TMP87 = m / i
+#TMP88 = #TMP87 * i
+#TMP83 = m - #TMP88
+BNZ #TMP83 _label22
 leap=0
 _label22: i = i + 1
 GOTO _label20
-_label21: #TMP92 = leap == 1
-BZ #TMP92 _label23
+_label21: #TMP89 = leap == 1
+BZ #TMP89 _label23
 syscall-4  
 syscall-1 m
 syscall-11 10
 h = h + 1
-#TMP94 = h / 10
-x2 = #TMP94 * 10
-#TMP96 = x2 == h
-BZ #TMP96 _label23
+#TMP91 = h / 10
+x2 = #TMP91 * 10
+#TMP93 = x2 == h
+BZ #TMP93 _label23
 syscall-4  
 syscall-11 10
 _label23: m = m + 1
@@ -1032,63 +1027,60 @@ link:		returnType:int	paraNum:2	paras:[4 5 ]
 name:swap	id:6	type:function	scope:	addr:-1	dimension:0
 link:		returnType:void	paraNum:2	paras:[7 8 ]
 complete_flower_num:
-name:a	id:31	type:int	scope:complete_flower_num	addr:680	dimension:0link:NULL
-name:b	id:32	type:int	scope:complete_flower_num	addr:684	dimension:0link:NULL
-name:c	id:33	type:int	scope:complete_flower_num	addr:688	dimension:0link:NULL
-name:h	id:28	type:int	scope:complete_flower_num	addr:692	dimension:0link:NULL
-name:i	id:20	type:int	scope:complete_flower_num	addr:696	dimension:0link:NULL
-name:j	id:21	type:int	scope:complete_flower_num	addr:700	dimension:0link:NULL
-name:k	id:19	type:int[]	scope:complete_flower_num	addr:168	dimension:128link:NULL
-name:k2	id:27	type:int	scope:complete_flower_num	addr:704	dimension:0link:NULL
-name:leap	id:29	type:int	scope:complete_flower_num	addr:708	dimension:0link:NULL
-name:m	id:26	type:int	scope:complete_flower_num	addr:712	dimension:0link:NULL
-name:n	id:22	type:int	scope:complete_flower_num	addr:716	dimension:0link:NULL
-name:s	id:23	type:int	scope:complete_flower_num	addr:720	dimension:0link:NULL
-name:x1	id:24	type:int	scope:complete_flower_num	addr:724	dimension:0link:NULL
-name:x2	id:30	type:int	scope:complete_flower_num	addr:728	dimension:0link:NULL
-name:y	id:25	type:int	scope:complete_flower_num	addr:732	dimension:0link:NULL
-tmp96 addr:0
-tmp94 addr:4
-tmp92 addr:8
-tmp91 addr:12
-tmp90 addr:16
-tmp89 addr:20
-tmp87 addr:24
-tmp82 addr:28
-tmp80 addr:32
-tmp79 addr:36
-tmp78 addr:40
-tmp76 addr:44
-tmp75 addr:48
-tmp74 addr:52
-tmp73 addr:56
-tmp72 addr:60
-tmp71 addr:64
-tmp70 addr:68
-tmp69 addr:72
-tmp68 addr:76
-tmp67 addr:80
-tmp66 addr:84
-tmp65 addr:88
-tmp62 addr:92
-tmp61 addr:96
-tmp60 addr:100
-tmp59 addr:104
-tmp53 addr:108
-tmp52 addr:112
-tmp47 addr:116
-tmp46 addr:120
-tmp39 addr:124
-tmp37 addr:128
-tmp36 addr:132
-tmp35 addr:136
-tmp34 addr:140
-tmp31 addr:144
-tmp30 addr:148
-tmp29 addr:152
-tmp27 addr:156
-tmp22 addr:160
-tmp21 addr:164
+name:a	id:31	type:int	scope:complete_flower_num	addr:668	dimension:0link:NULL
+name:b	id:32	type:int	scope:complete_flower_num	addr:672	dimension:0link:NULL
+name:c	id:33	type:int	scope:complete_flower_num	addr:676	dimension:0link:NULL
+name:h	id:28	type:int	scope:complete_flower_num	addr:680	dimension:0link:NULL
+name:i	id:20	type:int	scope:complete_flower_num	addr:684	dimension:0link:NULL
+name:j	id:21	type:int	scope:complete_flower_num	addr:688	dimension:0link:NULL
+name:k	id:19	type:int[]	scope:complete_flower_num	addr:156	dimension:128link:NULL
+name:k2	id:27	type:int	scope:complete_flower_num	addr:692	dimension:0link:NULL
+name:leap	id:29	type:int	scope:complete_flower_num	addr:696	dimension:0link:NULL
+name:m	id:26	type:int	scope:complete_flower_num	addr:700	dimension:0link:NULL
+name:n	id:22	type:int	scope:complete_flower_num	addr:704	dimension:0link:NULL
+name:s	id:23	type:int	scope:complete_flower_num	addr:708	dimension:0link:NULL
+name:x1	id:24	type:int	scope:complete_flower_num	addr:712	dimension:0link:NULL
+name:x2	id:30	type:int	scope:complete_flower_num	addr:716	dimension:0link:NULL
+name:y	id:25	type:int	scope:complete_flower_num	addr:720	dimension:0link:NULL
+tmp93 addr:0
+tmp91 addr:4
+tmp89 addr:8
+tmp88 addr:12
+tmp87 addr:16
+tmp83 addr:20
+tmp80 addr:24
+tmp78 addr:28
+tmp77 addr:32
+tmp76 addr:36
+tmp74 addr:40
+tmp73 addr:44
+tmp72 addr:48
+tmp71 addr:52
+tmp70 addr:56
+tmp69 addr:60
+tmp68 addr:64
+tmp67 addr:68
+tmp66 addr:72
+tmp65 addr:76
+tmp64 addr:80
+tmp63 addr:84
+tmp60 addr:88
+tmp59 addr:92
+tmp58 addr:96
+tmp57 addr:100
+tmp51 addr:104
+tmp50 addr:108
+tmp45 addr:112
+tmp44 addr:116
+tmp37 addr:120
+tmp35 addr:124
+tmp34 addr:128
+tmp33 addr:132
+tmp30 addr:136
+tmp29 addr:140
+tmp25 addr:144
+tmp22 addr:148
+tmp21 addr:152
 factorial:
 name:n	id:2	type:int	scope:factorial	addr:52	dimension:0link:NULL
 tmp5 addr:0

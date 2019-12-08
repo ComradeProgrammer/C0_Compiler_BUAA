@@ -1446,8 +1446,9 @@ void GrammarAnalyzer::ifSentence() {
 	}
 	getNextSym();
 	//完成读取左括号
-
-	ReturnBundle conditionBundle=condition();
+	vector<int>tmp;
+	//tmp.clear();
+	ReturnBundle conditionBundle=condition(tmp);
 	//读取条件
 
 	if (lex.sym().type != RPARENT) {
@@ -1459,8 +1460,14 @@ void GrammarAnalyzer::ifSentence() {
 	}
 	//读取右括号
 	int label1 = MidCode::labelAlloc();
-	raw.midCodeInsert(MIDBZ, MIDUNUSED,
-		conditionBundle.id, conditionBundle.isImmediate, label1,false,MIDNOLABEL);
+	if (tmp.size() == 0) {
+		raw.midCodeInsert(MIDBZ, MIDUNUSED,
+			conditionBundle.id, conditionBundle.isImmediate, label1, false, MIDNOLABEL);
+	}
+	else {
+		raw.midCodeInsert(MIDBNZ, MIDUNUSED,
+			conditionBundle.id, conditionBundle.isImmediate, label1, false, MIDNOLABEL);
+	}
 	//生成if的头部
 	sentence();
 	//语句
@@ -1535,9 +1542,11 @@ ReturnBundle GrammarAnalyzer::condition() {
 	return res;
 }
 
-ReturnBundle GrammarAnalyzer::condition() {
-	
-	ReturnBundle res1=expression();
+//tmp如果为空证明跳转指令无法优化；tmp如果说明条件的第二操作数是0，可以优化，返回第一操作数
+//同时tmp变成第一操作数
+ReturnBundle GrammarAnalyzer::condition(vector<int>& tmp) {
+
+	ReturnBundle res1 = expression();
 
 	ReturnBundle res;
 	res.isChar = false;
@@ -1574,10 +1583,19 @@ ReturnBundle GrammarAnalyzer::condition() {
 		}
 		getNextSym();
 		//读取关系运算符完成
-		ReturnBundle res2=expression();
+		ReturnBundle res2 = expression();
 		if (res2.isChar) {
 			f.handleCourseFault(lex.lineNumber(), ILLEGALTYPEINCONDITION);
 			f.handleFault(lex.lineNumber(), "条件中必须使用整型");
+		}
+		if (res2.isImmediate && res2.id == 0&&(op==MIDEQL||op==MIDNEQ)) {
+			if (op == MIDNEQ) {
+				return res1;
+			}
+			else {
+				tmp.push_back(op);
+				return res1;
+			}
 		}
 		int tmpVar = MidCode::tmpVarAlloc();
 		raw.midCodeInsert(op, tmpVar,
@@ -1589,6 +1607,7 @@ ReturnBundle GrammarAnalyzer::condition() {
 	if (course) { out << "<条件>" << endl; }
 	return res;
 }
+
 void GrammarAnalyzer::loopSentence() {
 	inlineable = false;
 	bool error = false;

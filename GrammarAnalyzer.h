@@ -87,7 +87,7 @@ public:
 
 	void ifSentence();
 	ReturnBundle condition();
-	//ReturnBundle condition(MidCode&tmp);
+	ReturnBundle condition(vector<int>&tmp);
 	void loopSentence();
 	/*会在此处理各种语句抛出的异常*/
 	void sentence();
