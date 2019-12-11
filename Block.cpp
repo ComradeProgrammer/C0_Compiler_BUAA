@@ -26,7 +26,7 @@ void Block::useDefScan() {
 		if (i.op == MIDADD || i.op == MIDSUB || i.op == MIDMULT
 			|| i.op == MIDDIV || i.op == MIDLSS || i.op == MIDLEQ
 			|| i.op == MIDGRE || i.op == MIDGEQ || i.op == MIDEQL
-			|| i.op == MIDNEQ||i.op==MIDARRAYGET) {
+			|| i.op == MIDNEQ||i.op==MIDARRAYGET||i.op==MIDREM) {
 			use.erase(i.target);
 			def.insert(i.target);
 			if (!i.isImmediate1) {
@@ -97,7 +97,7 @@ vector<vector<int>>Block::conflictEdgeAnalyze(){
 		if (i.op == MIDADD || i.op == MIDSUB || i.op == MIDMULT
 			|| i.op == MIDDIV || i.op == MIDLSS || i.op == MIDLEQ
 			|| i.op == MIDGRE || i.op == MIDGEQ || i.op == MIDEQL
-			|| i.op == MIDNEQ || i.op == MIDARRAYGET) {
+			|| i.op == MIDNEQ || i.op == MIDARRAYGET||i.op==MIDREM) {
 			localActive.erase(i.target);
 			if (!i.isImmediate1) {
 				localActive.insert(i.operand1);
@@ -190,6 +190,16 @@ void Block::eliminateDeadCode() {
 	v=eliminator.eliminateDeadCode(v);
 }
 
+void Block::blockOptimize() {
+	BlockOptimization bop(activeOut);
+	v = bop.propagationInBlock(v);
+}
+
+void Block::peepholeOptimize() {
+	PeepHoleOptimization opt;
+	v = opt.peepHoleOptimization(v);
+}
+
 set<int>Block::setUnion(set<int> a, set<int> b) {
 	set<int>res;
 	for (int i : a) {
@@ -258,10 +268,6 @@ ostream& operator<<(ostream& out, Block b) {
 	return out;
 }
 
-void Block::blockOptimize() {
-	BlockOptimization bop(activeOut);
-	v = bop.propagationInBlock(v);
-}
 
 void Block::activeVariableAnalyzePerLine() {
 	set<int>localActive = activeOut;
@@ -272,7 +278,7 @@ void Block::activeVariableAnalyzePerLine() {
 		if (i.op == MIDADD || i.op == MIDSUB || i.op == MIDMULT
 			|| i.op == MIDDIV || i.op == MIDLSS || i.op == MIDLEQ
 			|| i.op == MIDGRE || i.op == MIDGEQ || i.op == MIDEQL
-			|| i.op == MIDNEQ || i.op == MIDARRAYGET) {
+			|| i.op == MIDNEQ || i.op == MIDARRAYGET||i.op==MIDREM) {
 			localActive.erase(i.target);
 			if (!i.isImmediate1) {
 				localActive.insert(i.operand1);

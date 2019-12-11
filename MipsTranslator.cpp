@@ -906,6 +906,46 @@ void MipsTranslator::translate(MidCode c) {
 			specialVarwriteback(c.target, false);
 			break;
 		}
+		case MIDREM:
+		{
+			if (c.isImmediate2) {
+				vector<int>conflictVar;
+				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
+				int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
+
+				conflictVar.clear();
+				conflictVar.push_back(c.target);
+				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
+					{ target }, &(c.activeVariable));
+
+				out << "rem " << name[target] << "," << name[operand1] << "," << c.operand2;
+				out << "#" << c << endl;
+				specialVarwriteback(c.target, false);
+				break;
+			}
+			vector<int>conflictVar;
+			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
+			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
+			int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
+
+			conflictVar.clear();
+			conflictVar.push_back(c.target);
+			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
+			int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
+				{ target }, &(c.activeVariable));
+
+			conflictVar.clear();
+			conflictVar.push_back(c.target);
+			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
+			int operand2 = loadOperand(c.operand2, c.isImmediate2, conflictVar,
+				{ target,operand1 }, &(c.activeVariable));
+
+			out << "div " << name[operand1] << "," << name[operand2]<<endl;
+			out << "mfhi " << name[target]<<endl;
+			out << "#" << c << endl;
+			specialVarwriteback(c.target, false);
+			break;
+		}
 		case MIDNEGATE:
 		{
 			vector<int>conflictVar;

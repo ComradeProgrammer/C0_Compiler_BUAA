@@ -114,6 +114,7 @@ void DagMap::handleMidCode(MidCode c){
 		case MIDGEQ:
 		case MIDEQL:
 		case MIDNEQ:
+		case MIDREM:
 		case MIDARRAYGET:
 		{
 			DagNode* node1 = getNodeByVar(c.operand1, c.isImmediate1);
@@ -372,6 +373,7 @@ MidCode DagMap::nodeToMidCode(DagNode* node) {
 		case MIDNEQ:
 		case MIDARRAYGET:
 		case MIDARRAYWRITE:
+		case MIDREM:
 		{
 			MidCode res;
 			res.op = node->op;

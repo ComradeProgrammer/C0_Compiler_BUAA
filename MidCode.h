@@ -41,6 +41,7 @@ enum MidCodeOp {
 	MIDREADINTEGER,//SYSCALL5 target-读入整数的id
 	MIDREADCHAR,//SYSCALL12  target-读入字符的id
 	MIDNOP,//对付跳转使用的，优化时候就都干掉了，什么都不要什么都不做
+	MIDREM,//取余数 xinzeng
 };
 /*再这里记录一下*/
 class MidCode {

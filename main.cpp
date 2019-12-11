@@ -23,7 +23,6 @@ int main() {
 	//grammarAnalyzer.homeworkOn(true,true);
 
 	grammarAnalyzer.programme();
-
 	frame.optimize();
 	f << frame;
 	f << endl << endl;

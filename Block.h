@@ -5,6 +5,7 @@
 #include"DagMap.h"
 #include"DeadCodeEliminator.h"
 #include"BlockOptimization.h"
+#include"PeepHoleOptimization.h"
 using namespace std;
 
 class Block {
@@ -34,4 +35,5 @@ public:
 	void eliminateDeadCode();
 	void blockOptimize();
 	void activeVariableAnalyzePerLine();
+	void peepholeOptimize();
 };

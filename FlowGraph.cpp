@@ -14,7 +14,9 @@ FlowGraph::FlowGraph(MidCodeContainer& c) {
 			Block* oldBlock = block;
 			block = new Block(functionId);
 			graph.push_back(oldBlock);
-			addLink(oldBlock, block);
+			if (!(i != 0 && (c.v[i - 1].op == MIDGOTO || c.v[i - 1].op == MIDRET))) {
+				addLink(oldBlock, block);
+			}
 		}
 		else if (i != 0 &&( c.v[i - 1].op == MIDGOTO||c.v[i-1].op==MIDRET)) {
 			Block* oldBlock = block;
@@ -52,12 +54,20 @@ void FlowGraph::addLink(Block* from, Block* to) {
 }
 
 void FlowGraph::optimize() {
+
 	activeVariableAnalyze();
 	DAGoptimize();
+
 	activeVariableAnalyze();
 	blockOptimize();
+
 	activeVariableAnalyze();
 	eliminateDeadCode();
+
+	activeVariableAnalyze();
+	activeVariablePerLine();
+	peepholeOptimize();
+
 	activeVariableAnalyze();
 	variableSummary();
 	activeVariablePerLine();
@@ -124,6 +134,7 @@ void FlowGraph::variableSummary() {
 			case MIDGEQ:
 			case MIDEQL:
 			case MIDNEQ:
+			case MIDREM:
 				if (!j.isImmediate1 && j.operand1 < -1) {
 					tmpVariable.insert(j.operand1);
 				}
@@ -271,4 +282,10 @@ ostream& operator<<(ostream& out, FlowGraph& f) {
 		out << (*i);
 	}
 	return out;
+}
+
+void FlowGraph::peepholeOptimize() {
+	for (Block* i : graph) {
+		i->peepholeOptimize();
+	}
 }

@@ -749,7 +749,7 @@ void GrammarAnalyzer::parameterList(SymbolEntry* entry) {
 
 /*<复合语句>*/
  void GrammarAnalyzer::compoundSentence(){
-	inlineable = true;
+	 inlineable = true;
 	if (currentScope == "main") {
 		inlineable = false;
 	}

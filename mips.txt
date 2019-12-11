@@ -54,17 +54,14 @@ jr $ra
 #ret #TMP5
 
 mod:
-sw $ra,40($sp)#save the return value
+sw $ra,32($sp)#save the return value
 div $a0,$a1
-mflo $t0##TMP6 = x / y
-
-mul $t1,$t0,$a1##TMP7 = #TMP6 * y
-
-subu $a0,$a0,$t1#x = x - #TMP7
+mfhi $a0
+#x = x mod y
 
 move $v0,$a0
-lw $ra,40($sp)
-addiu $sp,$sp,52
+lw $ra,32($sp)
+addiu $sp,$sp,44
 jr $ra
 #ret x
 
@@ -202,12 +199,12 @@ jr $ra
 #ret #TMP20
 
 complete_flower_num:
-sw $ra,756($sp)#save the return value
-sw $s0,724($sp)
-sw $s1,728($sp)
-sw $s2,732($sp)
-sw $s3,736($sp)
-sw $s4,740($sp)
+sw $ra,732($sp)#save the return value
+sw $s0,700($sp)
+sw $s1,704($sp)
+sw $s2,708($sp)
+sw $s3,712($sp)
+sw $s4,716($sp)
 li $s1,2
 label$3:
 slti $t0,$s1,128#_label3: #TMP21 = j < 128
@@ -224,13 +221,10 @@ slt $t0,$s0,$s1#_label5: #TMP22 = i < j
 beq $t0,$0,label$6#BZ #TMP22 _label6
 
 div $s1,$s0
-mflo $t0##TMP29 = j / i
+mfhi $t0
+##TMP25 = j mod i
 
-mul $t1,$t0,$s0##TMP30 = #TMP29 * i
-
-subu $t2,$s1,$t1##TMP25 = j - #TMP30
-
-bne $t2,$0,label$7#BNZ #TMP25 _label7
+bne $t0,$0,label$7#BNZ #TMP25 _label7
 
 addiu $s2,$s2,1#n = n + 1
 
@@ -255,7 +249,7 @@ j label$7#GOTO _label7
 label$8:
 sll $t0,$s2,2
 addu $t0,$t0,$sp
-sw $s0,156($t0)#_label8: k[n] =i
+sw $s0,132($t0)#_label8: k[n] =i
 
 label$7:
 addiu $s0,$s0,1#_label7: i = i + 1
@@ -293,7 +287,7 @@ syscall #printstring
 
 sll $t1,$s0,2
 addu $t1,$t1,$sp
-lw $t0,156($t1)##TMP35 = k [ i ] 
+lw $t0,132($t1)##TMP35 = k [ i ] 
 
 move $a0,$t0
 li $v0,1
@@ -365,45 +359,40 @@ mul $t4,$t3,$t3##TMP71 = #TMP63 * #TMP63
 
 mul $t5,$t4,$t3##TMP72 = #TMP71 * #TMP63
 
-div $t0,$t1
-mflo $t6##TMP44 = #TMP50 / 10
+rem $t6,$t0,10##TMP64 = #TMP50 mod 10
 
-mul $t7,$t6,10##TMP45 = #TMP44 * 10
+mul $t7,$t6,$t6##TMP68 = #TMP64 * #TMP64
 
-subu $t8,$t0,$t7##TMP64 = #TMP50 - #TMP45
+mul $t8,$t7,$t6##TMP69 = #TMP68 * #TMP64
 
-mul $t9,$t8,$t8##TMP68 = #TMP64 * #TMP64
+li $t0,100	# load immediate 100
+div $s0,$t0
+mflo $t9##TMP65 = i / 100
 
-mul $t0,$t9,$t8##TMP69 = #TMP68 * #TMP64
+mul $t2,$t9,$t9##TMP66 = #TMP65 * #TMP65
 
-li $t4,100	# load immediate 100
-div $s0,$t4
-mflo $t2##TMP65 = i / 100
+mul $t4,$t2,$t9##TMP67 = #TMP66 * #TMP65
 
-mul $t6,$t2,$t2##TMP66 = #TMP65 * #TMP65
+addu $t2,$t4,$t8##TMP70 = #TMP67 + #TMP69
 
-mul $t7,$t6,$t2##TMP67 = #TMP66 * #TMP65
+addu $t4,$t2,$t5##TMP73 = #TMP70 + #TMP72
 
-addu $t6,$t7,$t0##TMP70 = #TMP67 + #TMP69
+mul $t2,$t6,10##TMP58 = #TMP64 * 10
 
-addu $t0,$t6,$t5##TMP73 = #TMP70 + #TMP72
+mul $t5,$t9,100##TMP57 = #TMP65 * 100
 
-mul $t5,$t8,10##TMP58 = #TMP64 * 10
+addu $t6,$t5,$t2##TMP59 = #TMP57 + #TMP58
 
-mul $t6,$t2,100##TMP57 = #TMP65 * 100
+addu $t2,$t6,$t3##TMP60 = #TMP59 + #TMP63
 
-addu $t2,$t6,$t5##TMP59 = #TMP57 + #TMP58
-
-addu $t5,$t2,$t3##TMP60 = #TMP59 + #TMP63
-
-bne $t5,$t0,label$15
+bne $t2,$t4,label$15
 ##TMP74 = #TMP60 == #TMP73
 
 #BZ #TMP74 _label15
 
 sll $t0,$s1,2
 addu $t0,$t0,$sp
-sw $s0,156($t0)#k[y] =i
+sw $s0,132($t0)#k[y] =i
 
 addiu $s1,$s1,1#y = y + 1
 
@@ -426,7 +415,7 @@ syscall #printstring
 
 sll $t1,$s0,2
 addu $t1,$t1,$sp
-lw $t0,156($t1)##TMP77 = k [ i ] 
+lw $t0,132($t1)##TMP77 = k [ i ] 
 
 move $a0,$t0
 li $v0,1
@@ -482,13 +471,10 @@ sle $t0,$s0,$s2#_label20: #TMP80 = i <= k2
 beq $t0,$0,label$21#BZ #TMP80 _label21
 
 div $s1,$s0
-mflo $t0##TMP87 = m / i
+mfhi $t0
+##TMP83 = m mod i
 
-mul $t1,$t0,$s0##TMP88 = #TMP87 * i
-
-subu $t2,$s1,$t1##TMP83 = m - #TMP88
-
-bne $t2,$0,label$22#BNZ #TMP83 _label22
+bne $t0,$0,label$22#BNZ #TMP83 _label22
 
 li $s4,0
 label$22:
@@ -563,13 +549,13 @@ li $v0,11
 syscall #printchar
 # syscall-11 10
 
-lw $s0,724($sp)
-lw $s1,728($sp)
-lw $s2,732($sp)
-lw $s3,736($sp)
-lw $s4,740($sp)
-lw $ra,756($sp)
-addiu $sp,$sp,760
+lw $s0,700($sp)
+lw $s1,704($sp)
+lw $s2,708($sp)
+lw $s3,712($sp)
+lw $s4,716($sp)
+lw $ra,732($sp)
+addiu $sp,$sp,736
 jr $ra
 #ret 
 
@@ -659,7 +645,7 @@ li $v0,11
 syscall #printchar
 # syscall-11 10
 
-addiu $sp,$sp,-760
+addiu $sp,$sp,-736
 jal complete_flower_num
 #call complete_flower_num
 

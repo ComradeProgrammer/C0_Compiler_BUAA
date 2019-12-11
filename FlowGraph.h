@@ -25,4 +25,5 @@ public:
 	void eliminateDeadCode();
 	void blockOptimize();
 	void activeVariablePerLine();
+	void peepholeOptimize();
 };

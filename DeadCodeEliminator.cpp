@@ -16,7 +16,7 @@ vector<MidCode> DeadCodeEliminator::eliminateDeadCode(vector<MidCode>& v) {
 		if (i.op == MIDADD || i.op == MIDSUB || i.op == MIDMULT
 			|| i.op == MIDDIV || i.op == MIDLSS || i.op == MIDLEQ
 			|| i.op == MIDGRE || i.op == MIDGEQ || i.op == MIDEQL
-			|| i.op == MIDNEQ || i.op == MIDARRAYGET) {
+			|| i.op == MIDNEQ || i.op == MIDARRAYGET||i.op==MIDREM) {
 			SymbolEntry* entry = MidCode::table->getSymbolById(i.target);
 			if (localActive.find(i.target) == localActive.end()
 				&& (i.target < 0 || entry->scope != "")) {

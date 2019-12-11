@@ -56,6 +56,7 @@ vector<MidCode>BlockOptimization::propagationInBlock(vector<MidCode>& v) {
 			case MIDGEQ:
 			case MIDEQL:
 			case MIDNEQ:
+			case MIDREM:
 			{
 				MidCode tmp = c;
 				//如果两个立即数都是常量的话

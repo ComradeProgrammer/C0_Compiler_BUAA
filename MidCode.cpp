@@ -50,6 +50,7 @@ ostream& operator<<(ostream& out, MidCode c) {
 	ops[MIDGEQ] = ">=";
 	ops[MIDEQL] = "==";
 	ops[MIDNEQ] = "!=";
+	ops[MIDREM] = "mod";
 	if (c.labelNo < -1) {
 		out << "_label" << -(c.labelNo) << ": ";
 	}
@@ -92,6 +93,7 @@ ostream& operator<<(ostream& out, MidCode c) {
 		case MIDGEQ:
 		case MIDEQL:
 		case MIDNEQ:
+		case MIDREM:
 			out << MidCode::getOperandName(c.target,false);
 			out << " " << "=" << " ";
 			out << MidCode::getOperandName(c.operand1, c.isImmediate1);

@@ -147,6 +147,7 @@
     <ClCompile Include="MidCode.cpp" />
     <ClCompile Include="MidCodeFrameWork.cpp" />
     <ClCompile Include="MipsTranslator.cpp" />
+    <ClCompile Include="PeepHoleOptimization.cpp" />
     <ClCompile Include="SubSymbolTable.cpp" />
     <ClCompile Include="SymbolTable.cpp" />
   </ItemGroup>
@@ -164,6 +165,7 @@
     <ClInclude Include="MidCodeContainer.h" />
     <ClInclude Include="MidCodeFramework.h" />
     <ClInclude Include="MipsTranslator.h" />
+    <ClInclude Include="PeepHoleOptimization.h" />
     <ClInclude Include="SubSymbolTable.h" />
     <ClInclude Include="SymbolTable.h" />
   </ItemGroup>
