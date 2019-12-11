@@ -206,23 +206,19 @@ sw $s2,708($sp)
 sw $s3,712($sp)
 sw $s4,716($sp)
 li $s1,2
+j label$4#GOTO _label4
+
 label$3:
-slti $t0,$s1,128#_label3: #TMP21 = j < 128
-
-beq $t0,$0,label$4#BZ #TMP21 _label4
-
 li $s0,1
 li $s2,-1
 move $s3,$s1#s=j
 
+j label$6#GOTO _label6
+
 label$5:
-slt $t0,$s0,$s1#_label5: #TMP22 = i < j
-
-beq $t0,$0,label$6#BZ #TMP22 _label6
-
 div $s1,$s0
 mfhi $t0
-##TMP25 = j mod i
+#_label5: #TMP25 = j mod i
 
 bne $t0,$0,label$7#BNZ #TMP25 _label7
 
@@ -254,10 +250,12 @@ sw $s0,132($t0)#_label8: k[n] =i
 label$7:
 addiu $s0,$s0,1#_label7: i = i + 1
 
-j label$5#GOTO _label5
-
 label$6:
-bne $s3,$0,label$10#_label6: BNZ s _label10
+slt $t0,$s0,$s1#_label6: #TMP22 = i < j
+
+bne $t0,$0,label$5#BNZ #TMP22 _label5
+
+bne $s3,$0,label$10#BNZ s _label10
 
 la $a0,string$5
 li $v0,4
@@ -275,15 +273,13 @@ syscall #printchar
 # syscall-11 10
 
 li $s0,0
+j label$12#GOTO _label12
+
 label$11:
-sle $t0,$s0,$s2#_label11: #TMP34 = i <= n
-
-beq $t0,$0,label$12#BZ #TMP34 _label12
-
 la $a0,string$6
 li $v0,4
 syscall #printstring
-# syscall-4   
+# _label11: syscall-4   
 
 sll $t1,$s0,2
 addu $t1,$t1,$sp
@@ -301,13 +297,15 @@ syscall #printchar
 
 addiu $s0,$s0,1#i = i + 1
 
-j label$11#GOTO _label11
-
 label$12:
+sle $t0,$s0,$s2#_label12: #TMP34 = i <= n
+
+bne $t0,$0,label$11#BNZ #TMP34 _label11
+
 la $a0,string$7
 li $v0,4
 syscall #printstring
-# _label12: syscall-4  
+# syscall-4  
 
 li $a0,10
 li $v0,11
@@ -317,13 +315,15 @@ syscall #printchar
 label$10:
 addiu $s1,$s1,1#_label10: j = j + 1
 
-j label$3#GOTO _label3
-
 label$4:
+slti $t0,$s1,128#_label4: #TMP21 = j < 128
+
+bne $t0,$0,label$3#BNZ #TMP21 _label3
+
 la $a0,string$8
 li $v0,4
 syscall #printstring
-# _label4: syscall-4 ---------------------------------------------------------------
+# syscall-4 ---------------------------------------------------------------
 
 li $a0,10
 li $v0,11
@@ -342,14 +342,12 @@ syscall #printchar
 
 li $s0,100
 li $s1,0
+j label$14#GOTO _label14
+
 label$13:
-slti $t0,$s0,228#_label13: #TMP37 = i < 228
-
-beq $t0,$0,label$14#BZ #TMP37 _label14
-
 li $t1,10	# load immediate 10
 div $s0,$t1
-mflo $t0##TMP50 = i / 10
+mflo $t0#_label13: #TMP50 = i / 10
 
 mul $t2,$t0,10##TMP51 = #TMP50 * 10
 
@@ -399,19 +397,19 @@ addiu $s1,$s1,1#y = y + 1
 label$15:
 addiu $s0,$s0,1#_label15: i = i + 1
 
-j label$13#GOTO _label13
-
 label$14:
+slti $t0,$s0,228#_label14: #TMP37 = i < 228
+
+bne $t0,$0,label$13#BNZ #TMP37 _label13
+
 li $s0,0
+j label$17#GOTO _label17
+
 label$16:
-slt $t0,$s0,$s1#_label16: #TMP76 = i < y
-
-beq $t0,$0,label$17#BZ #TMP76 _label17
-
 la $a0,string$10
 li $v0,4
 syscall #printstring
-# syscall-4   
+# _label16: syscall-4   
 
 sll $t1,$s0,2
 addu $t1,$t1,$sp
@@ -429,13 +427,15 @@ syscall #printchar
 
 addiu $s0,$s0,1#i = i + 1
 
-j label$16#GOTO _label16
-
 label$17:
+slt $t0,$s0,$s1#_label17: #TMP76 = i < y
+
+bne $t0,$0,label$16#BNZ #TMP76 _label16
+
 la $a0,string$11
 li $v0,4
 syscall #printstring
-# _label17: syscall-4  
+# syscall-4  
 
 li $a0,10
 li $v0,11
@@ -455,24 +455,20 @@ syscall #printchar
 li $s1,2
 li $s3,0
 li $s4,1
+j label$19#GOTO _label19
+
 label$18:
-sle $t0,$s1,128#_label18: #TMP78 = m <= 128
-
-beq $t0,$0,label$19#BZ #TMP78 _label19
-
 li $t0,2	# load immediate 2
 div $s1,$t0
-mflo $s2#k2 = m / 2
+mflo $s2#_label18: k2 = m / 2
 
 li $s0,2
+j label$21#GOTO _label21
+
 label$20:
-sle $t0,$s0,$s2#_label20: #TMP80 = i <= k2
-
-beq $t0,$0,label$21#BZ #TMP80 _label21
-
 div $s1,$s0
 mfhi $t0
-##TMP83 = m mod i
+#_label20: #TMP83 = m mod i
 
 bne $t0,$0,label$22#BNZ #TMP83 _label22
 
@@ -480,12 +476,14 @@ li $s4,0
 label$22:
 addiu $s0,$s0,1#_label22: i = i + 1
 
-j label$20#GOTO _label20
-
 label$21:
+sle $t0,$s0,$s2#_label21: #TMP80 = i <= k2
+
+bne $t0,$0,label$20#BNZ #TMP80 _label20
+
 li $t0,1	# load immediate 1
 bne $s4,$t0,label$23
-#_label21: #TMP89 = leap == 1
+##TMP89 = leap == 1
 
 #BZ #TMP89 _label23
 
@@ -531,13 +529,15 @@ label$23:
 addiu $s1,$s1,1#_label23: m = m + 1
 
 li $s4,1
-j label$18#GOTO _label18
-
 label$19:
+sle $t0,$s1,128#_label19: #TMP78 = m <= 128
+
+bne $t0,$0,label$18#BNZ #TMP78 _label18
+
 la $a0,string$15
 li $v0,4
 syscall #printstring
-# _label19: syscall-4 The total is 
+# syscall-4 The total is 
 
 move $a0,$s3
 li $v0,1

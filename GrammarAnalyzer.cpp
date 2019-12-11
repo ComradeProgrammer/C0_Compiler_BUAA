@@ -1622,11 +1622,16 @@ void GrammarAnalyzer::loopSentence() {
 		getNextSym();
 		int label1 = MidCode::labelAlloc();
 		int label2 = MidCode::labelAlloc();
-		raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label1);
+		
 		//读取左括号
 
+		int probe1 = raw.getIndex();
 		ReturnBundle conditionBundle = condition();
+		int probe2 = raw.getIndex();
+		vector<MidCode>paraCode(raw.getIterator(probe1), raw.getIterator(probe2));
 		//读取条件语句
+		
+		
 		if (lex.sym().type != RPARENT) {
 			f.handleCourseFault(lex.lineNumber(), NORPARENT);
 			f.handleFault(lex.lineNumber(), "缺少)");
@@ -1636,15 +1641,19 @@ void GrammarAnalyzer::loopSentence() {
 		}
 		//读取右括号完成
 
-		raw.midCodeInsert(MIDBZ,MIDUNUSED,
-			conditionBundle.id,conditionBundle.isImmediate,
-			label2,false,MIDNOLABEL);
+		
 		//生成while头部
+		raw.midCodeInsert(MIDGOTO, MIDUNUSED, label2, false,
+			MIDUNUSED, false, MIDNOLABEL);
+		raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label1);
 		sentence();
 
-		raw.midCodeInsert(MIDGOTO, MIDUNUSED, label1, false,
-			MIDUNUSED, false, MIDNOLABEL);
 		raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label2);
+		raw.midCodeInsert(paraCode);
+		raw.midCodeInsert(MIDBNZ, MIDUNUSED,
+			conditionBundle.id, conditionBundle.isImmediate,
+			label1, false, MIDNOLABEL);
+		
 	}
 	else if (lex.sym().type == DOTK) {
 		getNextSym();
@@ -1730,7 +1739,7 @@ void GrammarAnalyzer::loopSentence() {
 		}
 		int label1 = MidCode::labelAlloc();
 		int label2 = MidCode::labelAlloc();
-		raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label1);
+
 		//生成第一部分中间代码
 		if (lex.sym().type != SEMICN) {
 			f.handleCourseFault(lex.lineNumber(), NOSEMICN);
@@ -1740,9 +1749,12 @@ void GrammarAnalyzer::loopSentence() {
 			getNextSym();
 		}
 		//读取分号完成
-		ReturnBundle conditionBundle=condition();
-		raw.midCodeInsert(MIDBZ, MIDUNUSED,
-			conditionBundle.id, conditionBundle.isImmediate, label2, false, MIDNOLABEL);
+		int probe1 = raw.getIndex();
+		ReturnBundle conditionBundle = condition();
+		int probe2 = raw.getIndex();
+		vector<MidCode>paraCode(raw.getIterator(probe1), raw.getIterator(probe2));
+
+		
 		//生成条件部分代码
 		//读取条件完成
 		if (lex.sym().type != SEMICN) {
@@ -1824,7 +1836,14 @@ void GrammarAnalyzer::loopSentence() {
 			getNextSym();
 		}
 		//读取右括号完成
+		raw.midCodeInsert(MIDGOTO, MIDUNUSED, label2, false,
+			MIDUNUSED, false, MIDNOLABEL);
+		raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label1);
 		sentence();
+
+
+
+		
 		if (entry2 != NULL&&entry3!=NULL) {
 			if (entry3->type == TYPECHARCONST || entry3->type == TYPEINTCONST) {
 				raw.midCodeInsert(op, entry2->id,
@@ -1834,8 +1853,11 @@ void GrammarAnalyzer::loopSentence() {
 				raw.midCodeInsert(op, entry2->id,
 					entry3->id, false, step, true, MIDNOLABEL);
 			}
-			raw.midCodeInsert(MIDGOTO, MIDUNUSED, label1, false, MIDUNUSED, false, MIDNOLABEL);
 			raw.midCodeInsert(MIDNOP, MIDUNUSED, MIDUNUSED, false, MIDUNUSED, false, label2);
+			raw.midCodeInsert(paraCode);
+			raw.midCodeInsert(MIDBNZ, MIDUNUSED,
+				conditionBundle.id, conditionBundle.isImmediate, label1, false, MIDNOLABEL);
+	
 			//生成头部第三部分
 		}
 	}
