@@ -183,3 +183,62 @@ void main() {
     arr[5] = 'f';
     arrange(5, 0);
 }
+//========
+int x;
+int mod(int x,int y){
+	int q;
+	q=x/y;
+	return (x-q*y);
+}
+
+int isPrime(int x){
+	int i;
+	if(x==2){
+		return (1);
+	}
+	else{
+		for(i=3;i<x;i=i+1){
+			if(mod(x,i)==0){
+				return (0);
+			}
+		}
+	}
+	return (1);
+}
+
+void fenjie(int x){
+	int loop,i;
+	loop=1;
+	i=2;
+	printf("the prime factors of ",x);
+	while(loop){
+		if(x==1){
+			return;
+		}
+		if(isPrime(i)){
+			if(mod(x,i)==0){
+				printf(i);
+				x=x/i;
+				i=2;
+			}
+			else{
+				i=i+1;
+			}
+		}
+		else{
+			i=i+1;
+		}
+	}
+	
+}
+void main(){
+
+	x=0;
+	while(x!=-1){
+		printf("input the number");
+		scanf(x);
+		if(x!=-1)
+			fenjie(x);
+	}
+	
+}

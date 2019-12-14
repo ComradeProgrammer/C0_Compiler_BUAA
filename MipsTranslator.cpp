@@ -167,6 +167,7 @@ void MipsTranslator::SregisterAlloc() {
 			}
 		}
 	}
+	
 }
 vector<int> MipsTranslator::TregisterAlloc(int var, int isImmediate
 	, vector<int>conflictVar, vector<int> conflictReg) {
@@ -648,7 +649,21 @@ void MipsTranslator::translate(MidCode c) {
 		}
 		case MIDDIV:
 		{
-			
+			if (c.isImmediate2&&c.operand2==2) {
+				vector<int>conflictVar;
+				if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
+				int target = loadOperand(c.target, false, conflictVar, {}, &(c.activeVariable));
+
+				conflictVar.clear();
+				conflictVar.push_back(c.target);
+				int operand1 = loadOperand(c.operand1, c.isImmediate1, conflictVar,
+					{ target }, &(c.activeVariable));
+
+				out << "sra " << name[target] << "," << name[operand1] << "," << 1;
+				out << "#" << c << endl;
+				specialVarwriteback(c.target, false);
+				break;
+			}
 			vector<int>conflictVar;
 			if (!c.isImmediate1) { conflictVar.push_back(c.operand1); }
 			if (!c.isImmediate2) { conflictVar.push_back(c.operand2); }
