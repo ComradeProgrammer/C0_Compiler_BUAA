@@ -22,9 +22,11 @@ MAX_NUM: .word 128
 jal main
 factorial:
 sw $ra,48($sp)#save the return value
-sle $t0,$a0,1##TMP2 = n <= 1
+li $t0,1	# load immediate 1
+bgt $a0,$t0,label$2
+##TMP2 = n <= 1
 
-beq $t0,$0,label$2#BZ #TMP2 _label2
+#BZ #TMP2 _label2
 
 li $v0,1
 lw $ra,48($sp)
@@ -226,9 +228,11 @@ addiu $s2,$s2,1#n = n + 1
 
 subu $s3,$s3,$s0#s = s - i
 
-sge $t0,$s2,128##TMP33 = n >= 128
+li $t0,128	# load immediate 128
+blt $s2,$t0,label$8
+##TMP33 = n >= 128
 
-beq $t0,$0,label$8#BZ #TMP33 _label8
+#BZ #TMP33 _label8
 
 la $a0,string$4
 li $v0,4
@@ -251,9 +255,10 @@ label$7:
 addiu $s0,$s0,1#_label7: i = i + 1
 
 label$6:
-slt $t0,$s0,$s1#_label6: #TMP22 = i < j
+blt $s0,$s1,label$5
+#_label6: #TMP22 = i < j
 
-bne $t0,$0,label$5#BNZ #TMP22 _label5
+#BNZ #TMP22 _label5
 
 bne $s3,$0,label$10#BNZ s _label10
 
@@ -298,9 +303,10 @@ syscall #printchar
 addiu $s0,$s0,1#i = i + 1
 
 label$12:
-sle $t0,$s0,$s2#_label12: #TMP34 = i <= n
+ble $s0,$s2,label$11
+#_label12: #TMP34 = i <= n
 
-bne $t0,$0,label$11#BNZ #TMP34 _label11
+#BNZ #TMP34 _label11
 
 la $a0,string$7
 li $v0,4
@@ -316,9 +322,11 @@ label$10:
 addiu $s1,$s1,1#_label10: j = j + 1
 
 label$4:
-slti $t0,$s1,128#_label4: #TMP21 = j < 128
+li $t0,128	# load immediate 128
+blt $s1,$t0,label$3
+#_label4: #TMP21 = j < 128
 
-bne $t0,$0,label$3#BNZ #TMP21 _label3
+#BNZ #TMP21 _label3
 
 la $a0,string$8
 li $v0,4
@@ -398,9 +406,11 @@ label$15:
 addiu $s0,$s0,1#_label15: i = i + 1
 
 label$14:
-slti $t0,$s0,228#_label14: #TMP37 = i < 228
+li $t0,228	# load immediate 228
+blt $s0,$t0,label$13
+#_label14: #TMP37 = i < 228
 
-bne $t0,$0,label$13#BNZ #TMP37 _label13
+#BNZ #TMP37 _label13
 
 li $s0,0
 j label$17#GOTO _label17
@@ -428,9 +438,10 @@ syscall #printchar
 addiu $s0,$s0,1#i = i + 1
 
 label$17:
-slt $t0,$s0,$s1#_label17: #TMP76 = i < y
+blt $s0,$s1,label$16
+#_label17: #TMP76 = i < y
 
-bne $t0,$0,label$16#BNZ #TMP76 _label16
+#BNZ #TMP76 _label16
 
 la $a0,string$11
 li $v0,4
@@ -475,9 +486,10 @@ label$22:
 addiu $s0,$s0,1#_label22: i = i + 1
 
 label$21:
-sle $t0,$s0,$s2#_label21: #TMP80 = i <= k2
+ble $s0,$s2,label$20
+#_label21: #TMP80 = i <= k2
 
-bne $t0,$0,label$20#BNZ #TMP80 _label20
+#BNZ #TMP80 _label20
 
 li $t0,1	# load immediate 1
 bne $s4,$t0,label$23
@@ -528,9 +540,11 @@ addiu $s1,$s1,1#_label23: m = m + 1
 
 li $s4,1
 label$19:
-sle $t0,$s1,128#_label19: #TMP78 = m <= 128
+li $t0,128	# load immediate 128
+ble $s1,$t0,label$18
+#_label19: #TMP78 = m <= 128
 
-bne $t0,$0,label$18#BNZ #TMP78 _label18
+#BNZ #TMP78 _label18
 
 la $a0,string$15
 li $v0,4

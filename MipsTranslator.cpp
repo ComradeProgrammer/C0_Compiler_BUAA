@@ -56,9 +56,11 @@ void MipsTranslator::translateBlock(Block* b) {
 	}
 	for (int i = 0; i < b->v.size(); i++) {
 		if (i+1<b->v.size()
-			&&(b->v[i].op==MIDEQL||b->v[i].op==MIDNEQ)
+			&&(b->v[i].op==MIDEQL||b->v[i].op==MIDNEQ|| b->v[i].op == MIDGRE
+				||b->v[i].op == MIDGEQ|| b->v[i].op == MIDLSS
+				|| b->v[i].op == MIDLEQ)
 			&&(b->v[i+1].op==MIDBZ||b->v[i+1].op==MIDBNZ)) {
-			//针对跳转语句的beq bne优化
+			//针对跳转语句优化
 			MidCode c1 = b->v[i];
 			MidCode c2 = b->v[i + 1];
 			if (c2.operand1 == c1.target && !c2.isImmediate1//保证是同一个变量
@@ -1277,8 +1279,25 @@ void MipsTranslator::translate(vector<MidCode>c,int type) {
 			|| (c[0].op == MIDNEQ && c[1].op == MIDBNZ)) {
 			out << "bne " << name[operand1] << "," << name[operand2] << ",label$" << -c[1].operand2 << endl;
 		}
-		else {
+		else if((c[0].op == MIDEQL && c[1].op == MIDBNZ)
+			|| (c[0].op == MIDNEQ && c[1].op == MIDBZ)){
 			out << "beq " << name[operand1] << "," << name[operand2] << ",label$" << -c[1].operand2 << endl;
+		}
+		else if (c[0].op == MIDGEQ && c[1].op == MIDBZ ||
+			c[0].op == MIDLSS && c[1].op == MIDBNZ) {
+			out << "blt " << name[operand1] << "," << name[operand2] << ",label$" << -c[1].operand2 << endl;
+		}
+		else if (c[0].op == MIDGEQ && c[1].op == MIDBNZ ||
+			c[0].op == MIDLSS && c[1].op == MIDBZ) {
+			out << "bge " << name[operand1] << "," << name[operand2] << ",label$" << -c[1].operand2 << endl;
+		}
+		else if (c[0].op == MIDGRE && c[1].op == MIDBZ ||
+			c[0].op == MIDLEQ && c[1].op == MIDBNZ) {
+			out << "ble " << name[operand1] << "," << name[operand2] << ",label$" << -c[1].operand2 << endl;
+		}
+		else if (c[0].op == MIDGRE && c[1].op == MIDBNZ ||
+			c[0].op == MIDLEQ && c[1].op == MIDBZ) {
+			out << "bgt " << name[operand1] << "," << name[operand2] << ",label$" << -c[1].operand2 << endl;
 		}
 		out << "#" << c[0] << endl;
 		out << "#" << c[1] << endl;
