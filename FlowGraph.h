@@ -3,6 +3,7 @@
 #include<set>
 #include"Block.h"
 #include"MidCodeContainer.h"
+#include"OptimizeSwitch.h"
 using namespace std;
 class FlowGraph {
 public:

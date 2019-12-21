@@ -36,7 +36,7 @@ public:
 	void test();
 	
 private:
-	ofstream fout;
+	fstream fout;
 	bool debug=false;
 	map<FaultType, string>messages;
 };

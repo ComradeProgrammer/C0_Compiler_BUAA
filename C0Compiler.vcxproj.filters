@@ -157,6 +157,9 @@
     <ClInclude Include="PeepHoleOptimization.h">
       <Filter>头文件\BackEnd</Filter>
     </ClInclude>
+    <ClInclude Include="OptimizeSwitch.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Annotation 2019-09-26 123820.jpg">

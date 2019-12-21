@@ -1,37 +1,115 @@
 ﻿#include"main.h"
 using namespace std;
 
-int main() {
-	fstream f;
-	f.open("debug.txt", ios_base::trunc | ios_base::out);
+bool constantSubstitutionSwitch=false;
+bool inlineSwitch=false;
+bool propagationSwitch=false;
+bool dagMapSwitch=false;
+bool deadCodeEliminateSwitch=false;
+bool PeepHoleSwitch=false;
 
-    FaultHandler faultHandler("error.txt");
-	faultHandler.debugOn();
+int main(int argc, char* argv[]) {
+	string inputFile = "testfile.txt";
+	string outputFile = "mips.txt";
+	string errorFile = "";
+	string debugFile = "";
+	string recursiveDescendInformationFile = "";
+	cout << "Final project of 'Complier Design' Course(Autumn2019),SCSE BUAA" << endl;
+	
+	/*添加命令行参数支持与学校验收测试的支持*/
+	if (argc==1) {
+		//如果是学校验收的话无参数
+		cout << "HomeWork acceptance Mode" << endl;
+		errorFile = "error.txt";
+		debugFile = "debug.txt";
+		recursiveDescendInformationFile = "output.txt";
+		//grammarAnalyzer.homeworkOn(true,true);
+		constantSubstitutionSwitch = true;
+		inlineSwitch = true;
+		propagationSwitch = true;
+		dagMapSwitch = true;
+		deadCodeEliminateSwitch = true;
+		PeepHoleSwitch = true;
+	}
+	else {
+		//使用了命令行参数
+		inputFile = argv[1];
+		for (int i = 2; i < argc; i++) {
+			string header = argv[i];
+			if (header == "-opt") {
+				constantSubstitutionSwitch = true;
+				inlineSwitch = true;
+				propagationSwitch = true;
+				dagMapSwitch = true;
+				deadCodeEliminateSwitch = true;
+				PeepHoleSwitch = true;
+				continue;
+			}
 
-	LexicalAnalyzer lexicalAnalyzer(faultHandler);
-	lexicalAnalyzer.readAll("testfile.txt");
-	lexicalAnalyzer.getNextSym();
-
+			if (i + 1 >= argc) {
+				cout << "invalid parameter for operand " << header << endl;
+				exit(0);
+			}
+			string para = argv[i + 1];
+			if (header == "-o") {
+				outputFile = para;
+			}
+			else if (header == "-d") {
+				debugFile = para;
+			}
+			else if (header == "-rdi") {
+				recursiveDescendInformationFile = "output.txt";
+			}
+			else if (header == "-h") {
+				/*准备说明文档*/
+			}
+			else {
+				cout << "invalid operand " << header << endl;
+				exit(0);
+			}
+			i++;
+		}
+	}
+	/*实例化各个组件===========================*/
+	//符号表
 	SymbolTable symbolTable;
 	MidCode::table = &symbolTable;
 	SubSymbolTable::table = &symbolTable;
-
-	MipsTranslator mips("mips.txt");
-
+	//错误处理
+    FaultHandler faultHandler(errorFile);
+	faultHandler.debugOn();
+	//词法分析
+	LexicalAnalyzer lexicalAnalyzer(faultHandler);
+	lexicalAnalyzer.readAll(inputFile);
+	lexicalAnalyzer.getNextSym();
+	//目标代码生成
+	MipsTranslator mips(outputFile);
+	//编译器框架
 	MidCodeFramework frame(mips);
-	GrammarAnalyzer grammarAnalyzer(faultHandler,symbolTable,lexicalAnalyzer,frame,"output.txt");
-	//grammarAnalyzer.homeworkOn(true,true);
-
+	//语法分析
+	GrammarAnalyzer grammarAnalyzer(faultHandler,symbolTable,lexicalAnalyzer,
+		frame,recursiveDescendInformationFile);
+	/*开始编译*/
+	fstream f;
+	if (debugFile != "") {
+		f.open(debugFile, ios_base::trunc | ios_base::out);
+	}
 	grammarAnalyzer.programme();
 	frame.optimize();
-	f << frame;
-	f << endl << endl;
-	frame.dumpNewMidCode(f);
-	f << endl << endl;
-	f << symbolTable;
-	f << endl << endl;
+	if (debugFile != "") {
+		f << "BEFORE BACKEND OPTIMIZATION" << endl;
+		f << frame;
+		f << endl << endl;
+	}
+	if (debugFile!= "") {
+		f << "BEFORE BACKEND OPTIMIZATION" << endl;
+		frame.dumpNewMidCode(f);
+		f << endl << endl;
+		f << "SYMBOLTABLE" << endl;
+		f << symbolTable;
+		f << endl << endl;
+	}
 	frame.generateMips();
-	
 	system("pause");
 
 	return 0;

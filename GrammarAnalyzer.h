@@ -5,6 +5,7 @@
 #include"SymbolTable.h"
 #include"MidCode.h"
 #include"MidCodeFramework.h"
+#include"OptimizeSwitch.h"
 using namespace std;
 struct ReturnBundle {
 	bool isChar=false;

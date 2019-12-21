@@ -136,7 +136,7 @@ void MipsTranslator::SregisterAlloc() {
 				//若没有找到满足条件的，暂时是从头找一个
 				//此处如何选择可进行优化
 				int chosen = *(var.begin());
-				cout << "remove var No." << chosen << endl;
+				//cout << "remove var No." << chosen << endl;
 				for (int j : m[chosen]) {
 					m[j].erase(chosen);
 				}

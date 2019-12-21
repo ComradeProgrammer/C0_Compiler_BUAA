@@ -79,9 +79,11 @@ void MidCodeFramework::dumpNewMidCode(ostream&out) {
 	MidCode::table->getSubSymbolTableByName("")->dumpMidCode(out);
 	for (FlowGraph& g : graph) {
 		string functionName = MidCode::table->getSymbolById(g.functionId)->name;
-		MidCode::table->getSubSymbolTableByName(functionName)->dumpMidCode(out);
+		
 		for (Block* b : g.graph) {
 			for (MidCode& c : b->v) {
+				if(c.op==MIDFUNC)
+					MidCode::table->getSubSymbolTableByName(functionName)->dumpMidCode(out);
 				out << c;
 			}
 		}

@@ -11,3 +11,4 @@
 #include"Block.h"
 #include"FlowGraph.h"
 #include"MipsTranslator.h"
+#include"OptimizeSwitch.h"

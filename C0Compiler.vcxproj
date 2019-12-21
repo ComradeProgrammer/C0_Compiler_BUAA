@@ -165,6 +165,7 @@
     <ClInclude Include="MidCodeContainer.h" />
     <ClInclude Include="MidCodeFramework.h" />
     <ClInclude Include="MipsTranslator.h" />
+    <ClInclude Include="OptimizeSwitch.h" />
     <ClInclude Include="PeepHoleOptimization.h" />
     <ClInclude Include="SubSymbolTable.h" />
     <ClInclude Include="SymbolTable.h" />

@@ -3,6 +3,9 @@
 /*构造器函数*/
 GrammarAnalyzer::GrammarAnalyzer(FaultHandler& _f, SymbolTable& _s, LexicalAnalyzer& _l,MidCodeFramework& _raw,string file)
 :f(_f),table(_s),raw(_raw), lex(_l) {
+	if (file == "") {
+		file = "/dev/null";
+	}
 	out.open(file,ios_base::trunc|ios_base::out);
 	currentScope="";
 }
@@ -749,7 +752,7 @@ void GrammarAnalyzer::parameterList(SymbolEntry* entry) {
 
 /*<复合语句>*/
  void GrammarAnalyzer::compoundSentence(){
-	 inlineable = true;
+	inlineable = inlineSwitch;
 	if (currentScope == "main") {
 		inlineable = false;
 	}
@@ -840,7 +843,7 @@ ReturnBundle GrammarAnalyzer::factor() {
 				res.isChar = true;
 			}
 			if (!error) {
-				if (entry->type == TYPECHARCONST || entry->type == TYPEINTCONST) {
+				if (constantSubstitutionSwitch&&(entry->type == TYPECHARCONST || entry->type == TYPEINTCONST)) {
 					res.id = entry->initValue;
 					res.isImmediate = true;
 				}
@@ -1845,7 +1848,7 @@ void GrammarAnalyzer::loopSentence() {
 
 		
 		if (entry2 != NULL&&entry3!=NULL) {
-			if (entry3->type == TYPECHARCONST || entry3->type == TYPEINTCONST) {
+			if (constantSubstitutionSwitch&&(entry3->type == TYPECHARCONST || entry3->type == TYPEINTCONST)) {
 				raw.midCodeInsert(op, entry2->id,
 					entry3->initValue, true, step, true, MIDNOLABEL);
 			}

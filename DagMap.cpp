@@ -135,6 +135,12 @@ void DagMap::handleMidCode(MidCode c){
 			varToNode[c.target] = node;
 			node->possibleNames.insert(c.target);
 			assigned.insert(c.target);
+			if (c.target > 0) {
+				SymbolEntry* entry = MidCode::table->getSymbolById(c.target);
+				if (entry->scope == "") {
+					mustOut.insert(c.target);
+				}
+			}
 			break;
 		}
 		case MIDNEGATE:
@@ -153,6 +159,12 @@ void DagMap::handleMidCode(MidCode c){
 			varToNode[c.target] = node;
 			node->possibleNames.insert(c.target);
 			assigned.insert(c.target);
+			if (c.target > 0) {
+				SymbolEntry* entry = MidCode::table->getSymbolById(c.target);
+				if (entry->scope == "") {
+					mustOut.insert(c.target);
+				}
+			}
 			break;
 		}
 		case MIDASSIGN:
@@ -177,6 +189,12 @@ void DagMap::handleMidCode(MidCode c){
 			varToNode[c.target] = node1;
 			node1->possibleNames.insert(c.target);
 			assigned.insert(c.target);
+			if (c.target > 0) {
+				SymbolEntry* entry = MidCode::table->getSymbolById(c.target);
+				if (entry->scope == "") {
+					mustOut.insert(c.target);
+				}
+			}
 			break;
 		}
 		case MIDPRINTCHAR:
@@ -297,8 +315,9 @@ vector<MidCode> DagMap::dumpMidCode() {
 	//开始确定导出顺序
 	vector<DagNode*>q;
 	int i = 0;
-	while (i < nodes.size()) {
-		DagNode* tmp=nullptr;
+	DagNode* tmp = nullptr;
+	while (i < nodes.size() ) {
+		tmp = nullptr;
 		for (int j = 0; j < nodes.size(); j++) {
 			if (nodes[j]->dumped) { continue; }
 			else if (nodes[j]->isLeaf) {

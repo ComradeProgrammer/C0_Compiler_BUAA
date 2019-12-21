@@ -54,19 +54,26 @@ void FlowGraph::addLink(Block* from, Block* to) {
 }
 
 void FlowGraph::optimize() {
+	if (dagMapSwitch) {
+		activeVariableAnalyze();
+		DAGoptimize();
+	}
 
-	activeVariableAnalyze();
-	DAGoptimize();
+	if (propagationSwitch) {
+		activeVariableAnalyze();
+		blockOptimize();
+	}
 
-	activeVariableAnalyze();
-	blockOptimize();
+	if (deadCodeEliminateSwitch) {
+		activeVariableAnalyze();
+		eliminateDeadCode();
+	}
 
-	activeVariableAnalyze();
-	eliminateDeadCode();
-
-	activeVariableAnalyze();
-	activeVariablePerLine();
-	peepholeOptimize();
+	if (PeepHoleSwitch) {
+		activeVariableAnalyze();
+		activeVariablePerLine();
+		peepholeOptimize();
+	}
 
 	activeVariableAnalyze();
 	variableSummary();
