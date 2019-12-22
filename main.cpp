@@ -95,22 +95,27 @@ int main(int argc, char* argv[]) {
 		f.open(debugFile, ios_base::trunc | ios_base::out);
 	}
 	grammarAnalyzer.programme();
-	frame.optimize();
-	if (debugFile != "") {
-		f << "BEFORE BACKEND OPTIMIZATION" << endl;
-		f << frame;
-		f << endl << endl;
-	}
-	if (debugFile!= "") {
-		f << "BEFORE BACKEND OPTIMIZATION" << endl;
-		frame.dumpNewMidCode(f);
-		f << endl << endl;
-		f << "SYMBOLTABLE" << endl;
-		f << symbolTable;
-		f << endl << endl;
-	}
-	frame.generateMips();
-	system("pause");
 
+	if (faultHandler.haveBug()) {
+		faultHandler.terminate();
+	}
+	else {
+		frame.optimize();
+		if (debugFile != "") {
+			f << "BEFORE BACKEND OPTIMIZATION" << endl;
+			f << frame;
+			f << endl << endl;
+		}
+		if (debugFile != "") {
+			f << "BEFORE BACKEND OPTIMIZATION" << endl;
+			frame.dumpNewMidCode(f);
+			f << endl << endl;
+			f << "SYMBOLTABLE" << endl;
+			f << symbolTable;
+			f << endl << endl;
+		}
+		frame.generateMips();
+		system("pause");
+	}
 	return 0;
 }

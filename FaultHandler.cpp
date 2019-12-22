@@ -22,10 +22,12 @@ FaultHandler::~FaultHandler() {
 
 void FaultHandler::handleCourseFault(int line, FaultType type) {
 	fout << line << " "<<(char)type<<endl;
+	hasBug = true;
 	//handleFault(line, messages[type]);
 }
 
 void FaultHandler::handleFault(int line, string information) {
+	hasBug = true;
 	if (debug) {
 		cout << "Error @ line " << line << ": " << information << endl;
 	}
@@ -46,4 +48,8 @@ void FaultHandler::test() {
 	/*debugOn();
 	handleCourseFault(15, LEXICALERROR);
 	handleCourseFault(107,NORPARENT);*/
+}
+
+bool FaultHandler::haveBug() {
+	return hasBug;
 }

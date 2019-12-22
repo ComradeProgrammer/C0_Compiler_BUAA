@@ -34,9 +34,11 @@ public:
 	void terminate();
 	void debugOn();
 	void test();
+	bool haveBug();
 	
 private:
 	fstream fout;
 	bool debug=false;
+	bool hasBug = false;
 	map<FaultType, string>messages;
 };
