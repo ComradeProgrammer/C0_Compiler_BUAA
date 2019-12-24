@@ -7,6 +7,7 @@
 using namespace std;
 class FlowGraph {
 public:
+	~FlowGraph();
 	set<int>globalVariable;
 	set<int>tmpVariable;
 	set<int>allVariable;
@@ -14,7 +15,7 @@ public:
 	int functionId;
 	vector<Block*>graph;
 	vector<vector<int>>conflictEdges;
-
+	static vector<Block*>allGraph;
 	FlowGraph(MidCodeContainer& container);
 	friend ostream& operator<<(ostream& out, FlowGraph& f);
 	void optimize();

@@ -3,6 +3,11 @@
 MidCodeFramework::MidCodeFramework(MipsTranslator& _mips):mips(_mips) {
 }
 
+MidCodeFramework::~MidCodeFramework(){
+	for (Block* b : FlowGraph::allGraph) {
+		delete b;
+	}
+}
 void MidCodeFramework::functionStart(string name) {
 	container = MidCodeContainer();
 	container.functionName = name;

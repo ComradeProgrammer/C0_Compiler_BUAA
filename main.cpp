@@ -19,11 +19,10 @@ int main(int argc, char* argv[]) {
 	/*添加命令行参数支持与学校验收测试的支持*/
 	if (argc==1) {
 		//如果是学校验收的话无参数
-		cout << "HomeWork acceptance Mode" << endl;
+		cout << "HomeWork Acceptance Test Mode" << endl;
 		errorFile = "error.txt";
 		debugFile = "debug.txt";
-		recursiveDescendInformationFile = "output.txt";
-		//grammarAnalyzer.homeworkOn(true,true);
+		//recursiveDescendInformationFile = "output.txt";
 		constantSubstitutionSwitch = true;
 		inlineSwitch = true;
 		propagationSwitch = true;
@@ -58,10 +57,17 @@ int main(int argc, char* argv[]) {
 				debugFile = para;
 			}
 			else if (header == "-rdi") {
-				recursiveDescendInformationFile = "output.txt";
+				recursiveDescendInformationFile = para;
 			}
 			else if (header == "-h") {
 				/*准备说明文档*/
+				cout << "usage: C0compiler.exe sourcefile " << endl;
+				cout << "[-o outputfile] " << endl;
+				cout << "[-d debugInformation]" << endl;
+				cout << "[-rdi recursiveDescendInformationFile]" << endl;
+				cout << "[-h] help document" << endl;
+				cout << "[-opt] turn on the optimization" << endl;
+
 			}
 			else {
 				cout << "invalid operand " << header << endl;
@@ -89,6 +95,9 @@ int main(int argc, char* argv[]) {
 	//语法分析
 	GrammarAnalyzer grammarAnalyzer(faultHandler,symbolTable,lexicalAnalyzer,
 		frame,recursiveDescendInformationFile);
+	if (recursiveDescendInformationFile != "") {
+		grammarAnalyzer.homeworkOn(true, true);
+	}
 	/*开始编译*/
 	fstream f;
 	if (debugFile != "") {

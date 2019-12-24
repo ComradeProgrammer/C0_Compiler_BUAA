@@ -7,6 +7,7 @@ struct ReturnBundle;
 class MidCodeFramework {
 public :
 	MidCodeFramework(MipsTranslator& _mips);
+	~MidCodeFramework();
 	vector<MidCodeContainer>functionContainer;
 	MidCodeContainer container;
 	void functionStart(string name);

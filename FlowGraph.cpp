@@ -1,5 +1,5 @@
 ﻿#include"FlowGraph.h"
-
+vector<Block*>FlowGraph::allGraph;
 FlowGraph::FlowGraph(MidCodeContainer& c) {
 	map<int, Block*>codeToBlock;
 	map<int, Block*>labelToBlock;
@@ -7,12 +7,14 @@ FlowGraph::FlowGraph(MidCodeContainer& c) {
 	functionName = c.functionName;
 	functionId = MidCode::table->getSymbolByName("", functionName)->id;
 	Block* block = new Block(functionId);
+	allGraph.push_back(block);
 	for (int i = 0; i < c.v.size(); i++) {
 		if (c.v[i].labelNo != MIDNOLABEL||
 			(i != 0 && ( c.v[i - 1].op == MIDBNZ ||c.v[i - 1].op == MIDBZ||c.v[i-1].op==MIDCALL
 				|| c.v[i - 1].op == MIDREADINTEGER|| c.v[i - 1].op == MIDREADCHAR))) {
 			Block* oldBlock = block;
 			block = new Block(functionId);
+			allGraph.push_back(block);
 			graph.push_back(oldBlock);
 			if (!(i != 0 && (c.v[i - 1].op == MIDGOTO || c.v[i - 1].op == MIDRET))) {
 				addLink(oldBlock, block);
@@ -22,6 +24,7 @@ FlowGraph::FlowGraph(MidCodeContainer& c) {
 			Block* oldBlock = block;
 			block = new Block(functionId);
 			graph.push_back(oldBlock);
+			allGraph.push_back(block);
 		}
 		block->insert(c.v[i]);
 		codeToBlock[i] = block;
@@ -43,7 +46,9 @@ FlowGraph::FlowGraph(MidCodeContainer& c) {
 		}
 	}
 }
-
+FlowGraph::~FlowGraph() {
+	
+}
 
 void FlowGraph::addLink(Block* from, Block* to) {
 	if (from == NULL || to == NULL) {
