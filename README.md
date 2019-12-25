@@ -5,7 +5,7 @@ This is the repository for the project of "Design of Compiler Technology".This p
 ### About the 'C0 language'
 C0 language is a slightly modified and simplified High-level programming language based on C language. The grammar of this 'C0'  language is LL(1) grammar.<br>
 The Grammar of this C0 language is shown bellow.<br>
-[!](https://github.com/ComradeProgrammer/C0_Compiler_BUAA/blob/master/Annotation%202019-09-26%20123820.jpg?raw=true)
+![grammar](https://github.com/ComradeProgrammer/C0_Compiler_BUAA/blob/master/Annotation%202019-09-26%20123820.jpg?raw=true)
 ### About the simple compiler
 This compiler contains a 'frontend' and a 'backend.<br>
 In the front end we implemented Lexical analysis,Grammar analysis ( recursive-descend method), and the fault handling. The front end can translate the original C0 language to midcode.
